@@ -1,0 +1,8 @@
+<resources>
+    <string name="app_name">M3UPlayer</string>
+    <string-array name="turListesi">
+        <item>Channel</item>
+        <item>Film</item>
+        <item>Series</item>
+    </string-array>
+</resources>
