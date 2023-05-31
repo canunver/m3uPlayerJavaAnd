@@ -4,6 +4,10 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
+import androidx.recyclerview.widget.DefaultItemAnimator;
+import androidx.recyclerview.widget.DividerItemDecoration;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import android.Manifest;
 import android.content.pm.PackageManager;
@@ -33,7 +37,8 @@ public class MainActivity extends AppCompatActivity {
     int say = 0;
     private TextView sayac;
     AutoCompleteTextView grupSec;
-
+    private RecyclerView recyclerView;
+    private KanalAdapter kanalAdapter;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -43,6 +48,15 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void UygulamayaBasla() {
+        recyclerView = (RecyclerView)findViewById(R.id.recyclerView);
+        kanalAdapter = new KanalAdapter(this, null);
+        LinearLayoutManager mLayoutManager = new LinearLayoutManager(this);
+        recyclerView.setLayoutManager(mLayoutManager);
+        recyclerView.setItemAnimator(new DefaultItemAnimator());
+        recyclerView.addItemDecoration(new DividerItemDecoration(this, LinearLayoutManager.VERTICAL));
+        recyclerView.setAdapter(kanalAdapter);
+        setupPagination();
+
         String[] turListesi = getResources().getStringArray(R.array.turListesi);
         ArrayAdapter<String> aaTur = new ArrayAdapter<String>(getApplicationContext(), com.google.android.material.R.layout.support_simple_spinner_dropdown_item, turListesi);
         TextInputLayout tilTur = findViewById(R.id.turSecCont);
@@ -62,6 +76,28 @@ public class MainActivity extends AppCompatActivity {
                 TurSecildi(position);
             }
         });
+
+        grupSec.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                GrupSecildi(position);
+            }
+        });
+    }
+
+    private void setupPagination() {
+        recyclerView.addOnScrollListener(
+            new RecyclerView.OnScrollListener() {
+                @Override
+                public void onScrolled(@NonNull RecyclerView recyclerView, int dx, int dy) {
+                    super.onScrolled(recyclerView, dx, dy);
+                    if(dy>0)
+                    {
+                    }
+                }
+            }
+        );
+        //kanalAdapter.setData(null);
     }
 
 
@@ -94,7 +130,7 @@ public class MainActivity extends AppCompatActivity {
             }
         }
     }
-
+    ArrayAdapter<String> grupAdapter;
     public void TurSecildi(int position) {
         ArrayList<String> s = new ArrayList<String>();
         ArrayList<M3UGrup> grup = GrupKodBul(position);
@@ -102,9 +138,20 @@ public class MainActivity extends AppCompatActivity {
         for (M3UGrup item: grup) {
             s.add(item.grupAdi);
         }
-        ArrayAdapter<String> aaTur = new ArrayAdapter<String>(getApplicationContext(), com.google.android.material.R.layout.support_simple_spinner_dropdown_item, s);
-        grupSec.setAdapter(aaTur);
-        grupSec.setText(aaTur.getItem(0), false);
+        grupAdapter = new ArrayAdapter<String>(getApplicationContext(), com.google.android.material.R.layout.support_simple_spinner_dropdown_item, s);
+        grupSec.setAdapter(grupAdapter);
+        grupSec.setText(grupAdapter.getItem(0), false);
+        GrupSecildi(0);
+    }
+    public void GrupSecildi(int position) {
+        //Toast.makeText(this, grupAdapter.getItem(position), Toast.LENGTH_SHORT);
+        ArrayList<M3UBilgi> l = new ArrayList<>();
+        int a = 0;
+        for (Map.Entry<String, M3UBilgi> d: tumM3Ular.entrySet()) {
+            if(a++ > 20) break;
+            l.add(d.getValue());
+        }
+        kanalAdapter.setData(l);
     }
 
     void OkuBakayim() {
