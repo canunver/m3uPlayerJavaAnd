@@ -33,6 +33,7 @@ import java.util.Hashtable;
 import java.util.Map;
 
 public class MainActivity extends AppCompatActivity {
+    ArrayList<M3UBilgi> kanalListe = new ArrayList<>();
     AutoCompleteTextView actv;
     int say = 0;
     private TextView sayac;
@@ -49,7 +50,7 @@ public class MainActivity extends AppCompatActivity {
 
     private void UygulamayaBasla() {
         recyclerView = (RecyclerView)findViewById(R.id.recyclerView);
-        kanalAdapter = new KanalAdapter(this, null);
+        kanalAdapter = new KanalAdapter(this, kanalListe);
         LinearLayoutManager mLayoutManager = new LinearLayoutManager(this);
         recyclerView.setLayoutManager(mLayoutManager);
         recyclerView.setItemAnimator(new DefaultItemAnimator());
@@ -65,7 +66,7 @@ public class MainActivity extends AppCompatActivity {
         actv = findViewById(R.id.turSec);
         grupSec = findViewById(R.id.grupSec);
         actv.setAdapter(aaTur);
-        //actv.setSelection(0);
+
         actv.setText(aaTur.getItem(0), false);
         OkuBakayim();
 
@@ -97,9 +98,7 @@ public class MainActivity extends AppCompatActivity {
                 }
             }
         );
-        //kanalAdapter.setData(null);
     }
-
 
     private static final int REQUEST_STORAGE_PERMISSION = 2;
 
@@ -143,15 +142,15 @@ public class MainActivity extends AppCompatActivity {
         grupSec.setText(grupAdapter.getItem(0), false);
         GrupSecildi(0);
     }
+
     public void GrupSecildi(int position) {
         //Toast.makeText(this, grupAdapter.getItem(position), Toast.LENGTH_SHORT);
-        ArrayList<M3UBilgi> l = new ArrayList<>();
         int a = 0;
         for (Map.Entry<String, M3UBilgi> d: tumM3Ular.entrySet()) {
             if(a++ > 20) break;
-            l.add(d.getValue());
+            kanalListe.add(d.getValue());
         }
-        kanalAdapter.setData(l);
+        kanalAdapter.veriDegisti();
     }
 
     void OkuBakayim() {
