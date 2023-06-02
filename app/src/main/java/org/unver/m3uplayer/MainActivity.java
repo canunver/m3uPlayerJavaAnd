@@ -40,6 +40,7 @@ public class MainActivity extends AppCompatActivity {
     AutoCompleteTextView grupSec;
     private RecyclerView recyclerView;
     private KanalAdapter kanalAdapter;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
