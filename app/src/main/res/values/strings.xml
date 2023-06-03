@@ -1,5 +1,7 @@
 <resources>
     <string name="app_name">M3UPlayer</string>
+    <string name="AraMetin" translatable="false">%</string>
+    <string name="AraDetay" translatable="false">...</string>
     <string-array name="turListesi">
         <item>Channel</item>
         <item>Film</item>

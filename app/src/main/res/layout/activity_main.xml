@@ -5,14 +5,16 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+
     tools:context=".MainActivity">
 
 
     <com.google.android.material.textfield.TextInputLayout
         style="@style/Widget.Material3.TextInputLayout.OutlinedBox.ExposedDropdownMenu"
         android:id="@+id/turSecCont"
+
         android:layout_width="match_parent"
-        android:layout_height="60dp"
+        android:layout_height="wrap_content"
         android:layout_marginStart="32dp"
         android:layout_marginTop="0dp"
         android:layout_marginEnd="32dp"
@@ -24,12 +26,15 @@
         <AutoCompleteTextView
             android:id="@+id/turSec"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_weight="1"
-            android:inputType="none"
-            android:text=""
 
-            tools:ignore="SpeakableTextPresentCheck" />
+            android:layout_height="55dp"
+            android:layout_marginLeft="2dp"
+            android:layout_marginRight="2dp"
+
+            android:inputType="none"
+            android:text="@string/app_name"
+
+            tools:ignore="LabelFor,SpeakableTextPresentCheck" />
     </com.google.android.material.textfield.TextInputLayout>
 
     <com.google.android.material.textfield.TextInputLayout
@@ -39,7 +44,8 @@
         android:layout_marginStart="32dp"
         android:layout_marginEnd="32dp"
 
-        android:layout_height="60dp"
+
+        android:layout_height="wrap_content"
         android:layout_marginTop="5dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -48,37 +54,61 @@
         <AutoCompleteTextView
             android:id="@+id/grupSec"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_weight="1"
+
+            android:layout_height="55dp"
+            android:layout_marginLeft="2dp"
+            android:layout_marginRight="2dp"
             android:inputType="none"
-            android:text=""
-            tools:ignore="SpeakableTextPresentCheck" />
+            android:text="@string/app_name"
+            tools:ignore="LabelFor" />
     </com.google.android.material.textfield.TextInputLayout>
 
-    <TextView
-        android:id="@+id/sayac"
+
+
+    <LinearLayout
+        android:id="@+id/KriterAlan"
         android:layout_width="match_parent"
         android:layout_marginStart="32dp"
         android:layout_marginEnd="32dp"
-        android:layout_height="60dp"
+        android:layout_height="wrap_content"
         android:layout_marginTop="5dp"
-        android:text="Merhaba"
+
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/textInputLayout" />
+        app:layout_constraintTop_toBottomOf="@+id/textInputLayout">
+        <EditText
+            android:id="@+id/filtreAd"
+            android:layout_width="0dp"
+            android:layout_weight="0.5560"
+            android:layout_height="60dp" />
+        <Button
+            android:id="@+id/btnAra"
+            android:layout_width="0dp"
+            android:layout_weight="0.25"
+            android:onClick="btnAraClicked"
+
+            android:drawableRight="@android:drawable/ic_menu_search"
+            android:layout_height="wrap_content" />
+        <Button
+            android:layout_width="0dp"
+            android:layout_weight="0.20"
+            android:drawableRight="@android:drawable/arrow_down_float"
+            android:layout_height="wrap_content" />
+    </LinearLayout>
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recyclerView"
         android:scrollbars="vertical"
         android:layout_width="0dp"
-        android:layout_height="300dp"
+        android:layout_height="0dp"
         android:layout_marginStart="32dp"
         android:layout_marginEnd="32dp"
-        android:layout_marginTop="5dp"
+        android:layout_marginTop="2dp"
 
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/sayac" />
+        app:layout_constraintTop_toBottomOf="@+id/KriterAlan"
+        app:layout_constraintBottom_toBottomOf="parent" />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

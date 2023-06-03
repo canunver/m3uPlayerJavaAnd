@@ -55,4 +55,12 @@ public class M3UListeArac {
         }
         return deger;
     }
+
+    public static boolean IsNullOrWhiteSpace(String str) {
+        if (str == null) return true;
+        if (str == "") return true;
+
+        if( str.trim() == "") return true;
+        return false;
+    }
 }

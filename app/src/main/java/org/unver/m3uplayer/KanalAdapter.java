@@ -33,8 +33,9 @@ public class KanalAdapter extends RecyclerView.Adapter<KanalAdapter.ViewHolder> 
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
         M3UBilgi blg = data.get(position);
-        holder.textView.setText(blg.tvgName);
-        M3UListeArac.ImageYukle(holder.imageView, blg.tvgLogo);
+        holder.kanalAd.setText(blg.tvgName);
+        holder.programAd.setText("EPG Not Supported Yet");
+        M3UListeArac.ImageYukle(holder.kanalLogo, blg.tvgLogo);
     }
 
     @Override
@@ -49,12 +50,14 @@ public class KanalAdapter extends RecyclerView.Adapter<KanalAdapter.ViewHolder> 
     }
 
     public class ViewHolder extends RecyclerView.ViewHolder {
-        public TextView textView;
-        public ImageView imageView;
+        public TextView kanalAd;
+        public TextView programAd;
+        public ImageView kanalLogo;
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
-            textView = itemView.findViewById(R.id.textView);
-            imageView = itemView.findViewById(R.id.imageView);
+            kanalAd = itemView.findViewById(R.id.kanalAd);
+            kanalLogo = itemView.findViewById(R.id.kanalLogo);
+            programAd = itemView.findViewById(R.id.programAd);
         }
 
     }

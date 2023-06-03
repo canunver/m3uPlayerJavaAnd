@@ -2,35 +2,28 @@ package org.unver.m3uplayer;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.app.ActivityCompat;
-import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.DefaultItemAnimator;
 import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import android.Manifest;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
-import android.util.Log;
+import android.os.Handler;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
+import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.android.material.textfield.TextInputLayout;
 
-import java.io.BufferedReader;
-import java.io.InputStreamReader;
-import java.net.HttpURLConnection;
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.Hashtable;
-import java.util.Map;
 
 public class MainActivity extends AppCompatActivity {
     ArrayList<M3UBilgi> kanalListe = new ArrayList<>();
@@ -40,6 +33,10 @@ public class MainActivity extends AppCompatActivity {
     AutoCompleteTextView grupSec;
     private RecyclerView recyclerView;
     private KanalAdapter kanalAdapter;
+    public M3UBilgi.M3UTur aktifTur = M3UBilgi.M3UTur.tv;
+    public String aktifGrupAd = "-";
+    private M3UFiltre filtre = new M3UFiltre(M3UBilgi.M3UTur.tv, "", "", false);
+    private EditText filtreAlan;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -50,7 +47,8 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void UygulamayaBasla() {
-        recyclerView = (RecyclerView)findViewById(R.id.recyclerView);
+        filtreAlan =(EditText) findViewById(R.id.filtreAd);
+        recyclerView = (RecyclerView) findViewById(R.id.recyclerView);
         kanalAdapter = new KanalAdapter(this, kanalListe);
         LinearLayoutManager mLayoutManager = new LinearLayoutManager(this);
         recyclerView.setLayoutManager(mLayoutManager);
@@ -62,7 +60,7 @@ public class MainActivity extends AppCompatActivity {
         String[] turListesi = getResources().getStringArray(R.array.turListesi);
         ArrayAdapter<String> aaTur = new ArrayAdapter<String>(getApplicationContext(), com.google.android.material.R.layout.support_simple_spinner_dropdown_item, turListesi);
         TextInputLayout tilTur = findViewById(R.id.turSecCont);
-        sayac = findViewById(R.id.sayac);
+        sayac = findViewById(R.id.filtreAd);
 
         actv = findViewById(R.id.turSec);
         grupSec = findViewById(R.id.grupSec);
@@ -87,17 +85,31 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
+    boolean isLoading = false;
+
     private void setupPagination() {
         recyclerView.addOnScrollListener(
-            new RecyclerView.OnScrollListener() {
-                @Override
-                public void onScrolled(@NonNull RecyclerView recyclerView, int dx, int dy) {
-                    super.onScrolled(recyclerView, dx, dy);
-                    if(dy>0)
-                    {
+                new RecyclerView.OnScrollListener() {
+                    @Override
+                    public void onScrolled(@NonNull RecyclerView recyclerView, int dx, int dy) {
+                        super.onScrolled(recyclerView, dx, dy);
+
+                        LinearLayoutManager linearLayoutManager = (LinearLayoutManager) recyclerView.getLayoutManager();
+                        if (linearLayoutManager != null && linearLayoutManager.findLastCompletelyVisibleItemPosition() == kanalListe.size() - 1) {
+                            if (!isLoading) {
+                                isLoading = true;
+                                Handler handler = new Handler();
+                                handler.postDelayed(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        Yukle(false);
+                                        isLoading = false;
+                                    }
+                                }, 50);
+                            }
+                        }
                     }
                 }
-            }
         );
     }
 
@@ -130,14 +142,19 @@ public class MainActivity extends AppCompatActivity {
             }
         }
     }
+
     ArrayAdapter<String> grupAdapter;
+
     public void TurSecildi(int position) {
+        aktifTur = position == 2 ? M3UBilgi.M3UTur.seri : (position == 1 ? M3UBilgi.M3UTur.film : M3UBilgi.M3UTur.tv);
         ArrayList<String> s = new ArrayList<String>();
         ArrayList<M3UGrup> grup = GrupKodBul(position);
 
-        for (M3UGrup item: grup) {
-            s.add(item.grupAdi);
+        for (M3UGrup item : grup) {
+            if(item.FiltreyeUygunMu(tumM3Ular, filtre))
+                s.add(item.grupAdi);
         }
+        if(s.isEmpty()) s.add("-");
         grupAdapter = new ArrayAdapter<String>(getApplicationContext(), com.google.android.material.R.layout.support_simple_spinner_dropdown_item, s);
         grupSec.setAdapter(grupAdapter);
         grupSec.setText(grupAdapter.getItem(0), false);
@@ -145,13 +162,48 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void GrupSecildi(int position) {
-        //Toast.makeText(this, grupAdapter.getItem(position), Toast.LENGTH_SHORT);
-        int a = 0;
-        for (Map.Entry<String, M3UBilgi> d: tumM3Ular.entrySet()) {
-            if(a++ > 20) break;
-            kanalListe.add(d.getValue());
+        aktifGrupAd = grupAdapter.getItem(position);
+        Yukle(true);
+    }
+
+    private void Yukle(boolean ilk) {
+        M3UGrup bulunanGrup = GrupBul(GrupDegiskenBul());
+        if (ilk)
+            kanalListe.clear();
+        int basla = kanalListe.size();
+        if (bulunanGrup != null) {
+            int kanalSay = 0;
+            int eklenenSay = 0;
+            for (String kanalId : bulunanGrup.kanallar) {
+                M3UBilgi m3u = tumM3Ular.get(kanalId);
+                if(m3u.FiltreUygunMu(filtre)) {
+                    kanalSay++;
+                    if (kanalSay <= basla) continue;
+                    if (eklenenSay++ > 20) break;
+                    kanalListe.add(m3u);
+                }
+            }
         }
+        if (ilk)
+            recyclerView.scrollToPosition(0);
         kanalAdapter.veriDegisti();
+    }
+
+    private M3UGrup GrupBul(ArrayList<M3UGrup> grupListesi) {
+        for (M3UGrup g : grupListesi) {
+            if (g.grupAdi == aktifGrupAd)
+                return g;
+        }
+        return null;
+    }
+
+    private ArrayList<M3UGrup> GrupDegiskenBul() {
+        if (aktifTur == M3UBilgi.M3UTur.film)
+            return filmGruplari;
+        else if (aktifTur == M3UBilgi.M3UTur.seri)
+            return seriGruplari;
+        else
+            return tvGruplari;
     }
 
     void OkuBakayim() {
@@ -219,9 +271,10 @@ public class MainActivity extends AppCompatActivity {
     public ArrayList<M3UGrup> filmGruplari = new ArrayList<>();
     public ArrayList<M3UGrup> seriGruplari = new ArrayList<>();
     public Hashtable<String, String> tumSerilerAd = new Hashtable<>();
+
     private ArrayList<M3UGrup> GrupKodBul(int position) {
-        if(position == 0) return tvGruplari;
-        else if(position == 1) return filmGruplari;
+        if (position == 0) return tvGruplari;
+        else if (position == 1) return filmGruplari;
         else return seriGruplari;
     }
 
@@ -293,5 +346,16 @@ public class MainActivity extends AppCompatActivity {
 //        } catch (Exception e) {
 //            Log.d("Hata", e.getMessage());
 //        }
+    }
+
+    public void btnAraClicked(View view) {
+        filtre.filtre = filtreAlan.getText().toString();
+        TurSecildi(SiraBul(aktifTur));
+    }
+
+    private int SiraBul(M3UBilgi.M3UTur aktifTur) {
+        if(aktifTur== M3UBilgi.M3UTur.film) return 1;
+        if(aktifTur== M3UBilgi.M3UTur.seri) return 2;
+        return 0;
     }
 }

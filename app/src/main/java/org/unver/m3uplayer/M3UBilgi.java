@@ -8,10 +8,42 @@ import java.util.ArrayList;
 public class M3UBilgi {
     public ArrayList<Sezon> seriSezonlari = new ArrayList<>();
 
-    public enum M3UTur
-    {
+    public boolean FiltreUygunMu(M3UFiltre filtre) {
+        if (Tur == M3UTur.tv) {
+            return AdUygunMu(filtre) && YeniUygunMu(filtre);
+        } else {
+            return AdUygunMu(filtre) && YilUygunMu(filtre) && PuanUygunMu(filtre) && TurUygunMu(filtre) && YeniUygunMu(filtre);
+        }
+    }
+
+    private boolean AdUygunMu(M3UFiltre filtre) {
+        //if (filtre == null || filtre.filtre == null) return true;
+        if (M3UListeArac.IsNullOrWhiteSpace(filtre.filtre)) return true;
+        if (tvgName.toLowerCase().contains(filtre.filtre.toLowerCase())) return true;
+        return false;
+    }
+
+    private boolean YeniUygunMu(M3UFiltre filtre) {
+        //if (filtre == null) return true;
+        return !filtre.sadeceYeni || (this.eklemeTarih.compareTo(filtre.tarihStr) == 1);
+    }
+
+    private boolean TurUygunMu(M3UFiltre filtre) {
+        return true;
+    }
+
+    private boolean PuanUygunMu(M3UFiltre filtre) {
+        return true;
+    }
+
+    private boolean YilUygunMu(M3UFiltre filtre) {
+        return true;
+    }
+
+    public enum M3UTur {
         seri, film, tv
     }
+
     public String ID;
     //public String m3uDosyaKod;
     public String tvgId;
@@ -30,13 +62,12 @@ public class M3UBilgi {
 
     public String sezon = "";
     public String bolum = "";
-    public String seriAd="";
+    public String seriAd = "";
     public int filmYilInt = 0;
     public String filmYil = "";
     public String filmAd = "";
 
-    public M3UBilgi(String m3uDosyaKod, String tvgId, String tvgName, String tvgLogo, String groupTitle, String urlAdres, String tar)
-    {
+    public M3UBilgi(String m3uDosyaKod, String tvgId, String tvgName, String tvgLogo, String groupTitle, String urlAdres, String tar) {
         this.eklemeTarih = tar;
         this.tvgId = tvgId;
         this.tvgName = tvgName;
@@ -49,8 +80,7 @@ public class M3UBilgi {
         DegerleriOlustur(m3uDosyaKod);
     }
 
-    public M3UBilgi(String ID, String tvgId, String tvgName, String tvgLogo, String groupTitle, String urlAdres, String tar, int gizli, int adult, int tmdbId)
-    {
+    public M3UBilgi(String ID, String tvgId, String tvgName, String tvgLogo, String groupTitle, String urlAdres, String tar, int gizli, int adult, int tmdbId) {
         this.ID = ID;
         this.eklemeTarih = tar;
         this.tvgId = tvgId;
@@ -68,7 +98,7 @@ public class M3UBilgi {
         String[] urlParcalar = urlAdres.split("/");
         String fileName = urlParcalar[urlParcalar.length - 1];
         String[] fileNameParcalar = fileName.split("\\.");
-        if(m3uDosyaKod != null)
+        if (m3uDosyaKod != null)
             this.ID = m3uDosyaKod + "_" + fileNameParcalar[0];
 
         if (fileNameParcalar.length == 2) this.uzanti = fileNameParcalar[1];
@@ -117,8 +147,7 @@ public class M3UBilgi {
         }
     }
 
-    public long Yaz(SQLiteDatabase db)
-    {
+    public long Yaz(SQLiteDatabase db) {
         long rowId;
 
         try {
@@ -135,10 +164,8 @@ public class M3UBilgi {
             values.put("tmdbId", tmdbId);
 
             rowId = db.insertWithOnConflict(M3UVeri.TABLE_M3U, null, values, SQLiteDatabase.CONFLICT_REPLACE);
-        }
-        catch(Exception _)
-        {
-            rowId=-1;
+        } catch (Exception _) {
+            rowId = -1;
         }
         return rowId;
     }
