@@ -133,7 +133,7 @@ public class M3UBilgi {
                                 0,
                                 this.tvgName.length() - this.filmYil.length() - 1
                         );
-                        this.filmYil = this.filmYil.substring(1, this.filmYil.length() - 2);
+                        this.filmYil = this.filmYil.substring(1, this.filmYil.length() - 1);
                     } else {
                         this.filmAd = this.tvgName;
                         this.filmYil = "";

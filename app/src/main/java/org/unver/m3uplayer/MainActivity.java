@@ -13,6 +13,7 @@ import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.os.Handler;
 import android.view.View;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
@@ -37,6 +38,7 @@ public class MainActivity extends AppCompatActivity {
     public String aktifGrupAd = "-";
     private M3UFiltre filtre = new M3UFiltre(M3UBilgi.M3UTur.tv, "", "", false);
     private EditText filtreAlan;
+    private InputMethodManager imm;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -47,7 +49,9 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void UygulamayaBasla() {
-        filtreAlan =(EditText) findViewById(R.id.filtreAd);
+        imm = (InputMethodManager) getSystemService(this.INPUT_METHOD_SERVICE);
+
+        filtreAlan = (EditText) findViewById(R.id.filtreAd);
         recyclerView = (RecyclerView) findViewById(R.id.recyclerView);
         kanalAdapter = new KanalAdapter(this, kanalListe);
         LinearLayoutManager mLayoutManager = new LinearLayoutManager(this);
@@ -150,15 +154,21 @@ public class MainActivity extends AppCompatActivity {
         ArrayList<String> s = new ArrayList<String>();
         ArrayList<M3UGrup> grup = GrupKodBul(position);
 
+        int yerInd = -1;
+        String simd = grupSec.getText().toString();
         for (M3UGrup item : grup) {
-            if(item.FiltreyeUygunMu(tumM3Ular, filtre))
+            if (item.FiltreyeUygunMu(tumM3Ular, filtre)) {
                 s.add(item.grupAdi);
+                if (item.grupAdi.equals(simd))
+                    yerInd = s.size() - 1;
+            }
         }
-        if(s.isEmpty()) s.add("-");
+        if(yerInd == -1) yerInd = 0;
+        if (s.isEmpty()) s.add("-");
         grupAdapter = new ArrayAdapter<String>(getApplicationContext(), com.google.android.material.R.layout.support_simple_spinner_dropdown_item, s);
         grupSec.setAdapter(grupAdapter);
-        grupSec.setText(grupAdapter.getItem(0), false);
-        GrupSecildi(0);
+        grupSec.setText(grupAdapter.getItem(yerInd), false);
+        GrupSecildi(yerInd);
     }
 
     public void GrupSecildi(int position) {
@@ -176,7 +186,7 @@ public class MainActivity extends AppCompatActivity {
             int eklenenSay = 0;
             for (String kanalId : bulunanGrup.kanallar) {
                 M3UBilgi m3u = tumM3Ular.get(kanalId);
-                if(m3u.FiltreUygunMu(filtre)) {
+                if (m3u.FiltreUygunMu(filtre)) {
                     kanalSay++;
                     if (kanalSay <= basla) continue;
                     if (eklenenSay++ > 20) break;
@@ -351,11 +361,13 @@ public class MainActivity extends AppCompatActivity {
     public void btnAraClicked(View view) {
         filtre.filtre = filtreAlan.getText().toString();
         TurSecildi(SiraBul(aktifTur));
+
+        imm.hideSoftInputFromWindow(filtreAlan.getWindowToken(), 0);
     }
 
     private int SiraBul(M3UBilgi.M3UTur aktifTur) {
-        if(aktifTur== M3UBilgi.M3UTur.film) return 1;
-        if(aktifTur== M3UBilgi.M3UTur.seri) return 2;
+        if (aktifTur == M3UBilgi.M3UTur.film) return 1;
+        if (aktifTur == M3UBilgi.M3UTur.seri) return 2;
         return 0;
     }
 }
