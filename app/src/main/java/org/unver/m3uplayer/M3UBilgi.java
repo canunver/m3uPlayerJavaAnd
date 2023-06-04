@@ -40,6 +40,15 @@ public class M3UBilgi {
         return true;
     }
 
+    public Sezon SezonBul(String sezonAd) {
+        for (Sezon s : seriSezonlari
+        ) {
+            if (s.sezonAd.equals(sezonAd))
+                return s;
+        }
+        return null;
+    }
+
     public enum M3UTur {
         seri, film, tv
     }

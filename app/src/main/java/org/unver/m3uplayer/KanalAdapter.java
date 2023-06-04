@@ -4,6 +4,9 @@ import android.annotation.SuppressLint;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
+import android.widget.AutoCompleteTextView;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -30,11 +33,11 @@ public class KanalAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
     public int getItemViewType(int position) {
         // Determine the view type based on the position or data at that position
         blg = data.get(position);
-        if (blg.Tur == M3UBilgi.M3UTur.film) 
+        if (blg.Tur == M3UBilgi.M3UTur.film)
             return VIEW_TYPE_FILM;
         else if (blg.Tur == M3UBilgi.M3UTur.seri)
             return VIEW_TYPE_SERI;
-        else 
+        else
             return VIEW_TYPE_TV;
     }
 
@@ -52,11 +55,11 @@ public class KanalAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
 
     @Override
     public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, int position) {
-        if (locVT == VIEW_TYPE_FILM) 
+        if (locVT == VIEW_TYPE_FILM)
             ((FilmViewHolder) holder).bind(blg, position);
         else if (locVT == VIEW_TYPE_SERI)
             ((SeriViewHolder) holder).bind(blg, position);
-        else 
+        else
             ((KanalViewHolder) holder).bind(blg, position);
     }
 
@@ -119,6 +122,13 @@ public class KanalAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
         public TextView seriOzellik;
         public TextView seriAciklama;
         public ImageView seriAfis;
+        public AutoCompleteTextView sezonSec;
+        public AutoCompleteTextView bolumSec;
+        public String aktifSezonAd;
+        public String aktifBolumAd;
+        public ArrayAdapter<String> sezonAdapter;
+        public ArrayAdapter<String> bolumAdapter;
+        private M3UBilgi blg;
 
         public SeriViewHolder(@NonNull View itemView) {
             super(itemView);
@@ -127,13 +137,56 @@ public class KanalAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
             seriAfis = itemView.findViewById(R.id.seriAfis);
             seriOzellik = itemView.findViewById(R.id.seriOzellik);
             seriAciklama = itemView.findViewById(R.id.seriAciklama);
+            sezonSec = itemView.findViewById(R.id.sezonSec);
+            bolumSec = itemView.findViewById(R.id.bolumSec);
+
+            sezonSec.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                @Override
+                public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                    SezonSecildi(position);
+                }
+            });
         }
 
         public void bind(M3UBilgi blg, int position) {
+            this.blg = blg;
             seriAd.setText(blg.seriAd);
             seriOzellik.setText(blg.filmYil);
             M3UListeArac.ImageYukle(seriAfis, blg.tvgLogo);
             seriAciklama.setText("blg.seriYil");
+
+            ArrayList<String> al = new ArrayList<>();
+            for (Sezon s : blg.seriSezonlari) {
+                al.add(s.sezonAd);
+            }
+
+            sezonAdapter = new ArrayAdapter<String>(context, com.google.android.material.R.layout.support_simple_spinner_dropdown_item, al);
+            sezonSec.setAdapter(sezonAdapter);
+            sezonSec.setText(sezonAdapter.getItem(0), false);
+            SezonSecildi(0);
+        }
+
+        public void SezonSecildi(int position) {
+            aktifSezonAd = sezonAdapter.getItem(position);
+
+            ArrayList<String> al = new ArrayList<>();
+            Sezon s = blg.SezonBul(aktifSezonAd);
+            if (s != null) {
+                for (Bolum b : s.bolumler) {
+                    al.add(b.bolum);
+                }
+            }
+            if (al.size() == 0)
+                al.add("-");
+
+            bolumAdapter = new ArrayAdapter<String>(context, com.google.android.material.R.layout.support_simple_spinner_dropdown_item, al);
+            bolumSec.setAdapter(bolumAdapter);
+            bolumSec.setText(bolumAdapter.getItem(0), false);
+            BolumSecildi(0);
+        }
+
+        public void BolumSecildi(int position) {
+            aktifBolumAd = bolumAdapter.getItem(position);
         }
     }
 }

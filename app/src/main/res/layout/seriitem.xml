@@ -35,6 +35,65 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toBottomOf="@id/seriAfis"
         />
+
+    <com.google.android.material.textfield.TextInputLayout
+        style="@style/Widget.Material3.TextInputLayout.OutlinedBox.ExposedDropdownMenu"
+        android:id="@+id/sezonSecCont"
+        app:layout_constraintWidth_percent="0.5"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="6dp"
+        android:layout_marginTop="0dp"
+        android:layout_marginEnd="0dp"
+
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/seriAd"
+        >
+
+        <AutoCompleteTextView
+            android:id="@+id/sezonSec"
+            android:layout_width="match_parent"
+
+            android:layout_height="50dp"
+            android:layout_marginBottom="0dp"
+            android:layout_marginTop="0dp"
+            android:layout_marginLeft="0dp"
+            android:layout_marginRight="0dp"
+
+            android:inputType="none"
+            android:text="@string/app_name"
+
+         />
+    </com.google.android.material.textfield.TextInputLayout>
+    <com.google.android.material.textfield.TextInputLayout
+        style="@style/Widget.Material3.TextInputLayout.OutlinedBox.ExposedDropdownMenu"
+        android:id="@+id/bolumSecCont"
+
+        android:layout_width="0dp"
+        app:layout_constraintWidth_percent="0.475"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="2dp"
+        android:layout_marginTop="0dp"
+        android:layout_marginEnd="32dp"
+
+        app:layout_constraintStart_toEndOf="@id/sezonSecCont"
+        app:layout_constraintTop_toBottomOf="@id/seriAd"
+        >
+
+        <AutoCompleteTextView
+            android:id="@+id/bolumSec"
+            android:layout_width="match_parent"
+
+            android:layout_height="50dp"
+            android:layout_marginBottom="0dp"
+            android:layout_marginTop="0dp"
+            android:layout_marginLeft="0dp"
+            android:layout_marginRight="0dp"
+
+            android:inputType="none"
+            android:text="@string/app_name" />
+    </com.google.android.material.textfield.TextInputLayout>
+
     <TextView
         android:id="@+id/seriOzellik"
         android:layout_width="match_parent"
@@ -46,7 +105,7 @@
         android:text="@string/app_name"
         android:layout_marginBottom="1dp"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/seriAd"
+        app:layout_constraintTop_toBottomOf="@id/sezonSecCont"
         />
     <TextView
         android:id="@+id/seriAciklama"

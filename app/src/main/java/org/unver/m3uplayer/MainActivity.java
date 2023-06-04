@@ -30,7 +30,6 @@ public class MainActivity extends AppCompatActivity {
     ArrayList<M3UBilgi> kanalListe = new ArrayList<>();
     AutoCompleteTextView actv;
     int say = 0;
-    private TextView sayac;
     AutoCompleteTextView grupSec;
     private RecyclerView recyclerView;
     private KanalAdapter kanalAdapter;
@@ -64,7 +63,6 @@ public class MainActivity extends AppCompatActivity {
         String[] turListesi = getResources().getStringArray(R.array.turListesi);
         ArrayAdapter<String> aaTur = new ArrayAdapter<String>(getApplicationContext(), com.google.android.material.R.layout.support_simple_spinner_dropdown_item, turListesi);
         TextInputLayout tilTur = findViewById(R.id.turSecCont);
-        sayac = findViewById(R.id.filtreAd);
 
         actv = findViewById(R.id.turSec);
         grupSec = findViewById(R.id.grupSec);
