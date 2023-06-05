@@ -20,7 +20,6 @@ public class M3UListeArac {
         ExecutorService exec = Executors.newSingleThreadExecutor();
         exec.execute(() -> {
             try {
-                Log.d("URL", url);
                 InputStream iStream = new URL(url).openStream();
                 Bitmap image = BitmapFactory.decodeStream(iStream);
                 handler.post(()->{

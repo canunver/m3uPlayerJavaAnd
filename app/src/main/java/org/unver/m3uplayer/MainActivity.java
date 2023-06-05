@@ -8,10 +8,12 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.content.pm.PackageManager;
+import android.content.res.Configuration;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.os.Handler;
+import android.util.Log;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
@@ -48,6 +50,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void UygulamayaBasla() {
+        Log.d("M3U", "UygulamayaBasla");
         imm = (InputMethodManager) getSystemService(this.INPUT_METHOD_SERVICE);
 
         filtreAlan = (EditText) findViewById(R.id.filtreAd);
@@ -367,5 +370,11 @@ public class MainActivity extends AppCompatActivity {
         if (aktifTur == M3UBilgi.M3UTur.film) return 1;
         if (aktifTur == M3UBilgi.M3UTur.seri) return 2;
         return 0;
+    }
+
+    @Override
+    public void onConfigurationChanged(@NonNull Configuration newConfig) {
+        super.onConfigurationChanged(newConfig);
+        Log.d("M3U", "onConfigurationChanged");
     }
 }
