@@ -4,7 +4,6 @@ import android.annotation.SuppressLint;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.ImageView;
@@ -14,25 +13,24 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 
-public class KanalAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
+public class OynaticiAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     private static final int VIEW_TYPE_FILM = 1;
     private static final int VIEW_TYPE_SERI = 2;
     private static final int VIEW_TYPE_TV = 0;
-    private final MainActivity context;
+    private final PlayerFragment playerFragment;
     private final ArrayList<M3UBilgi> data;
-    private M3UBilgi blg;
-    private int locVT;
 
-    public KanalAdapter(MainActivity context, ArrayList<M3UBilgi> data) {
-        this.context = context;
+    public OynaticiAdapter(PlayerFragment playerFragment, ArrayList<M3UBilgi> data) {
+        this.playerFragment = playerFragment;
         this.data = data;
     }
 
     @Override
     public int getItemViewType(int position) {
         // Determine the view type based on the position or data at that position
-        blg = data.get(position);
+        M3UBilgi blg = data.get(position);
         if (blg.Tur == M3UBilgi.M3UTur.film)
             return VIEW_TYPE_FILM;
         else if (blg.Tur == M3UBilgi.M3UTur.seri)
@@ -44,22 +42,22 @@ public class KanalAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
     @NonNull
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        locVT = viewType;
         if (viewType == VIEW_TYPE_FILM)
-            return (RecyclerView.ViewHolder) new FilmViewHolder(LayoutInflater.from(parent.getContext()).inflate(R.layout.filmitem, parent, false));
+            return new FilmViewHolder(LayoutInflater.from(parent.getContext()).inflate(R.layout.filmitem, parent, false));
         else if (viewType == VIEW_TYPE_SERI)
-            return (RecyclerView.ViewHolder) new SeriViewHolder(LayoutInflater.from(parent.getContext()).inflate(R.layout.seriitem, parent, false));
+            return new SeriViewHolder(LayoutInflater.from(parent.getContext()).inflate(R.layout.seriitem, parent, false));
         else
-            return (RecyclerView.ViewHolder) new KanalViewHolder(LayoutInflater.from(parent.getContext()).inflate(R.layout.kanalitem, parent, false));
+            return new KanalViewHolder(LayoutInflater.from(parent.getContext()).inflate(R.layout.kanalitem, parent, false));
     }
 
     @Override
     public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, int position) {
-        if (locVT == VIEW_TYPE_FILM)
+        M3UBilgi blg = data.get(position);
+        if (blg.Tur== M3UBilgi.M3UTur.film)
             ((FilmViewHolder) holder).bind(blg, position);
-        else if (locVT == VIEW_TYPE_SERI)
+        else if (blg.Tur== M3UBilgi.M3UTur.seri)
             ((SeriViewHolder) holder).bind(blg, position);
-        else
+        else if (blg.Tur== M3UBilgi.M3UTur.tv)
             ((KanalViewHolder) holder).bind(blg, position);
     }
 
@@ -74,6 +72,25 @@ public class KanalAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
         notifyDataSetChanged();
     }
 
+
+    public class MyOnClickListener implements View.OnClickListener {
+        private final RecyclerView.ViewHolder holder;
+        long prevClickTimeInMS = 0;
+
+        public MyOnClickListener(RecyclerView.ViewHolder holder) {
+            this.holder = holder;
+        }
+
+        @Override
+        public void onClick(View v) {
+            long currTimeInMS = Calendar.getInstance().getTimeInMillis();
+            if (currTimeInMS - prevClickTimeInMS < 800) {
+                playerFragment.NesneSecildi(holder.getBindingAdapterPosition());
+            }
+            prevClickTimeInMS = currTimeInMS;
+        }
+    }
+
     public class KanalViewHolder extends RecyclerView.ViewHolder {
         public TextView kanalAd;
         public TextView programAd;
@@ -81,15 +98,15 @@ public class KanalAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
 
         public KanalViewHolder(@NonNull View itemView) {
             super(itemView);
-
+            itemView.setOnClickListener(new MyOnClickListener(this));
             kanalAd = itemView.findViewById(R.id.kanalAd);
             kanalLogo = itemView.findViewById(R.id.kanalLogo);
             programAd = itemView.findViewById(R.id.programAd);
         }
 
-        public void bind(M3UBilgi blg, int position) {
+        public void bind(M3UBilgi blg, int ignoredPosition) {
             kanalAd.setText(blg.tvgName);
-            programAd.setText("EPG Not Supported Yet");
+            programAd.setText(R.string.NoEPG);
             M3UListeArac.ImageYukle(kanalLogo, blg.tvgLogo);
         }
     }
@@ -102,18 +119,18 @@ public class KanalAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
 
         public FilmViewHolder(@NonNull View itemView) {
             super(itemView);
-
             filmAd = itemView.findViewById(R.id.filmAd);
             filmAfis = itemView.findViewById(R.id.filmAfis);
             filmOzellik = itemView.findViewById(R.id.filmOzellik);
             filmAciklama = itemView.findViewById(R.id.filmAciklama);
+            itemView.setOnClickListener(new MyOnClickListener(this));
         }
 
-        public void bind(M3UBilgi blg, int position) {
+        public void bind(M3UBilgi blg, int ignoredPosition) {
             filmAd.setText(blg.tvgName);
             filmOzellik.setText(blg.filmYil);
             M3UListeArac.ImageYukle(filmAfis, blg.tvgLogo);
-            filmAciklama.setText("blg.filmYil");
+            //filmAciklama.setText("blg.filmYil");
         }
     }
 
@@ -140,27 +157,23 @@ public class KanalAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
             sezonSec = itemView.findViewById(R.id.sezonSec);
             bolumSec = itemView.findViewById(R.id.bolumSec);
 
-            sezonSec.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-                @Override
-                public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                    SezonSecildi(position);
-                }
-            });
+            sezonSec.setOnItemClickListener((parent, view, position, id) -> SezonSecildi(position));
+            itemView.setOnClickListener(new MyOnClickListener(this));
         }
 
-        public void bind(M3UBilgi blg, int position) {
+        public void bind(M3UBilgi blg, int ignoredPosition) {
             this.blg = blg;
             seriAd.setText(blg.seriAd);
             seriOzellik.setText(blg.filmYil);
             M3UListeArac.ImageYukle(seriAfis, blg.tvgLogo);
-            seriAciklama.setText("blg.seriYil");
+            //seriAciklama.setText("blg.seriYil");
 
             ArrayList<String> al = new ArrayList<>();
             for (Sezon s : blg.seriSezonlari) {
                 al.add(s.sezonAd);
             }
 
-            sezonAdapter = new ArrayAdapter<String>(context, com.google.android.material.R.layout.support_simple_spinner_dropdown_item, al);
+            sezonAdapter = new ArrayAdapter<>(playerFragment.mainActivity, com.google.android.material.R.layout.support_simple_spinner_dropdown_item, al);
             sezonSec.setAdapter(sezonAdapter);
             sezonSec.setText(sezonAdapter.getItem(0), false);
             SezonSecildi(0);
@@ -179,7 +192,7 @@ public class KanalAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
             if (al.size() == 0)
                 al.add("-");
 
-            bolumAdapter = new ArrayAdapter<String>(context, com.google.android.material.R.layout.support_simple_spinner_dropdown_item, al);
+            bolumAdapter = new ArrayAdapter<>(playerFragment.mainActivity, com.google.android.material.R.layout.support_simple_spinner_dropdown_item, al);
             bolumSec.setAdapter(bolumAdapter);
             bolumSec.setText(bolumAdapter.getItem(0), false);
             BolumSecildi(0);

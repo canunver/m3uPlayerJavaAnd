@@ -1,0 +1,147 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:id="@+id/anaYerlesim">
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/aramaBolmesi"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:paddingLeft="4dp"
+        android:paddingTop="4dp"
+        android:paddingRight="4dp"
+        android:paddingBottom="4dp"
+        app:layout_constraintBottom_toTopOf="@+id/oynatmaBolmesi"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/turSecCont"
+            style="@style/Widget.Material3.TextInputLayout.OutlinedBox.ExposedDropdownMenu"
+
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="0dp"
+            android:layout_marginTop="0dp"
+            android:layout_marginEnd="0dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
+
+            <AutoCompleteTextView
+                android:id="@+id/turSec"
+                android:layout_width="match_parent"
+
+                android:layout_height="55dp"
+                android:layout_marginLeft="2dp"
+                android:layout_marginRight="2dp"
+
+                android:inputType="none"
+                tools:ignore="LabelFor,SpeakableTextPresentCheck,VisualLintTextFieldSize" />
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/textInputLayout"
+            style="@style/Widget.Material3.TextInputLayout.OutlinedBox.ExposedDropdownMenu"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="0dp"
+
+            android:layout_marginTop="5dp"
+            android:layout_marginEnd="0dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/turSecCont">
+
+            <AutoCompleteTextView
+                android:id="@+id/grupSec"
+                android:layout_width="match_parent"
+
+                android:layout_height="55dp"
+                android:layout_marginLeft="2dp"
+                android:layout_marginRight="2dp"
+                android:inputType="none"
+                android:text="@string/app_name"
+                tools:ignore="LabelFor,VisualLintTextFieldSize" />
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <LinearLayout
+            android:id="@+id/KriterAlan"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="0dp"
+            android:layout_marginTop="5dp"
+            android:layout_marginEnd="0dp"
+
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/textInputLayout">
+
+            <EditText
+
+                android:id="@+id/filtreAd"
+                android:layout_width="0dp"
+                android:layout_height="60dp"
+                android:layout_weight="0.5560"
+                android:importantForAutofill="no"
+                android:inputType="text"
+                tools:ignore="LabelFor,SpeakableTextPresentCheck,VisualLintTextFieldSize" />
+
+            <ImageButton
+                android:id="@+id/btnAra"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="0.25"
+
+                android:onClick="btnAraClicked"
+                android:src="@android:drawable/ic_menu_search"
+                tools:ignore="SpeakableTextPresentCheck" />
+
+            <ImageButton
+                android:id="@+id/btnAc"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="0.20"
+                android:onClick="btnAcClicked"
+                android:src="@android:drawable/arrow_down_float"
+                tools:ignore="SpeakableTextPresentCheck" />
+        </LinearLayout>
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/recyclerView"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:layout_marginStart="0dp"
+            android:layout_marginTop="2dp"
+            android:layout_marginEnd="0dp"
+            android:scrollbars="vertical"
+
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/KriterAlan" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/oynatmaBolmesi"
+        android:layout_width="match_parent"
+        android:layout_height="80dp"
+        android:layout_marginStart="32dp"
+        android:layout_marginEnd="32dp"
+        android:background="@color/cardview_dark_background"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/aramaBolmesi">
+
+        <androidx.media3.ui.PlayerView
+            android:id="@+id/playerView"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            app:show_subtitle_button="true"
+            app:surface_type="surface_view"></androidx.media3.ui.PlayerView>
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

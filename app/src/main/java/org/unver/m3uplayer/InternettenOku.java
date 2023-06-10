@@ -23,7 +23,7 @@ public class InternettenOku {
                 ikinciSatir,
                 suAn);
         m3u.Yaz(db);
-        mainActivity.GruplaraIsle(m3u, true);
+        M3UVeri.GruplaraIsle(m3u, true);
     }
 
     public void performNetworkOperation(MainActivity mainActivity, SQLiteDatabase db, String kod) {
@@ -59,6 +59,7 @@ public class InternettenOku {
                     }
 
                     reader.close();
+                    mainActivity.Cekildi();
                     //Log.d("query", content.toString());
 
                     // Process the retrieved content or update UI

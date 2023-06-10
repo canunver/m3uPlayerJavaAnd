@@ -172,7 +172,7 @@ public class M3UBilgi {
             values.put("adult", adult);
             values.put("tmdbId", tmdbId);
 
-            rowId = db.insertWithOnConflict(M3UVeri.TABLE_M3U, null, values, SQLiteDatabase.CONFLICT_REPLACE);
+            rowId = db.insertWithOnConflict(M3U_DB.TABLE_M3U, null, values, SQLiteDatabase.CONFLICT_REPLACE);
         } catch (Exception _) {
             rowId = -1;
         }
