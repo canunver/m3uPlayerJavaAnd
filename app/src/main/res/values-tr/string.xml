@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">M3UPlayer</string>
-    <string name="NoEPG">"EPG Desteği Hezü Eklenmedi"</string>
+    <string name="NoEPG">"EPG Desteği Henüz Eklenmedi"</string>
     <string-array name="turListesi">
         <item>Kanal</item>
         <item>Film</item>

@@ -20,12 +20,83 @@
         android:id="@+id/navigationView"
         android:layout_width="250dp"
         android:layout_height="match_parent"
-        app:headerLayout="@layout/sol_menu"
+
         android:layout_marginTop="?attr/actionBarSize"
         android:layout_gravity="start"
         android:background="@color/cardview_light_background"
         android:fitsSystemWindows="true"
 
-        tools:ignore="VisualLintBounds" />
+        tools:ignore="VisualLintBounds" >
+        <ScrollView android:layout_width="match_parent"
+            android:layout_height="match_parent">
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                >
 
+                <com.google.android.material.textfield.TextInputLayout
+                    android:id="@+id/turSecCont"
+                    style="@style/Widget.Material3.TextInputLayout.OutlinedBox.ExposedDropdownMenu"
+
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="0dp"
+                    android:layout_marginTop="0dp"
+                    android:layout_marginEnd="0dp"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent">
+
+                    <AutoCompleteTextView
+                        android:id="@+id/turSec"
+                        android:layout_width="match_parent"
+
+                        android:layout_height="55dp"
+                        android:layout_marginLeft="2dp"
+                        android:layout_marginRight="2dp"
+
+                        android:inputType="none"
+                        tools:ignore="LabelFor,SpeakableTextPresentCheck,VisualLintTextFieldSize" />
+                </com.google.android.material.textfield.TextInputLayout>
+
+
+                <LinearLayout
+                    android:id="@+id/KriterAlan"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="0dp"
+                    android:layout_marginTop="5dp"
+                    android:layout_marginEnd="0dp"
+                    android:orientation="horizontal"
+
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/turSecCont">
+
+                    <EditText
+                        android:id="@+id/filtreAd"
+                        android:layout_width="0dp"
+                        android:layout_height="60dp"
+                        android:layout_weight="0.75"
+                        android:importantForAutofill="no"
+                        android:inputType="text"
+                        tools:ignore="LabelFor,SpeakableTextPresentCheck,VisualLintTextFieldSize" />
+
+                    <ImageButton
+                        android:id="@+id/btnAra"
+                        android:layout_width="0dp"
+                        android:layout_height="match_parent"
+                        android:layout_weight="0.25"
+
+                        android:onClick="btnAraClicked"
+                        android:src="@android:drawable/ic_menu_search"
+                        tools:ignore="SpeakableTextPresentCheck" />
+
+                </LinearLayout>
+
+            </LinearLayout>
+        </ScrollView>
+
+    </com.google.android.material.navigation.NavigationView>
 </androidx.drawerlayout.widget.DrawerLayout>

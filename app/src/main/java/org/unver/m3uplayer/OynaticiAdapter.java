@@ -85,7 +85,7 @@ public class OynaticiAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
         public void onClick(View v) {
             long currTimeInMS = Calendar.getInstance().getTimeInMillis();
             if (currTimeInMS - prevClickTimeInMS < 800) {
-                playerFragment.NesneSecildi(holder.getBindingAdapterPosition());
+                playerFragment.NesneSecildi(holder.getPosition()); //.getBindingAdapterPosition()
             }
             prevClickTimeInMS = currTimeInMS;
         }
