@@ -28,8 +28,10 @@ import android.view.WindowManager;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
+import android.widget.Button;
 import android.widget.FrameLayout;
 import android.widget.ImageButton;
+import android.widget.LinearLayout;
 import android.widget.MediaController;
 
 import org.videolan.libvlc.LibVLC;
@@ -70,7 +72,7 @@ public class PlayerFragment extends Fragment {
     private LibVLC libVLC;
     private boolean buyuklukAyarlandi = false;
     private IVLCVout vout;
-    private MediaController mediaController;
+    private ExtMediaController mediaController;
     private SurfaceHolder holder;
 
     public PlayerFragment(MainActivity mainActivity) {
@@ -106,14 +108,14 @@ public class PlayerFragment extends Fragment {
         vout.setVideoView(mVideoView);
         vout.attachViews();
 
-
-
-        mediaController = new MediaController(mainActivity);
+        mediaController = new ExtMediaController(mainActivity);
+        mediaController.setVLCMediaPlayer(mMediaPlayer);
+        mediaController.setAnchorView(mVideoView);
 
         // Associate the media controller with the media player
-        mediaController.setMediaPlayer(new MediaPlayerController(mMediaPlayer));
+        mediaController.setMediaPlayer(mediaController);
         mVideoView.setMediaController(mediaController);
-        mediaController.setAnchorView(mVideoView);
+        //mediaController.setAnchorView(mVideoView);
         buyuklukAyarlandi = false;
         //mediaController.setAutoHideTimeout(10000);
     }
@@ -291,31 +293,6 @@ public class PlayerFragment extends Fragment {
     }
 
 
-    private ImageButton TusEkle(int iconResId, int i) {
-        ImageButton btn = new ImageButton(mainActivity);
-        btn.setImageResource(iconResId);
-        btn.setVisibility(View.GONE);
-        btn.setBackgroundColor(Color.TRANSPARENT);
-        FrameLayout.LayoutParams layoutParams = new FrameLayout.LayoutParams(
-                FrameLayout.LayoutParams.WRAP_CONTENT,
-                FrameLayout.LayoutParams.WRAP_CONTENT,
-                Gravity.TOP | Gravity.END // Position the layout as per your desired location
-        );
-
-        layoutParams.rightMargin = i;
-        //playerView.addView(btn, layoutParams);
-
-        btn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (v == tamEkranButton)
-                    TamEkranDegistir();
-                // Handle the button click event
-            }
-        });
-
-        return btn;
-    }
 
     private void TamEkranDegistir() {
         tamEkran = !tamEkran;
@@ -381,9 +358,7 @@ public class PlayerFragment extends Fragment {
 
 //        player = new ExoPlayer.Builder(this.getContext()).build();
 //        playerView.setPlayer(player);
-//        tamEkranButton = TusEkle(R.drawable.baseline_fullscreen_24, 0);
 //        tamEkran = false;
-//        yenidenYukleButton = TusEkle(R.drawable.baseline_autorenew_24, 80);
 //
 //        playerView.setControllerVisibilityListener(new PlayerView.ControllerVisibilityListener() {
 //            @Override
@@ -397,70 +372,5 @@ public class PlayerFragment extends Fragment {
 //                }
 //            }
 //        });
-    }
-
-    private class MediaPlayerController implements MediaController.MediaPlayerControl {
-        private final MediaPlayer mediaPlayer;
-
-        public MediaPlayerController(MediaPlayer mMediaPlayer) {
-            this.mediaPlayer = mMediaPlayer;
-        }
-
-        @Override
-        public void start() {
-            mediaPlayer.play();
-        }
-
-        @Override
-        public void pause() {
-            mediaPlayer.pause();
-        }
-
-        @Override
-        public int getDuration() {
-            return (int) mediaPlayer.getLength();
-        }
-
-        @Override
-        public int getCurrentPosition() {
-            return (int) mediaPlayer.getTime();
-        }
-
-        @Override
-        public void seekTo(int position) {
-            mediaPlayer.setTime(position);
-        }
-
-        @Override
-        public boolean isPlaying() {
-            return mediaPlayer.isPlaying();
-        }
-
-        @Override
-        public int getBufferPercentage() {
-            // Not implemented in this example
-            return 0;
-        }
-
-        @Override
-        public boolean canPause() {
-            return true;
-        }
-
-        @Override
-        public boolean canSeekBackward() {
-            return true;
-        }
-
-        @Override
-        public boolean canSeekForward() {
-            return true;
-        }
-
-        @Override
-        public int getAudioSessionId() {
-            // Not implemented in this example
-            return 0;
-        }
     }
 }
