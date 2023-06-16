@@ -1,7 +1,6 @@
 package org.unver.m3uplayer;
 
 import android.content.res.Configuration;
-import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
 
@@ -18,21 +17,17 @@ import androidx.recyclerview.widget.RecyclerView;
 import android.os.Handler;
 import android.util.Log;
 import android.util.TypedValue;
-import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.SurfaceHolder;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
+import android.view.WindowInsets;
 import android.view.WindowManager;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
-import android.widget.Button;
-import android.widget.FrameLayout;
 import android.widget.ImageButton;
-import android.widget.LinearLayout;
-import android.widget.MediaController;
 
 import org.videolan.libvlc.LibVLC;
 import org.videolan.libvlc.Media;
@@ -56,10 +51,6 @@ public class PlayerFragment extends Fragment {
     private VideoView mVideoView;
     private MediaPlayer mMediaPlayer;
     Media mediaItem;
-
-    private ImageButton tamEkranButton;
-    private ImageButton yenidenYukleButton;
-    private boolean tamEkran;
     private M3UFiltre filtre = new M3UFiltre(M3UBilgi.M3UTur.tv, "", "", false);
     private RecyclerView recyclerView;
     private OynaticiAdapter kanalAdapter;
@@ -71,16 +62,19 @@ public class PlayerFragment extends Fragment {
     private View currView;
     private LibVLC libVLC;
     private boolean buyuklukAyarlandi = false;
-    private IVLCVout vout;
-    private ExtMediaController mediaController;
+    private IVLCVout vout = null;
+    //private ExtMediaController mediaController;
+    private CustomMediaController mediaController;
     private SurfaceHolder holder;
 
     public PlayerFragment(MainActivity mainActivity) {
         // Required empty public constructor
-        this.mainActivity = mainActivity;;
+        this.mainActivity = mainActivity;
+        ;
     }
 
     MainActivity mainActivity;
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -108,13 +102,23 @@ public class PlayerFragment extends Fragment {
         vout.setVideoView(mVideoView);
         vout.attachViews();
 
-        mediaController = new ExtMediaController(mainActivity);
-        mediaController.setVLCMediaPlayer(mMediaPlayer);
-        mediaController.setAnchorView(mVideoView);
+        mediaController = new CustomMediaController(this, oynatmaBolmesi);
+//        mediaController.setVLCMediaPlayer(mMediaPlayer);
+//        mediaController.setAnchorView(mVideoView);
+
+//        mVideoView.addOnLayoutChangeListener(new View.OnLayoutChangeListener() {
+//            @Override
+//            public void onLayoutChange(View view, int left, int top, int right, int bottom,
+//                                       int oldLeft, int oldTop, int oldRight, int oldBottom) {
+//                Log.d("PlayerFragment", "mVideoView.addOnLayoutChangeListener:onLayoutChange");
+//                // VideoView boyutu değiştiğinde MediaController'ı güncelle
+////                mediaController.updateLayout();
+//            }
+//        });
 
         // Associate the media controller with the media player
-        mediaController.setMediaPlayer(mediaController);
-        mVideoView.setMediaController(mediaController);
+//        mediaController.setMediaPlayer(mediaController);
+//        mVideoView.setMediaController(mediaController);
         //mediaController.setAnchorView(mVideoView);
         buyuklukAyarlandi = false;
         //mediaController.setAutoHideTimeout(10000);
@@ -139,10 +143,21 @@ public class PlayerFragment extends Fragment {
         currView = inflater.inflate(R.layout.fragment_player, container, false);
 
         anaYerlesim = currView.findViewById(R.id.anaYerlesim);
+        anaYerlesim.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
+            @Override
+            public void onGlobalLayout() {
+                OynatmaBolgesiBuyuklukAyarla();
+            }
+        });
         mVideoView = currView.findViewById(R.id.playerView);
+        mVideoView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mediaController.GorunumDegistir();
+            }
+        });
         aramaBolmesi = currView.findViewById(R.id.aramaBolmesi);
         oynatmaBolmesi = currView.findViewById(R.id.oynatmaBolmesi);
-
         landscapeConstraintSet = new ConstraintSet();
         portraitConstraintSet = new ConstraintSet();
 
@@ -207,13 +222,17 @@ public class PlayerFragment extends Fragment {
         if (currentOrientation == Configuration.ORIENTATION_LANDSCAPE) {
             Log.d("M3U", "landscapeConstraintSet");
             landscapeConstraintSet.applyTo(anaYerlesim);
-            if(tamEkran) aramaBolmesi.setVisibility(View.GONE);
+            if (mediaController != null && mediaController.tamEkran)
+                aramaBolmesi.setVisibility(View.GONE);
         } else {
             Log.d("M3U", "portraitConstraintSet");
             portraitConstraintSet.applyTo(anaYerlesim);
         }
+        anaYerlesim.requestLayout();
     }
+
     boolean isLoading = false;
+
     private void setupPagination() {
         recyclerView.addOnScrollListener(
                 new RecyclerView.OnScrollListener() {
@@ -292,46 +311,27 @@ public class PlayerFragment extends Fragment {
         kanalAdapter.veriDegisti();
     }
 
-
-
-    private void TamEkranDegistir() {
-        tamEkran = !tamEkran;
-        if (tamEkran) {
-            Log.d("M3U", "Tam Ekrana Geçiş Tuşu");
-            tamEkranButton.setImageResource(R.drawable.baseline_fullscreen_exit_24);
-            //playerView.setResizeMode(AspectRatioFrameLayout.RESIZE_MODE_FIT);
-            aramaBolmesi.setVisibility(View.GONE);
-            //actionBar.hide();
-            mainActivity.getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
-            mainActivity.YatayYap();
-        } else {
-            Log.d("M3U", "Tam Ekrandan Çıkış Tuşu");
-            tamEkranButton.setImageResource(R.drawable.baseline_fullscreen_24);
-            //playerView.setResizeMode(AspectRatioFrameLayout.RESIZE_MODE_FIT);
-            mainActivity.GoruntulenenYap();
-            aramaBolmesi.setVisibility(View.VISIBLE);
-            mainActivity.getWindow().clearFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN);
-        }
-    }
-
     public void NesneSecildi(int pos) {
         //Log.d("RV", kanalListe.get(pos).urlAdres);
         OynatBakalim(kanalListe.get(pos));
     }
 
     public void OynatmaBolgesiBuyuklukAyarla() {
-        buyuklukAyarlandi = true;
-        int width = mVideoView.getWidth();
-        int height = mVideoView.getHeight();
-        vout.setWindowSize(width, height);
+        if (vout != null) {
+            buyuklukAyarlandi = true;
+//            int width = mVideoView.getWidth();
+//            int height = mVideoView.getHeight();
+            int width = oynatmaBolmesi.getWidth();
+            int height = oynatmaBolmesi.getHeight();
+            Log.d("Buyukluk", "width:" + width + ";  height:" + height);
+            vout.setWindowSize(width, height);
+        }
     }
 
     void OynatBakalim(M3UBilgi m3uBilgi) {
-        if(!buyuklukAyarlandi)
-        {
+        if (!buyuklukAyarlandi) {
             OynatmaBolgesiBuyuklukAyarla();
-        }
-        else
+        } else
             mMediaPlayer.stop();
 
         mediaItem = new Media(libVLC, Uri.parse(m3uBilgi.urlAdres));
@@ -354,23 +354,21 @@ public class PlayerFragment extends Fragment {
         libVLC = null;
     }
 
-    void PlayerAyarla() {
-
-//        player = new ExoPlayer.Builder(this.getContext()).build();
-//        playerView.setPlayer(player);
-//        tamEkran = false;
-//
-//        playerView.setControllerVisibilityListener(new PlayerView.ControllerVisibilityListener() {
-//            @Override
-//            public void onVisibilityChanged(int visibility) {
-//                if (visibility == View.VISIBLE) {
-//                    tamEkranButton.setVisibility(View.VISIBLE);
-//                    yenidenYukleButton.setVisibility(View.VISIBLE);
-//                } else {
-//                    tamEkranButton.setVisibility(View.GONE);
-//                    yenidenYukleButton.setVisibility(View.GONE);
-//                }
-//            }
-//        });
+    public void TamEkranDegistir(boolean tamEkran) {
+        if (tamEkran) {
+            //playerView.setResizeMode(AspectRatioFrameLayout.RESIZE_MODE_FIT);
+            aramaBolmesi.setVisibility(View.GONE);
+            //actionBar.hide();
+            mainActivity.getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
+            mainActivity.YatayYap();
+        } else {
+            Log.d("M3U", "Tam Ekrandan Çıkış Tuşu");
+            //playerView.setResizeMode(AspectRatioFrameLayout.RESIZE_MODE_FIT);
+            mainActivity.GoruntulenenYap();
+            aramaBolmesi.setVisibility(View.VISIBLE);
+            mainActivity.getWindow().clearFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN);
+        }
+        //OynatmaBolgesiBuyuklukAyarla();
     }
+
 }

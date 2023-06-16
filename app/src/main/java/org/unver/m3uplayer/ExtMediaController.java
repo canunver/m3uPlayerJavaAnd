@@ -10,6 +10,7 @@ import android.widget.Button;
 import android.widget.FrameLayout;
 import android.widget.ImageButton;
 import android.widget.MediaController;
+import android.widget.RelativeLayout;
 
 import org.videolan.libvlc.MediaPlayer;
 
@@ -43,14 +44,13 @@ public class ExtMediaController extends MediaController implements MediaControll
         btn.setImageResource(iconResId);
         //btn.setVisibility(View.GONE);
         btn.setBackgroundColor(Color.TRANSPARENT);
-        FrameLayout.LayoutParams layoutParams = new FrameLayout.LayoutParams(
+        RelativeLayout.LayoutParams layoutParams = new RelativeLayout.LayoutParams(
                 FrameLayout.LayoutParams.WRAP_CONTENT,
-                FrameLayout.LayoutParams.WRAP_CONTENT,
-                Gravity.TOP | Gravity.END
-        );
+                FrameLayout.LayoutParams.WRAP_CONTENT);
 
+        layoutParams.addRule(RelativeLayout.ALIGN_PARENT_TOP);
+        layoutParams.addRule(RelativeLayout.ALIGN_PARENT_END);
         layoutParams.rightMargin = i;
-        //addView(tamEkranButton);
         addView(btn, layoutParams);
 
         btn.setOnClickListener(new View.OnClickListener() {
@@ -129,5 +129,15 @@ public class ExtMediaController extends MediaController implements MediaControll
     public int getAudioSessionId() {
         // Not implemented in this example
         return 0;
+    }
+
+    public void updateLayout() {
+//        measure(MeasureSpec.UNSPECIFIED, MeasureSpec.UNSPECIFIED);
+//        int width = getMeasuredWidth();
+//        int height = getMeasuredHeight();
+//
+//        // Yeni boyutu ayarla
+//        setLayoutParams(new RelativeLayout.LayoutParams(width, height));
+
     }
 }

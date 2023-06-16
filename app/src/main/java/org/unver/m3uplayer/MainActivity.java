@@ -34,6 +34,7 @@ public class MainActivity extends AppCompatActivity {
     public M3UBilgi.M3UTur aktifTur = M3UBilgi.M3UTur.tv;
     AutoCompleteTextView actv;
     private EditText filtreAlan;
+    //private DenemeFragment currFragmentA;
 
     @SuppressLint("MissingInflatedId")
     @Override
@@ -44,8 +45,10 @@ public class MainActivity extends AppCompatActivity {
         drawerLayout = findViewById(R.id.drawerLayout);
         navigationView = findViewById(R.id.navigationView);
         M3UVeri.OkuBakayim(this);
+        //currFragmentA = new DenemeFragment();
         currFragment = new PlayerFragment(this);
         getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, currFragment).commit();
+        //getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, currFragmentA).commit();
         String[] turListesi = getResources().getStringArray(R.array.turListesi);
         ArrayAdapter<String> aaTur = new ArrayAdapter<String>(this, com.google.android.material.R.layout.support_simple_spinner_dropdown_item, turListesi);
         actv = findViewById(R.id.turSec);
