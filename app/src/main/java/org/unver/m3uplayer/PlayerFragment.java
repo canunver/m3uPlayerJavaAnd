@@ -70,7 +70,6 @@ public class PlayerFragment extends Fragment {
     public PlayerFragment(MainActivity mainActivity) {
         // Required empty public constructor
         this.mainActivity = mainActivity;
-        ;
     }
 
     MainActivity mainActivity;
@@ -103,23 +102,6 @@ public class PlayerFragment extends Fragment {
         vout.attachViews();
 
         mediaController = new CustomMediaController(this, oynatmaBolmesi, mMediaPlayer);
-//        mediaController.setVLCMediaPlayer(mMediaPlayer);
-//        mediaController.setAnchorView(mVideoView);
-
-//        mVideoView.addOnLayoutChangeListener(new View.OnLayoutChangeListener() {
-//            @Override
-//            public void onLayoutChange(View view, int left, int top, int right, int bottom,
-//                                       int oldLeft, int oldTop, int oldRight, int oldBottom) {
-//                Log.d("PlayerFragment", "mVideoView.addOnLayoutChangeListener:onLayoutChange");
-//                // VideoView boyutu değiştiğinde MediaController'ı güncelle
-////                mediaController.updateLayout();
-//            }
-//        });
-
-        // Associate the media controller with the media player
-//        mediaController.setMediaPlayer(mediaController);
-//        mVideoView.setMediaController(mediaController);
-        //mediaController.setAnchorView(mVideoView);
         buyuklukAyarlandi = false;
         //mediaController.setAutoHideTimeout(10000);
     }
@@ -347,7 +329,7 @@ public class PlayerFragment extends Fragment {
                     //Log.d("PlayerFragment", m3uBilgi.tvgName + "TimeChanged");
                 }
                 else if (event.type == MediaPlayer.Event.Playing) {//Üçüncü oluşan event 260
-                    mediaController.BilgiAyarla(event.getPausable(), event.getSeekable(), mMediaPlayer.getLength());
+                    mediaController.BilgiAyarla();
                     //Log.d("PlayerFragment", m3uBilgi.tvgName + "Playing:" + ":"+mMediaPlayer.getTime() + "/" + mMediaPlayer.getLength());
                 }
                 else if (event.type == MediaPlayer.Event.ESAdded) {//Dördüncü oluşan event 276
@@ -370,7 +352,7 @@ public class PlayerFragment extends Fragment {
 
                 }
                 else if (event.type == MediaPlayer.Event.SeekableChanged) { //269
-
+                    Log.d("PlayerFragment", m3uBilgi.tvgName + "SeekableChanged:" + event.getSeekable());
                 }
                 else if (event.type == MediaPlayer.Event.LengthChanged) { //273
 
@@ -422,4 +404,13 @@ public class PlayerFragment extends Fragment {
         //OynatmaBolgesiBuyuklukAyarla();
     }
 
+    public boolean TamEkranMi() {
+        if(mediaController!=null)
+            return mediaController.tamEkran;
+        return false;
+    }
+
+    public void TamEkrandanCik() {
+        mediaController.TamEkrandanCik();
+    }
 }

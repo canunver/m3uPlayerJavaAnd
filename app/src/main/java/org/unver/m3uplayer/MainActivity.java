@@ -1,5 +1,6 @@
 package org.unver.m3uplayer;
 
+import androidx.activity.OnBackPressedCallback;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.ActionBar;
@@ -62,7 +63,21 @@ public class MainActivity extends AppCompatActivity {
                 currFragment.TurSecildi(position);
             }
         });
+
+        OnBackPressedCallback onBackPressedCallback = new OnBackPressedCallback(true) {
+            @Override
+            public void handleOnBackPressed() {
+                Log.d("MainActivity", "Back Pressed");
+                if (currFragment.TamEkranMi()) {
+                    currFragment.TamEkrandanCik();
+                } else {
+                    finish();
+                }
+            }
+        };
+        getOnBackPressedDispatcher().addCallback(this, onBackPressedCallback);
     }
+
 
     @Override
     protected void onDestroy() {
