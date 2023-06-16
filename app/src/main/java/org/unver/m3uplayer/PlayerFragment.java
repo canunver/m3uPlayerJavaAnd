@@ -102,7 +102,7 @@ public class PlayerFragment extends Fragment {
         vout.setVideoView(mVideoView);
         vout.attachViews();
 
-        mediaController = new CustomMediaController(this, oynatmaBolmesi);
+        mediaController = new CustomMediaController(this, oynatmaBolmesi, mMediaPlayer);
 //        mediaController.setVLCMediaPlayer(mMediaPlayer);
 //        mediaController.setAnchorView(mVideoView);
 
@@ -323,7 +323,7 @@ public class PlayerFragment extends Fragment {
 //            int height = mVideoView.getHeight();
             int width = oynatmaBolmesi.getWidth();
             int height = oynatmaBolmesi.getHeight();
-            Log.d("Buyukluk", "width:" + width + ";  height:" + height);
+ //           Log.d("Buyukluk", "width:" + width + ";  height:" + height);
             vout.setWindowSize(width, height);
         }
     }
@@ -337,7 +337,58 @@ public class PlayerFragment extends Fragment {
         mediaItem = new Media(libVLC, Uri.parse(m3uBilgi.urlAdres));
         mMediaPlayer.setMedia(mediaItem);
         mMediaPlayer.play();
+        mediaController.m3uBilgiAyarla(m3uBilgi);
+        mMediaPlayer.setEventListener(new MediaPlayer.EventListener() {
+            @Override
+            public void onEvent(MediaPlayer.Event event) {
+                if (event.type == MediaPlayer.Event.Opening) { //İlk oluşan event 258
+                }
+                else if (event.type == MediaPlayer.Event.PausableChanged) {//İkinci oluşan event 270
+                    //Log.d("PlayerFragment", m3uBilgi.tvgName + "TimeChanged");
+                }
+                else if (event.type == MediaPlayer.Event.Playing) {//Üçüncü oluşan event 260
+                    mediaController.BilgiAyarla(event.getPausable(), event.getSeekable(), mMediaPlayer.getLength());
+                    //Log.d("PlayerFragment", m3uBilgi.tvgName + "Playing:" + ":"+mMediaPlayer.getTime() + "/" + mMediaPlayer.getLength());
+                }
+                else if (event.type == MediaPlayer.Event.ESAdded) {//Dördüncü oluşan event 276
+                    //Log.d("PlayerFragment", m3uBilgi.tvgName + "TimeChanged");
+                }
+                else if (event.type == MediaPlayer.Event.ESSelected) {//Beşinci oluşan event 278
+                    //Log.d("PlayerFragment", m3uBilgi.tvgName + "TimeChanged");
+                }
+                else if (event.type == MediaPlayer.Event.Vout) {//Altıncı oluşan event 274
+                    //Log.d("PlayerFragment", m3uBilgi.tvgName + "TimeChanged");
+                }
+                else if (event.type == MediaPlayer.Event.TimeChanged) {
+                    //Log.d("PlayerFragment", m3uBilgi.tvgName + "TimeChanged:" + event.getTimeChanged() + ":"+mMediaPlayer.getTime() + "/" + mMediaPlayer.getLength());
+                    mediaController.ZamanAyarla(mMediaPlayer.getTime());
+                }
+                else if (event.type == MediaPlayer.Event.PositionChanged) {
 
+                }
+                else if (event.type == MediaPlayer.Event.Buffering) {
+
+                }
+                else if (event.type == MediaPlayer.Event.SeekableChanged) { //269
+
+                }
+                else if (event.type == MediaPlayer.Event.LengthChanged) { //273
+
+                }
+                else if (event.type == MediaPlayer.Event.EndReached) { //269
+
+                }
+                else if (event.type == MediaPlayer.Event.ESDeleted) { //277
+
+                }
+                else if (event.type == MediaPlayer.Event.Stopped) { //262
+
+                }
+                else {
+                    Log.d("PlayerFragment", m3uBilgi.tvgName + "MediaPlayer.Event.type:" + event.type);
+                }
+            }
+        });
 
         // Set the media controller to be visible
         mediaController.show(8000);

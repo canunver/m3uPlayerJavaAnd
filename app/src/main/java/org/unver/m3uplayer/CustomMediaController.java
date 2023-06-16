@@ -12,11 +12,15 @@ import android.widget.ImageButton;
 import android.widget.RelativeLayout;
 import android.widget.SeekBar;
 
+import org.videolan.libvlc.MediaPlayer;
+
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 public class CustomMediaController implements View.OnClickListener {
 
+    private final MediaPlayer mediaPlayer;
     private PlayerFragment playerFragment;
     private ViewGroup anchorView;
     private ImageButton subtitleButton;
@@ -29,10 +33,19 @@ public class CustomMediaController implements View.OnClickListener {
     private Handler hideHandler;
     private FrameLayout frameLayout;
     public boolean tamEkran;
+    private boolean durdurulabilir = true;
+    private long currentMS;
+    private int currentSec;
+    private Date baslamaZamani;
+    private int currentMin;
+    private boolean yeterinceSeyrettik;
+    private M3UBilgi m3uBilgi = null;
+    private long totalMs;
 
-    public CustomMediaController(PlayerFragment mainActivity, ViewGroup anchorView) {
+    public CustomMediaController(PlayerFragment mainActivity, ViewGroup anchorView, MediaPlayer mediaPlayer) {
         this.playerFragment = mainActivity;
         this.anchorView = anchorView;
+        this.mediaPlayer = mediaPlayer;
         init();
     }
 
@@ -55,8 +68,7 @@ public class CustomMediaController implements View.OnClickListener {
         hideHandler = new Handler();
     }
 
-    private SeekBar createSeekBar()
-    {
+    private SeekBar createSeekBar() {
         SeekBar customSeekBar = new SeekBar(playerFragment.mainActivity);
         FrameLayout.LayoutParams seekBarLayoutParams = new FrameLayout.LayoutParams(
                 ViewGroup.LayoutParams.MATCH_PARENT,
@@ -69,6 +81,24 @@ public class CustomMediaController implements View.OnClickListener {
         seekBarLayoutParams.leftMargin = (int) (anchorView.getWidth() * 0.3); // Ayarlamak istediğiniz oranı belirleyin
         seekBarLayoutParams.bottomMargin = (int) (anchorView.getHeight() * 0.05); // Ayarlamak istediğiniz oranı belirleyin
         frameLayout.addView(customSeekBar, seekBarLayoutParams);
+        customSeekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+            @Override
+            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+                if(fromUser){
+                    mediaPlayer.setTime(progress * 1000);
+                }
+            }
+
+            @Override
+            public void onStartTrackingTouch(SeekBar seekBar) {
+
+            }
+
+            @Override
+            public void onStopTrackingTouch(SeekBar seekBar) {
+
+            }
+        });
         return customSeekBar;
     }
 
@@ -132,14 +162,15 @@ public class CustomMediaController implements View.OnClickListener {
     public void resetTimeout() {
         // Timeout süresini sıfırla
         hideHandler.removeCallbacks(hideRunnable);
-        if(this.visibleHide == View.VISIBLE)
+        if (this.visibleHide == View.VISIBLE)
             hideHandler.postDelayed(hideRunnable, timeout);
     }
 
     private Runnable hideRunnable = new Runnable() {
         @Override
         public void run() {
-            showHide(View.GONE);;
+            showHide(View.GONE);
+            ;
         }
     };
 
@@ -149,14 +180,57 @@ public class CustomMediaController implements View.OnClickListener {
 //            child.setVisibility(visibleHide);
 //        }
         this.visibleHide = visibleHide;
-        if(this.visibleHide == View.VISIBLE)
+        if (this.visibleHide == View.VISIBLE)
             resetTimeout();
     }
 
     public void GorunumDegistir() {
-        if(this.visibleHide == View.GONE)
+        if (this.visibleHide == View.GONE)
             showHide(View.VISIBLE);
         else
             showHide(View.GONE);
+    }
+
+    public void BilgiAyarla(boolean pausable, boolean seekable, long totalMs) {
+        this.totalMs = totalMs;
+        baslamaZamani = new Date();
+        yeterinceSeyrettik = false;
+        Log.d("PlayerFragment", m3uBilgi.tvgName + "Playing:" + ":" + totalMs + "/" + seekable);
+        if (totalMs > 0) {
+            seekBar.setVisibility(View.VISIBLE);
+            seekBar.setMax((int) (totalMs / 1000));
+            seekBar.setProgress(0);
+        } else
+            seekBar.setVisibility(View.GONE);
+        durdurulabilir = pausable;
+    }
+
+    public void ZamanAyarla(long timeChanged) {
+        currentMS = timeChanged;
+        int lCurrentSec = (int) (timeChanged / 1000);
+        if (lCurrentSec != currentSec) {
+            currentSec = lCurrentSec;
+            if (totalMs > 0)
+                seekBar.setProgress(currentSec);
+            if (!yeterinceSeyrettik) {
+                Date simdZaman = new Date();
+                long farkZaman = (simdZaman.getTime() - baslamaZamani.getTime()) / 60000;
+                if (farkZaman >= 5) {
+                    yeterinceSeyrettik = true;
+                    TarihceyeEkle();
+                }
+            }
+            int lCurrentMin = currentSec / 60;
+            if (currentMin != lCurrentMin) {
+                currentMin = lCurrentMin;
+            }
+        }
+    }
+
+    private void TarihceyeEkle() {
+    }
+
+    public void m3uBilgiAyarla(M3UBilgi m3uBilgi) {
+        this.m3uBilgi = m3uBilgi;
     }
 }
