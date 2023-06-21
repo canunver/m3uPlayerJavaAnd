@@ -2,7 +2,6 @@ package org.unver.m3uplayer;
 
 import androidx.activity.OnBackPressedCallback;
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.appcompat.app.AppCompatActivity;
@@ -10,11 +9,12 @@ import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 
 import android.annotation.SuppressLint;
-import android.content.Context;
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.pm.ActivityInfo;
 import android.content.res.Configuration;
 import android.os.Bundle;
-import android.util.AttributeSet;
+import android.text.InputType;
 import android.util.Log;
 import android.view.View;
 import android.view.Window;
@@ -24,7 +24,6 @@ import android.widget.AutoCompleteTextView;
 import android.widget.EditText;
 
 import com.google.android.material.navigation.NavigationView;
-import com.google.android.material.textfield.TextInputLayout;
 
 public class MainActivity extends AppCompatActivity {
     private ActionBar actionBar;
@@ -33,8 +32,9 @@ public class MainActivity extends AppCompatActivity {
     private DrawerLayout drawerLayout;
     private PlayerFragment currFragment;
     public M3UBilgi.M3UTur aktifTur = M3UBilgi.M3UTur.tv;
-    AutoCompleteTextView actv;
+    AutoCompleteTextView turSecDDL;
     private EditText filtreAlan;
+    private View menParolaGir;
     //private DenemeFragment currFragmentA;
 
     @SuppressLint("MissingInflatedId")
@@ -52,15 +52,23 @@ public class MainActivity extends AppCompatActivity {
         //getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, currFragmentA).commit();
         String[] turListesi = getResources().getStringArray(R.array.turListesi);
         ArrayAdapter<String> aaTur = new ArrayAdapter<String>(this, com.google.android.material.R.layout.support_simple_spinner_dropdown_item, turListesi);
-        actv = findViewById(R.id.turSec);
-        actv.setAdapter(aaTur);
-        actv.setText(aaTur.getItem(0), false);
+        turSecDDL = findViewById(R.id.turSec);
+        turSecDDL.setAdapter(aaTur);
+        turSecDDL.setText(aaTur.getItem(0), false);
 
         filtreAlan = (EditText) findViewById(R.id.filtreAd);
-        actv.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+        turSecDDL.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 currFragment.TurSecildi(position);
+            }
+        });
+
+        menParolaGir = findViewById(R.id.parolaGir);
+        menParolaGir.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                ParolaAl();
             }
         });
 
@@ -78,6 +86,35 @@ public class MainActivity extends AppCompatActivity {
         getOnBackPressedDispatcher().addCallback(this, onBackPressedCallback);
     }
 
+    private void ParolaAl() {
+        // Parola girişi için AlertDialog oluşturma
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle("Parola Girin");
+
+// Parola girişi için EditText oluşturma
+        final EditText passwordInput = new EditText(this);
+        passwordInput.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_PASSWORD);
+        builder.setView(passwordInput);
+
+// Tamam ve İptal düğmelerini ekleyin
+        builder.setPositiveButton("Tamam", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                String password = passwordInput.getText().toString();
+                // Parola girişi tamamlandı, yapılacak işlemleri burada gerçekleştirin
+            }
+        });
+        builder.setNegativeButton("İptal", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.cancel();
+            }
+        });
+
+// AlertDialog'ı göster
+        AlertDialog dialog = builder.create();
+        dialog.show();
+    }
 
     @Override
     protected void onDestroy() {

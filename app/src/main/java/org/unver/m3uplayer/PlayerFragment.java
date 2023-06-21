@@ -129,6 +129,7 @@ public class PlayerFragment extends Fragment {
             @Override
             public void onGlobalLayout() {
                 OynatmaBolgesiBuyuklukAyarla();
+                //Log.d("PlayerFragment", "BuyuklukAyarla");
             }
         });
         mVideoView = currView.findViewById(R.id.playerView);
@@ -307,6 +308,7 @@ public class PlayerFragment extends Fragment {
             int height = oynatmaBolmesi.getHeight();
  //           Log.d("Buyukluk", "width:" + width + ";  height:" + height);
             vout.setWindowSize(width, height);
+            mediaController.BuyuklukAyarla();
         }
     }
 

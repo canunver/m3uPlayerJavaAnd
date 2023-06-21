@@ -14,4 +14,10 @@
     </string-array>
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="yayin_tur">Broadcast Type</string>
+    <string name="arama_metni">Search Text </string>
+    <string name="ayarlar">Settings</string>
+    <string name="sifre_gir">Enter Man. Password</string>
+    <string name="gizli_icerik">Show Hidden Content</string>
+    <string name="yetiskin_goster">Show Adult Content</string>
 </resources>

@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="yayin_tur">Yayın Türü</string>
+    <string name="arama_metni">Arama Metni</string>
+    <string name="ayarlar">Ayarlar</string>
+    <string name="sifre_gir">Enter Man. Password</string>
+    <string name="gizli_icerik">Gizli içeriği göster</string>
+    <string name="yetiskin_goster">Yetişkin İçeriği Göster</string>
+</resources>

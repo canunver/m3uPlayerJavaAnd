@@ -34,14 +34,17 @@
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
                 >
-
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/yayin_tur" />
                 <com.google.android.material.textfield.TextInputLayout
                     android:id="@+id/turSecCont"
                     style="@style/Widget.Material3.TextInputLayout.OutlinedBox.ExposedDropdownMenu"
 
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginStart="0dp"
+                    android:layout_marginStart="6dp"
                     android:layout_marginTop="0dp"
                     android:layout_marginEnd="0dp"
                     app:layout_constraintEnd_toEndOf="parent"
@@ -60,43 +63,115 @@
                         tools:ignore="LabelFor,SpeakableTextPresentCheck,VisualLintTextFieldSize" />
                 </com.google.android.material.textfield.TextInputLayout>
 
-
-                <LinearLayout
-                    android:id="@+id/KriterAlan"
-                    android:layout_width="match_parent"
+                <TextView
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginStart="0dp"
-                    android:layout_marginTop="5dp"
-                    android:layout_marginEnd="0dp"
-                    android:orientation="horizontal"
-
+                    android:layout_marginTop="12dp"
+                    android:text="@string/arama_metni" />
+                <EditText
+                    android:id="@+id/filtreAd"
+                    android:layout_width="match_parent"
+                    android:layout_height="50dp"
+                    android:layout_marginStart="6dp"
+                    android:inputType="text"
+                    android:drawableEnd="@android:drawable/ic_menu_search"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/turSecCont">
+                    tools:ignore="LabelFor,SpeakableTextPresentCheck,VisualLintTextFieldSize" />
 
-                    <EditText
-                        android:id="@+id/filtreAd"
-                        android:layout_width="0dp"
-                        android:layout_height="60dp"
-                        android:layout_weight="0.75"
-                        android:importantForAutofill="no"
-                        android:inputType="text"
-                        tools:ignore="LabelFor,SpeakableTextPresentCheck,VisualLintTextFieldSize" />
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="6dp"
+                    android:orientation="horizontal">
 
-                    <ImageButton
-                        android:id="@+id/btnAra"
-                        android:layout_width="0dp"
-                        android:layout_height="match_parent"
-                        android:layout_weight="0.25"
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentStart="true"
+                        android:layout_toStartOf="@id/switchHidden"
+                        android:text="@string/gizli_icerik"
+                        />
 
-                        android:onClick="btnAraClicked"
-                        android:src="@android:drawable/ic_menu_search"
-                        tools:ignore="SpeakableTextPresentCheck" />
+                    <Switch
+                        android:id="@+id/switchHidden"
+                        android:layout_width="48dp"
+                        android:layout_height="48dp"
+                        android:layout_alignParentEnd="true"
+                        />
+                </RelativeLayout>
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="6dp"
+                    android:orientation="horizontal">
 
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentStart="true"
+                        android:layout_toStartOf="@id/switchAdult"
+                        android:text="@string/yetiskin_goster"
+                        />
+
+                    <Switch
+                        android:id="@+id/switchAdult"
+                        android:layout_width="48dp"
+                        android:layout_height="48dp"
+                        android:layout_alignParentEnd="true"
+                        />
+
+                </RelativeLayout>
+                <LinearLayout
+                    android:id="@+id/ayarlar"
+                    android:layout_marginTop="6dp"
+                    android:layout_width="wrap_content"
+                    android:layout_height="48dp"
+                    android:orientation="horizontal"
+                    android:clickable="true"
+                    android:focusable="true"
+                    android:background="?android:attr/selectableItemBackground">
+
+                    <ImageView
+                        android:layout_width="24dp"
+                        android:layout_height="24dp"
+                        android:src="@drawable/baseline_settings_24" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/ayarlar"
+                        android:layout_marginStart="8dp"
+                        android:textSize="16sp"
+                        android:textStyle="bold"
+                        />
                 </LinearLayout>
 
+                <LinearLayout
+                    android:id="@+id/parolaGir"
+                    android:layout_marginTop="6dp"
+                    android:layout_width="wrap_content"
+                    android:layout_height="48dp"
+                    android:orientation="horizontal"
+                    android:clickable="true"
+                    android:focusable="true"
+                    android:background="?android:attr/selectableItemBackground">
+
+                    <ImageView
+                        android:layout_width="24dp"
+                        android:layout_height="24dp"
+                        android:src="@drawable/baseline_key_24" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/sifre_gir"
+                        android:layout_marginStart="8dp"
+                        android:textSize="16sp"
+                        android:textStyle="bold"
+                        />
+                </LinearLayout>
             </LinearLayout>
         </ScrollView>
-
     </com.google.android.material.navigation.NavigationView>
 </androidx.drawerlayout.widget.DrawerLayout>
