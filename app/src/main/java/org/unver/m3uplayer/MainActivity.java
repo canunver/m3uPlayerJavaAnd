@@ -22,6 +22,7 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.EditText;
+import android.widget.TextView;
 
 import com.google.android.material.navigation.NavigationView;
 
@@ -35,6 +36,9 @@ public class MainActivity extends AppCompatActivity {
     AutoCompleteTextView turSecDDL;
     private EditText filtreAlan;
     private View menParolaGir;
+    private AlertDialog parolaAldialog;
+    private TextView msTur;
+    private AlertDialog turAldialog;
     //private DenemeFragment currFragmentA;
 
     @SuppressLint("MissingInflatedId")
@@ -57,6 +61,17 @@ public class MainActivity extends AppCompatActivity {
         turSecDDL.setText(aaTur.getItem(0), false);
 
         filtreAlan = (EditText) findViewById(R.id.filtreAd);
+        parolaAldialog = DialogTanimlar.ParolaAl(this);
+        turAldialog = DialogTanimlar.TurAl(this, FilmTurYonetim.TurIsimler(1));
+
+        msTur = findViewById(R.id.msTur);
+        msTur.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                turAldialog.show();
+            }
+        });
+
         turSecDDL.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
@@ -68,7 +83,7 @@ public class MainActivity extends AppCompatActivity {
         menParolaGir.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                ParolaAl();
+                parolaAldialog.show();
             }
         });
 
@@ -85,37 +100,7 @@ public class MainActivity extends AppCompatActivity {
         };
         getOnBackPressedDispatcher().addCallback(this, onBackPressedCallback);
     }
-
-    private void ParolaAl() {
-        // Parola girişi için AlertDialog oluşturma
-        AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setTitle("Parola Girin");
-
-// Parola girişi için EditText oluşturma
-        final EditText passwordInput = new EditText(this);
-        passwordInput.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_PASSWORD);
-        builder.setView(passwordInput);
-
-// Tamam ve İptal düğmelerini ekleyin
-        builder.setPositiveButton("Tamam", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                String password = passwordInput.getText().toString();
-                // Parola girişi tamamlandı, yapılacak işlemleri burada gerçekleştirin
-            }
-        });
-        builder.setNegativeButton("İptal", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                dialog.cancel();
-            }
-        });
-
-// AlertDialog'ı göster
-        AlertDialog dialog = builder.create();
-        dialog.show();
-    }
-
+    
     @Override
     protected void onDestroy() {
         super.onDestroy();

@@ -20,4 +20,8 @@
     <string name="sifre_gir">Enter Man. Password</string>
     <string name="gizli_icerik">Show Hidden Content</string>
     <string name="yetiskin_goster">Show Adult Content</string>
+    <string name="yil">Year</string>
+    <string name="puan">Point</string>
+    <string name="tur">Type</string>
+    <string name="select_type">Select Type</string>
 </resources>

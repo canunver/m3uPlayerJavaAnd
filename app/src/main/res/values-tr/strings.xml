@@ -6,4 +6,8 @@
     <string name="sifre_gir">Enter Man. Password</string>
     <string name="gizli_icerik">Gizli içeriği göster</string>
     <string name="yetiskin_goster">Yetişkin İçeriği Göster</string>
+    <string name="yil">Yıl</string>
+    <string name="puan">Point</string>
+    <string name="tur">Type</string>
+    <string name="select_type">Select Type</string>
 </resources>
