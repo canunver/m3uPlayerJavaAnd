@@ -12,32 +12,36 @@
     tools:openDrawer="start">
 
     <FrameLayout
+        android:id="@+id/fragment_container"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:id="@+id/fragment_container" />
+        android:layout_height="match_parent" />
 
     <com.google.android.material.navigation.NavigationView
         android:id="@+id/navigationView"
         android:layout_width="250dp"
         android:layout_height="match_parent"
 
-        android:layout_marginTop="?attr/actionBarSize"
         android:layout_gravity="start"
+        android:layout_marginTop="?attr/actionBarSize"
         android:background="@color/cardview_light_background"
         android:fitsSystemWindows="true"
 
-        tools:ignore="VisualLintBounds" >
-        <ScrollView android:layout_width="match_parent"
+        tools:ignore="VisualLintBounds">
+
+        <ScrollView
+            android:layout_width="match_parent"
             android:layout_height="match_parent">
+
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="vertical"
-                >
+                android:orientation="vertical">
+
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="@string/yayin_tur" />
+
                 <com.google.android.material.textfield.TextInputLayout
                     android:id="@+id/turSecCont"
                     style="@style/Widget.Material3.TextInputLayout.OutlinedBox.ExposedDropdownMenu"
@@ -68,17 +72,19 @@
                     android:layout_height="wrap_content"
                     android:layout_marginTop="6dp"
                     android:text="@string/arama_metni" />
+
                 <EditText
                     android:id="@+id/filtreAd"
-                    android:background="@android:drawable/editbox_background"
                     android:layout_width="match_parent"
                     android:layout_height="50dp"
                     android:layout_marginStart="6dp"
-                    android:inputType="text"
+                    android:background="@android:drawable/editbox_background"
                     android:drawableEnd="@android:drawable/ic_menu_search"
+                    android:inputType="text"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
-                    tools:ignore="LabelFor,SpeakableTextPresentCheck,VisualLintTextFieldSize" />
+                    tools:ignore="LabelFor,SpeakableTextPresentCheck,VisualLintTextFieldSize"
+                    android:importantForAutofill="no" />
 
                 <RelativeLayout
                     android:layout_width="match_parent"
@@ -88,12 +94,11 @@
 
                     <TextView
                         android:id="@+id/tvYil"
-                        android:layout_marginTop="12dp"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_alignParentStart="true"
-                        android:text="@string/yil"
-                        />
+                        android:layout_marginTop="12dp"
+                        android:text="@string/yil" />
 
                     <com.google.android.material.slider.RangeSlider
                         android:id="@+id/rsYil"
@@ -116,12 +121,11 @@
 
                     <TextView
                         android:id="@+id/tvPuan"
-                        android:layout_marginTop="12dp"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_alignParentStart="true"
-                        android:text="@string/puan"
-                        />
+                        android:layout_marginTop="12dp"
+                        android:text="@string/puan" />
 
                     <com.google.android.material.slider.RangeSlider
                         android:id="@+id/rsPuan"
@@ -144,12 +148,11 @@
 
                     <CheckBox
                         android:id="@+id/cbSadeceYeni"
-                        android:layout_marginTop="0dp"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_alignParentStart="true"
-                        android:text="@string/yeni"
-                        />
+                        android:layout_marginTop="0dp"
+                        android:text="@string/yeni" />
 
                     <com.google.android.material.slider.RangeSlider
                         android:id="@+id/rsGunSay"
@@ -160,8 +163,8 @@
 
                         android:valueFrom="15"
                         android:valueTo="100"
-                        tools:ignore="SpeakableTextPresentCheck"
-                        />
+                        android:stepSize="1"
+                        tools:ignore="SpeakableTextPresentCheck" />
                 </RelativeLayout>
 
                 <RelativeLayout
@@ -172,12 +175,11 @@
 
                     <TextView
                         android:id="@+id/tvTur"
-                        android:layout_marginTop="8dp"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_alignParentStart="true"
-                        android:text="@string/tur"
-                        />
+                        android:layout_marginTop="8dp"
+                        android:text="@string/tur" />
 
                     <TextView
                         android:id="@+id/msTur"
@@ -186,11 +188,12 @@
                         android:layout_alignParentEnd="true"
                         android:layout_toEndOf="@id/tvTur"
 
-                        tools:ignore="SpeakableTextPresentCheck"
                         android:background="@android:drawable/editbox_background"
-                        android:drawableRight="@android:drawable/arrow_down_float"
                         android:drawablePadding="16dp"
-                        android:hint="@string/select_type" />
+                        android:hint="@string/select_type"
+                        android:textColorHint="#757575"
+                        app:drawableRightCompat="@android:drawable/arrow_down_float"
+                        tools:ignore="SpeakableTextPresentCheck" />
                 </RelativeLayout>
 
                 <RelativeLayout
@@ -200,21 +203,21 @@
                     android:orientation="horizontal">
 
                     <TextView
-                        android:layout_marginTop="12dp"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_alignParentStart="true"
+                        android:layout_marginTop="12dp"
                         android:layout_toStartOf="@id/switchHidden"
-                        android:text="@string/gizli_icerik"
-                        />
+                        android:text="@string/gizli_icerik" />
 
                     <Switch
                         android:id="@+id/switchHidden"
                         android:layout_width="48dp"
                         android:layout_height="48dp"
                         android:layout_alignParentEnd="true"
-                        />
+                        tools:ignore="UseSwitchCompatOrMaterialXml,DuplicateSpeakableTextCheck" />
                 </RelativeLayout>
+
                 <RelativeLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -223,69 +226,69 @@
 
                     <TextView
                         android:layout_width="wrap_content"
-                        android:layout_marginTop="12dp"
                         android:layout_height="wrap_content"
                         android:layout_alignParentStart="true"
+                        android:layout_marginTop="12dp"
                         android:layout_toStartOf="@id/switchAdult"
-                        android:text="@string/yetiskin_goster"
-                        />
+                        android:text="@string/yetiskin_goster" />
 
                     <Switch
                         android:id="@+id/switchAdult"
                         android:layout_width="48dp"
                         android:layout_height="48dp"
                         android:layout_alignParentEnd="true"
-                        />
+                        tools:ignore="UseSwitchCompatOrMaterialXml" />
 
                 </RelativeLayout>
+
                 <LinearLayout
                     android:id="@+id/ayarlar"
-                    android:layout_marginTop="0dp"
                     android:layout_width="wrap_content"
                     android:layout_height="48dp"
-                    android:orientation="horizontal"
+                    android:layout_marginTop="0dp"
+                    android:background="?android:attr/selectableItemBackground"
                     android:clickable="true"
                     android:focusable="true"
-                    android:background="?android:attr/selectableItemBackground">
+                    android:orientation="horizontal">
 
                     <ImageView
                         android:layout_width="24dp"
                         android:layout_height="24dp"
-                        android:src="@drawable/baseline_settings_24" />
+                        android:src="@drawable/baseline_settings_24"
+                        android:importantForAccessibility="no" />
 
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="@string/ayarlar"
                         android:layout_marginStart="8dp"
+                        android:text="@string/ayarlar"
                         android:textSize="16sp"
-                        android:textStyle="bold"
-                        />
+                        android:textStyle="bold" />
                 </LinearLayout>
 
                 <LinearLayout
                     android:id="@+id/parolaGir"
-                    android:layout_marginTop="0dp"
                     android:layout_width="wrap_content"
                     android:layout_height="48dp"
-                    android:orientation="horizontal"
+                    android:layout_marginTop="0dp"
+                    android:background="?android:attr/selectableItemBackground"
                     android:clickable="true"
                     android:focusable="true"
-                    android:background="?android:attr/selectableItemBackground">
+                    android:orientation="horizontal">
 
                     <ImageView
                         android:layout_width="24dp"
                         android:layout_height="24dp"
-                        android:src="@drawable/baseline_key_24" />
+                        android:src="@drawable/baseline_key_24"
+                        android:importantForAccessibility="no" />
 
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="@string/sifre_gir"
                         android:layout_marginStart="8dp"
+                        android:text="@string/sifre_gir"
                         android:textSize="16sp"
-                        android:textStyle="bold"
-                        />
+                        android:textStyle="bold" />
                 </LinearLayout>
             </LinearLayout>
         </ScrollView>

@@ -13,7 +13,7 @@ public class DialogTanimlar {
 
     private static AlertDialog alertDialogTurSec;
 
-    public static AlertDialog ParolaAl(MainActivity mainActivity ) {
+    public static AlertDialog ParolaAl(MainActivity mainActivity) {
         // Parola girişi için AlertDialog oluşturma
         AlertDialog.Builder builder = new AlertDialog.Builder(mainActivity);
         builder.setTitle("Parola Girin");
@@ -38,7 +38,7 @@ public class DialogTanimlar {
             }
         });
 
-        return  builder.create();
+        return builder.create();
     }
 
     public static AlertDialog TurAl(MainActivity mainActivity, ArrayList<String> turDizisi, TextView textView) {
@@ -86,9 +86,8 @@ public class DialogTanimlar {
         StringBuilder stringBuilder = new StringBuilder();
         boolean kayitVar = false;
         for (int j = 0; j < secili.length; j++) {
-            if(secili[j])
-            {
-                if(kayitVar)
+            if (secili[j]) {
+                if (kayitVar)
                     stringBuilder.append(", ");
                 else
                     kayitVar = true;

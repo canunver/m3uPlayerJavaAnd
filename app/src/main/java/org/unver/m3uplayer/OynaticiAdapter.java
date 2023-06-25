@@ -53,11 +53,11 @@ public class OynaticiAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
     @Override
     public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, int position) {
         M3UBilgi blg = data.get(position);
-        if (blg.Tur== M3UBilgi.M3UTur.film)
+        if (blg.Tur == M3UBilgi.M3UTur.film)
             ((FilmViewHolder) holder).bind(blg, position);
-        else if (blg.Tur== M3UBilgi.M3UTur.seri)
+        else if (blg.Tur == M3UBilgi.M3UTur.seri)
             ((SeriViewHolder) holder).bind(blg, position);
-        else if (blg.Tur== M3UBilgi.M3UTur.tv)
+        else if (blg.Tur == M3UBilgi.M3UTur.tv)
             ((KanalViewHolder) holder).bind(blg, position);
     }
 

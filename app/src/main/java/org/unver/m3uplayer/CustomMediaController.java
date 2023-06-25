@@ -148,17 +148,17 @@ public class CustomMediaController implements View.OnClickListener {
             @Override
             public void onValueChange(@NonNull RangeSlider slider, float value, boolean fromUser) {
                 if (fromUser) {
-                    mediaPlayer.setTime((long)value * 1000);
+                    mediaPlayer.setTime((long) value * 1000);
                     resetTimeout();
                 }
             }
         });
         customSeekBar.setLabelFormatter(value -> {
-            long v = (long)value;
-            int dak = (int) (v/60);
-            int sec = (int) (v%60);
+            long v = (long) value;
+            int dak = (int) (v / 60);
+            int sec = (int) (v % 60);
 
-            return dak+":"+String.format("%02d", sec);
+            return dak + ":" + String.format("%02d", sec);
         });
 
         return customSeekBar;
@@ -257,7 +257,7 @@ public class CustomMediaController implements View.OnClickListener {
         int lCurrentSec = (int) (timeChanged / 1000);
         if (lCurrentSec != currentSec) {
             currentSec = lCurrentSec;
-            if (totalMs > 0) seekBar.setValues((float)currentSec);
+            if (totalMs > 0) seekBar.setValues((float) currentSec);
             if (!yeterinceSeyrettik) {
                 Date simdZaman = new Date();
                 long farkZaman = (simdZaman.getTime() - baslamaZamani.getTime()) / 60000;

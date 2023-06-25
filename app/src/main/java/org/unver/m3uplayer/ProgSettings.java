@@ -5,7 +5,7 @@ import java.util.Date;
 
 public class ProgSettings {
     public static int ConvertToInt32(String strDeger, int varsayilanDeger) {
-        if(strDeger!=null && !strDeger.equals("")) {
+        if (strDeger != null && !strDeger.equals("")) {
             try {
                 return Integer.parseInt(strDeger);
             } catch (Exception _) {
