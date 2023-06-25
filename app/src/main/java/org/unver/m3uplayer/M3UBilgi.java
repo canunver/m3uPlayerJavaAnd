@@ -146,12 +146,12 @@ public class M3UBilgi {
                     } else {
                         this.filmAd = this.tvgName;
                         this.filmYil = "";
-                        this.filmYilInt = ProgSettings.ConvertToInt32(this.filmYil, -1);
                     }
                 } else {
                     this.filmAd = this.tvgName;
                     this.filmYil = "";
                 }
+                this.filmYilInt = ProgSettings.ConvertToInt32(this.filmYil, -1);
             }
         }
     }

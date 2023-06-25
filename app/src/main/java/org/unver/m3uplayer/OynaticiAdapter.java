@@ -72,7 +72,6 @@ public class OynaticiAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
         notifyDataSetChanged();
     }
 
-
     public class MyOnClickListener implements View.OnClickListener {
         private final RecyclerView.ViewHolder holder;
         long prevClickTimeInMS = 0;

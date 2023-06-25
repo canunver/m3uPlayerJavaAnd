@@ -1,5 +1,6 @@
 package org.unver.m3uplayer;
 
+import android.annotation.SuppressLint;
 import android.graphics.Color;
 import android.os.Handler;
 import android.util.Log;
@@ -9,7 +10,11 @@ import android.view.ViewGroup;
 import android.widget.FrameLayout;
 import android.widget.ImageButton;
 import android.widget.ImageView;
-import android.widget.SeekBar;
+
+
+import androidx.annotation.NonNull;
+
+import com.google.android.material.slider.RangeSlider;
 
 import org.videolan.libvlc.MediaPlayer;
 
@@ -20,7 +25,7 @@ public class CustomMediaController implements View.OnClickListener {
     private PlayerFragment playerFragment;
     private ViewGroup anchorView;
 
-    private SeekBar seekBar;
+    private RangeSlider seekBar;
     private long timeout;
     private int visibleHide;
     private Handler hideHandler;
@@ -65,7 +70,7 @@ public class CustomMediaController implements View.OnClickListener {
             new EkranYer(R.drawable.baseline_skip_previous_24, 6, Gravity.CENTER_VERTICAL | Gravity.START, 4, 0, 0, 0), //Sonraki Media
             new EkranYer(R.drawable.baseline_backward_5_24, 6, Gravity.CENTER_VERTICAL | Gravity.START, 11, 03, 0, 0), //Sonraki Media
 
-            new EkranYer(R.drawable.baseline_play_circle_outline_24, 9, Gravity.CENTER_VERTICAL | Gravity.CENTER_HORIZONTAL, 0, 0, 0, 0),
+            new EkranYer(R.drawable.baseline_pause_circle_outline_24, 9, Gravity.CENTER_VERTICAL | Gravity.CENTER_HORIZONTAL, 0, 0, 0, 0),
 
             new EkranYer(R.drawable.baseline_forward_30_24, 6, Gravity.CENTER_VERTICAL | Gravity.END, 0, 9, 0, 0),
 
@@ -125,8 +130,8 @@ public class CustomMediaController implements View.OnClickListener {
         ekranYerler[buttonId].button = button;
     }
 
-    private SeekBar createSeekBar() {
-        SeekBar customSeekBar = new SeekBar(playerFragment.mainActivity);
+    private RangeSlider createSeekBar() {
+        RangeSlider customSeekBar = new RangeSlider(playerFragment.mainActivity);
         FrameLayout.LayoutParams seekBarLayoutParams = new FrameLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
         customSeekBar.setBackgroundColor(Color.TRANSPARENT);
         //customSeekBar.setVisibility(View.GONE);
@@ -134,25 +139,28 @@ public class CustomMediaController implements View.OnClickListener {
         seekBarLayoutParams.rightMargin = (int) (anchorView.getWidth() * 0.3); // Ayarlamak istediğiniz oranı belirleyin
         seekBarLayoutParams.leftMargin = (int) (anchorView.getWidth() * 0.3); // Ayarlamak istediğiniz oranı belirleyin
         seekBarLayoutParams.bottomMargin = (int) (anchorView.getHeight() * 0.05); // Ayarlamak istediğiniz oranı belirleyin
+        customSeekBar.setValueFrom(0);
+        customSeekBar.setValueTo(1f);
+        customSeekBar.setValues(0f);
         frameLayout.addView(customSeekBar, seekBarLayoutParams);
-        customSeekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+        customSeekBar.addOnChangeListener(new RangeSlider.OnChangeListener() {
+            @SuppressLint("RestrictedApi")
             @Override
-            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+            public void onValueChange(@NonNull RangeSlider slider, float value, boolean fromUser) {
                 if (fromUser) {
-                    mediaPlayer.setTime(progress * 1000);
+                    mediaPlayer.setTime((long)value * 1000);
+                    resetTimeout();
                 }
             }
-
-            @Override
-            public void onStartTrackingTouch(SeekBar seekBar) {
-
-            }
-
-            @Override
-            public void onStopTrackingTouch(SeekBar seekBar) {
-
-            }
         });
+        customSeekBar.setLabelFormatter(value -> {
+            long v = (long)value;
+            int dak = (int) (v/60);
+            int sec = (int) (v%60);
+
+            return dak+":"+String.format("%02d", sec);
+        });
+
         return customSeekBar;
     }
 
@@ -239,8 +247,8 @@ public class CustomMediaController implements View.OnClickListener {
         Log.d("PlayerFragment", m3uBilgi.tvgName + "Playing:" + ":" + totalMs + "/" + aranaBilir);
         if (totalMs > 0) {
             seekBar.setVisibility(View.VISIBLE);
-            seekBar.setMax((int) (totalMs / 1000));
-            seekBar.setProgress(0);
+            seekBar.setValueTo((float) (totalMs / 1000));
+            seekBar.setValues(0f);
         } else seekBar.setVisibility(View.GONE);
     }
 
@@ -249,7 +257,7 @@ public class CustomMediaController implements View.OnClickListener {
         int lCurrentSec = (int) (timeChanged / 1000);
         if (lCurrentSec != currentSec) {
             currentSec = lCurrentSec;
-            if (totalMs > 0) seekBar.setProgress(currentSec);
+            if (totalMs > 0) seekBar.setValues((float)currentSec);
             if (!yeterinceSeyrettik) {
                 Date simdZaman = new Date();
                 long farkZaman = (simdZaman.getTime() - baslamaZamani.getTime()) / 60000;

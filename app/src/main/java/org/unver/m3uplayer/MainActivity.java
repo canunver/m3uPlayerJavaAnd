@@ -25,6 +25,11 @@ import android.widget.EditText;
 import android.widget.TextView;
 
 import com.google.android.material.navigation.NavigationView;
+import com.google.android.material.slider.RangeSlider;
+
+import java.util.Calendar;
+import java.util.Date;
+import java.util.GregorianCalendar;
 
 public class MainActivity extends AppCompatActivity {
     private ActionBar actionBar;
@@ -39,6 +44,8 @@ public class MainActivity extends AppCompatActivity {
     private AlertDialog parolaAldialog;
     private TextView msTur;
     private AlertDialog turAldialog;
+    private RangeSlider rangeSliderPuan;
+    private RangeSlider rangeSliderYil;
     //private DenemeFragment currFragmentA;
 
     @SuppressLint("MissingInflatedId")
@@ -62,9 +69,9 @@ public class MainActivity extends AppCompatActivity {
 
         filtreAlan = (EditText) findViewById(R.id.filtreAd);
         parolaAldialog = DialogTanimlar.ParolaAl(this);
-        turAldialog = DialogTanimlar.TurAl(this, FilmTurYonetim.TurIsimler(1));
-
         msTur = findViewById(R.id.msTur);
+        turAldialog = DialogTanimlar.TurAl(this, FilmTurYonetim.TurIsimler(1), msTur);
+
         msTur.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -99,6 +106,18 @@ public class MainActivity extends AppCompatActivity {
             }
         };
         getOnBackPressedDispatcher().addCallback(this, onBackPressedCallback);
+
+        rangeSliderPuan =  findViewById(R.id.rsPuan);
+        rangeSliderPuan.setValues(0f, 100f);
+        rangeSliderPuan.setStepSize(1);
+
+        Calendar c = Calendar .getInstance();
+        int yil = c.get(Calendar.YEAR);
+        rangeSliderYil = findViewById(R.id.rsYil);
+        rangeSliderYil.setValueTo(yil);
+        rangeSliderYil.setValues((float)M3UVeri.minYil, (float)yil);
+        rangeSliderYil.setValueFrom(M3UVeri.minYil);
+        rangeSliderYil.setStepSize(1);
     }
     
     @Override

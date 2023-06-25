@@ -4,11 +4,14 @@ import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.text.InputType;
 import android.widget.EditText;
+import android.widget.TextView;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 
 public class DialogTanimlar {
+
+    private static AlertDialog alertDialogTurSec;
 
     public static AlertDialog ParolaAl(MainActivity mainActivity ) {
         // Parola girişi için AlertDialog oluşturma
@@ -38,79 +41,61 @@ public class DialogTanimlar {
         return  builder.create();
     }
 
-    public static AlertDialog TurAl(MainActivity mainActivity, ArrayList<String> turDizisi) {
+    public static AlertDialog TurAl(MainActivity mainActivity, ArrayList<String> turDizisi, TextView textView) {
         AlertDialog.Builder builder = new AlertDialog.Builder(mainActivity);
-
         // set title
         builder.setTitle("Select Language");
 
-        // set dialog non cancelable
-        builder.setCancelable(false);
+        String[] isimlerDizisi = new String[turDizisi.size()];
+        boolean[] secili = new boolean[turDizisi.size()];
 
-        String[] arr = new String[turDizisi.size()];
-
-        builder.setMultiChoiceItems(turDizisi.toArray(arr), null, new DialogInterface.OnMultiChoiceClickListener() {
+        builder.setMultiChoiceItems(turDizisi.toArray(isimlerDizisi), secili, new DialogInterface.OnMultiChoiceClickListener() {
             @Override
             public void onClick(DialogInterface dialogInterface, int i, boolean b) {
-                // check condition
-                if (b) {
-                    // when checkbox selected
-                    // Add position  in lang list
-                    //langList.add(i);
-                    // Sort array list
-                    //Collections.sort(langList);
-                } else {
-                    // when checkbox unselected
-                    // Remove position from langList
-                    //langList.remove(Integer.valueOf(i));
-                }
+                secili[i] = b;
+                SecilileriYaz(secili, isimlerDizisi, textView);
             }
         });
 
         builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialogInterface, int i) {
-                // Initialize string builder
-                StringBuilder stringBuilder = new StringBuilder();
-                // use for loop
-//                for (int j = 0; j < langList.size(); j++) {
-//                    // concat array value
-//                    stringBuilder.append(langArray[langList.get(j)]);
-//                    // check condition
-//                    if (j != langList.size() - 1) {
-//                        // When j value  not equal
-//                        // to lang list size - 1
-//                        // add comma
-//                        stringBuilder.append(", ");
-//                    }
-//                }
-//                // set text on textView
-//                textView.setText(stringBuilder.toString());
+                alertDialogTurSec.dismiss();
             }
         });
 
-//        builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
-//            @Override
-//            public void onClick(DialogInterface dialogInterface, int i) {
-//                // dismiss dialog
-//                dialogInterface.dismiss();
-//            }
-//        });
-//        builder.setNeutralButton("Clear All", new DialogInterface.OnClickListener() {
-//            @Override
-//            public void onClick(DialogInterface dialogInterface, int i) {
-//                // use for loop
-//                for (int j = 0; j < selectedLanguage.length; j++) {
-//                    // remove all selection
-//                    selectedLanguage[j] = false;
-//                    // clear language list
-//                    langList.clear();
-//                    // clear text view value
-//                    textView.setText("");
-//                }
-//            }
-//        });
-        // show dialog
-        return builder.create();
+        builder.setNeutralButton("Clear All", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int i) {
+                for (int j = 0; j < secili.length; j++) {
+                    secili[j] = false;
+                }
+                SecilileriYaz(secili, isimlerDizisi, textView);
+                ((AlertDialog) dialogInterface).getListView().clearChoices();
+                ((AlertDialog) dialogInterface).getListView().requestLayout();
+            }
+        });
+        // set dialog non cancelable
+        builder.setCancelable(false);
+        alertDialogTurSec = builder.create();
+        alertDialogTurSec.setCancelable(false);
+        return alertDialogTurSec;
+    }
+
+    private static void SecilileriYaz(boolean[] secili, String[] isimlerDizisi, TextView textView) {
+        StringBuilder stringBuilder = new StringBuilder();
+        boolean kayitVar = false;
+        for (int j = 0; j < secili.length; j++) {
+            if(secili[j])
+            {
+                if(kayitVar)
+                    stringBuilder.append(", ");
+                else
+                    kayitVar = true;
+                stringBuilder.append(isimlerDizisi[j]);
+            }
+        }
+        // set text on textView
+        textView.setText(stringBuilder.toString());
     }
 }

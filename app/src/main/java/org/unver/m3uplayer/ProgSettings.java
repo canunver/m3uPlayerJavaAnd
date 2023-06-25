@@ -7,7 +7,7 @@ public class ProgSettings {
     public static int ConvertToInt32(String strDeger, int varsayilanDeger) {
         if(strDeger!=null && !strDeger.equals("")) {
             try {
-                return Integer.getInteger(strDeger);
+                return Integer.parseInt(strDeger);
             } catch (Exception _) {
             }
         }

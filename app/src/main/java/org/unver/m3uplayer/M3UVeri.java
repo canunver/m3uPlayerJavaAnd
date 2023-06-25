@@ -17,6 +17,7 @@ public class M3UVeri {
     public static ArrayList<M3UGrup> seriGruplari = new ArrayList<>();
     public static Hashtable<String, String> tumSerilerAd = new Hashtable<>();
     private static MainActivity context;
+    public static int minYil = 10000;
 
     public static ArrayList<M3UGrup> GrupKodBul(int position) {
         if (position == 0) return tvGruplari;
@@ -60,8 +61,11 @@ public class M3UVeri {
                         M3UBilgi m3u = new M3UBilgi(ID, tvgId, tvgName,
                                 tvgLogo, groupTitle, urlAdres,
                                 eklemeTarih, gizli, adult, tmdbId);
+                        if(m3u.filmYilInt>0 && m3u.filmYilInt<minYil)
+                            minYil = m3u.filmYilInt;
                         GruplaraIsle(m3u, true);
                     } while (cursor.moveToNext());
+                    if(minYil > 3000) minYil = 0;
                 }
             } finally {
                 cursor.close();
