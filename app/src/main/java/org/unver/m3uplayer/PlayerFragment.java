@@ -7,6 +7,7 @@ import android.os.Bundle;
 import androidx.annotation.NonNull;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.constraintlayout.widget.ConstraintSet;
+import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.fragment.app.Fragment;
 
 import androidx.recyclerview.widget.DefaultItemAnimator;
@@ -393,6 +394,8 @@ public class PlayerFragment extends Fragment {
         if (tamEkran) {
             //playerView.setResizeMode(AspectRatioFrameLayout.RESIZE_MODE_FIT);
             aramaBolmesi.setVisibility(View.GONE);
+            mainActivity.drawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED);
+
             //actionBar.hide();
             mainActivity.getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
             mainActivity.YatayYap();
@@ -402,6 +405,7 @@ public class PlayerFragment extends Fragment {
             mainActivity.GoruntulenenYap();
             aramaBolmesi.setVisibility(View.VISIBLE);
             mainActivity.getWindow().clearFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN);
+            mainActivity.drawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_UNLOCKED);
         }
         //OynatmaBolgesiBuyuklukAyarla();
     }
