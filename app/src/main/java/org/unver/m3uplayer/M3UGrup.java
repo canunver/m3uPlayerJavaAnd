@@ -22,4 +22,10 @@ public class M3UGrup {
 
         return false;
     }
+
+    public String ProgBul(String id) {
+        for (String i:kanallar)
+            if(i.equals(id)) return i;
+        return null;
+    }
 }

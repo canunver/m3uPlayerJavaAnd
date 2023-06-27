@@ -23,12 +23,10 @@ import android.view.SurfaceHolder;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
-import android.view.WindowInsets;
 import android.view.WindowManager;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
-import android.widget.ImageButton;
 
 import org.videolan.libvlc.LibVLC;
 import org.videolan.libvlc.Media;
@@ -38,11 +36,6 @@ import org.videolan.libvlc.media.VideoView;
 
 import java.util.ArrayList;
 
-/**
- * A simple {@link Fragment} subclass.
- * Use the { @ l i n k PlayerFragment#newInstance} factory method to
- * create an instance of this fragment.
- */
 public class PlayerFragment extends Fragment {
     private ConstraintLayout anaYerlesim;
     private ConstraintLayout aramaBolmesi;
@@ -57,23 +50,20 @@ public class PlayerFragment extends Fragment {
     private OynaticiAdapter kanalAdapter;
     public String aktifGrupAd = "-";
     ArrayList<M3UBilgi> kanalListe = new ArrayList<>();
-    int say = 0;
     AutoCompleteTextView grupSec;
-
     private View currView;
     private LibVLC libVLC;
     private boolean buyuklukAyarlandi = false;
     private IVLCVout vout = null;
-    //private ExtMediaController mediaController;
     private CustomMediaController mediaController;
     private SurfaceHolder holder;
+    MainActivity mainActivity;
+    boolean isLoading = false;
+    ArrayAdapter<String> grupAdapter;
 
     public PlayerFragment(MainActivity mainActivity) {
-        // Required empty public constructor
         this.mainActivity = mainActivity;
     }
-
-    MainActivity mainActivity;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -104,7 +94,6 @@ public class PlayerFragment extends Fragment {
 
         mediaController = new CustomMediaController(this, oynatmaBolmesi, mMediaPlayer);
         buyuklukAyarlandi = false;
-        //mediaController.setAutoHideTimeout(10000);
     }
 
     @Override
@@ -122,7 +111,6 @@ public class PlayerFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
         currView = inflater.inflate(R.layout.fragment_player, container, false);
 
         anaYerlesim = currView.findViewById(R.id.anaYerlesim);
@@ -130,7 +118,6 @@ public class PlayerFragment extends Fragment {
             @Override
             public void onGlobalLayout() {
                 OynatmaBolgesiBuyuklukAyarla();
-                //Log.d("PlayerFragment", "BuyuklukAyarla");
             }
         });
         mVideoView = currView.findViewById(R.id.playerView);
@@ -199,23 +186,17 @@ public class PlayerFragment extends Fragment {
         return currView;
     }
 
-
     public void YonlendirmeAyarla() {
         int currentOrientation = getResources().getConfiguration().orientation;
-
         if (currentOrientation == Configuration.ORIENTATION_LANDSCAPE) {
-            Log.d("M3U", "landscapeConstraintSet");
             landscapeConstraintSet.applyTo(anaYerlesim);
             if (mediaController != null && mediaController.tamEkran)
                 aramaBolmesi.setVisibility(View.GONE);
         } else {
-            Log.d("M3U", "portraitConstraintSet");
             portraitConstraintSet.applyTo(anaYerlesim);
         }
         anaYerlesim.requestLayout();
     }
-
-    boolean isLoading = false;
 
     private void setupPagination() {
         recyclerView.addOnScrollListener(
@@ -223,7 +204,6 @@ public class PlayerFragment extends Fragment {
                     @Override
                     public void onScrolled(@NonNull RecyclerView recyclerView, int dx, int dy) {
                         super.onScrolled(recyclerView, dx, dy);
-
                         LinearLayoutManager linearLayoutManager = (LinearLayoutManager) recyclerView.getLayoutManager();
                         if (linearLayoutManager != null && linearLayoutManager.findLastCompletelyVisibleItemPosition() == kanalListe.size() - 1) {
                             if (!isLoading) {
@@ -243,10 +223,8 @@ public class PlayerFragment extends Fragment {
         );
     }
 
-    ArrayAdapter<String> grupAdapter;
-
     public void TurSecildi(int position) {
-        mainActivity.aktifTur = position == 2 ? M3UBilgi.M3UTur.seri : (position == 1 ? M3UBilgi.M3UTur.film : M3UBilgi.M3UTur.tv);
+        mainActivity.aktifTur = M3UVeri.TurBul(position);
         ArrayList<String> s = new ArrayList<String>();
         ArrayList<M3UGrup> grup = M3UVeri.GrupKodBul(position);
 
@@ -295,87 +273,69 @@ public class PlayerFragment extends Fragment {
         kanalAdapter.veriDegisti();
     }
 
-    public void NesneSecildi(int pos) {
-        //Log.d("RV", kanalListe.get(pos).urlAdres);
-        OynatBakalim(kanalListe.get(pos));
+    public void NesneSecildi(int pos, String sezon, String bolum) {
+        OynatBakalim(kanalListe.get(pos), sezon, bolum);
     }
 
     public void OynatmaBolgesiBuyuklukAyarla() {
         if (vout != null) {
             buyuklukAyarlandi = true;
-//            int width = mVideoView.getWidth();
-//            int height = mVideoView.getHeight();
             int width = oynatmaBolmesi.getWidth();
             int height = oynatmaBolmesi.getHeight();
- //           Log.d("Buyukluk", "width:" + width + ";  height:" + height);
             vout.setWindowSize(width, height);
             mediaController.BuyuklukAyarla();
         }
     }
 
-    void OynatBakalim(M3UBilgi m3uBilgi) {
+    void OynatBakalim(M3UBilgi m3uBilgiGrup, String sezon, String bolum) {
         if (!buyuklukAyarlandi) {
             OynatmaBolgesiBuyuklukAyarla();
         } else
             mMediaPlayer.stop();
 
-        mediaItem = new Media(libVLC, Uri.parse(m3uBilgi.urlAdres));
+        mediaController.m3uBilgiAyarla(m3uBilgiGrup, sezon, bolum);
+
+        mediaItem = new Media(libVLC, Uri.parse(mediaController.m3uBilgiOynayan.urlAdres));
         mMediaPlayer.setMedia(mediaItem);
         mMediaPlayer.play();
-        mediaController.m3uBilgiAyarla(m3uBilgi);
         mMediaPlayer.setEventListener(new MediaPlayer.EventListener() {
             @Override
             public void onEvent(MediaPlayer.Event event) {
                 if (event.type == MediaPlayer.Event.Opening) { //İlk oluşan event 258
-                }
-                else if (event.type == MediaPlayer.Event.PausableChanged) {//İkinci oluşan event 270
+                } else if (event.type == MediaPlayer.Event.PausableChanged) {//İkinci oluşan event 270
                     //Log.d("PlayerFragment", m3uBilgi.tvgName + "TimeChanged");
-                }
-                else if (event.type == MediaPlayer.Event.Playing) {//Üçüncü oluşan event 260
+                } else if (event.type == MediaPlayer.Event.Playing) {//Üçüncü oluşan event 260
                     mediaController.BilgiAyarla();
                     //Log.d("PlayerFragment", m3uBilgi.tvgName + "Playing:" + ":"+mMediaPlayer.getTime() + "/" + mMediaPlayer.getLength());
-                }
-                else if (event.type == MediaPlayer.Event.ESAdded) {//Dördüncü oluşan event 276
+                } else if (event.type == MediaPlayer.Event.ESAdded) {//Dördüncü oluşan event 276
                     //Log.d("PlayerFragment", m3uBilgi.tvgName + "TimeChanged");
-                }
-                else if (event.type == MediaPlayer.Event.ESSelected) {//Beşinci oluşan event 278
+                } else if (event.type == MediaPlayer.Event.ESSelected) {//Beşinci oluşan event 278
                     //Log.d("PlayerFragment", m3uBilgi.tvgName + "TimeChanged");
-                }
-                else if (event.type == MediaPlayer.Event.Vout) {//Altıncı oluşan event 274
+                } else if (event.type == MediaPlayer.Event.Vout) {//Altıncı oluşan event 274
                     //Log.d("PlayerFragment", m3uBilgi.tvgName + "TimeChanged");
-                }
-                else if (event.type == MediaPlayer.Event.TimeChanged) {
+                } else if (event.type == MediaPlayer.Event.TimeChanged) {
                     //Log.d("PlayerFragment", m3uBilgi.tvgName + "TimeChanged:" + event.getTimeChanged() + ":"+mMediaPlayer.getTime() + "/" + mMediaPlayer.getLength());
                     mediaController.ZamanAyarla(mMediaPlayer.getTime());
-                }
-                else if (event.type == MediaPlayer.Event.PositionChanged) {
+                } else if (event.type == MediaPlayer.Event.PositionChanged) {
 
-                }
-                else if (event.type == MediaPlayer.Event.Buffering) {
+                } else if (event.type == MediaPlayer.Event.Buffering) {
 
-                }
-                else if (event.type == MediaPlayer.Event.SeekableChanged) { //269
-                    Log.d("PlayerFragment", m3uBilgi.tvgName + "SeekableChanged:" + event.getSeekable());
-                }
-                else if (event.type == MediaPlayer.Event.LengthChanged) { //273
+                } else if (event.type == MediaPlayer.Event.SeekableChanged) { //269
+                    Log.d("PlayerFragment", mediaController.m3uBilgi.tvgName + "SeekableChanged:" + event.getSeekable());
+                } else if (event.type == MediaPlayer.Event.LengthChanged) { //273
 
-                }
-                else if (event.type == MediaPlayer.Event.EndReached) { //269
+                } else if (event.type == MediaPlayer.Event.EndReached) { //269
 
-                }
-                else if (event.type == MediaPlayer.Event.ESDeleted) { //277
+                } else if (event.type == MediaPlayer.Event.ESDeleted) { //277
 
-                }
-                else if (event.type == MediaPlayer.Event.Stopped) { //262
+                } else if (event.type == MediaPlayer.Event.Stopped) { //262
 
-                }
-                else {
-                    Log.d("PlayerFragment", m3uBilgi.tvgName + "MediaPlayer.Event.type:" + event.type);
+                } else {
+                    Log.d("PlayerFragment", mediaController.m3uBilgi.tvgName + "MediaPlayer.Event.type:" + event.type);
                 }
             }
         });
 
-        // Set the media controller to be visible
         mediaController.show(8000);
     }
 
@@ -384,7 +344,6 @@ public class PlayerFragment extends Fragment {
             return;
         mMediaPlayer.stop();
         final IVLCVout vout = mMediaPlayer.getVLCVout();
-        //vout.removeCallback(this);
         vout.detachViews();
         libVLC.release();
         libVLC = null;
@@ -392,31 +351,47 @@ public class PlayerFragment extends Fragment {
 
     public void TamEkranDegistir(boolean tamEkran) {
         if (tamEkran) {
-            //playerView.setResizeMode(AspectRatioFrameLayout.RESIZE_MODE_FIT);
             aramaBolmesi.setVisibility(View.GONE);
             mainActivity.drawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED);
 
-            //actionBar.hide();
             mainActivity.getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
             mainActivity.YatayYap();
         } else {
-            Log.d("M3U", "Tam Ekrandan Çıkış Tuşu");
-            //playerView.setResizeMode(AspectRatioFrameLayout.RESIZE_MODE_FIT);
             mainActivity.GoruntulenenYap();
             aramaBolmesi.setVisibility(View.VISIBLE);
             mainActivity.getWindow().clearFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN);
             mainActivity.drawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_UNLOCKED);
         }
-        //OynatmaBolgesiBuyuklukAyarla();
     }
 
     public boolean TamEkranMi() {
-        if(mediaController!=null)
+        if (mediaController != null)
             return mediaController.tamEkran;
         return false;
     }
 
     public void TamEkrandanCik() {
         mediaController.TamEkrandanCik();
+    }
+
+    public void TarihceyeEkle() {
+        ProgSettings.TarihceyeEkle(mainActivity.aktifTur, aktifGrupAd, mediaController.m3uBilgi.ID);
+    }
+
+    public void ZamaniYaz(M3UBilgi m3uBilgiOynayan, Bolum aktifBolum, int dakika) {
+        if (aktifBolum != null) {
+            for (String id : aktifBolum.idler) {
+                M3UBilgi akt = M3UVeri.tumM3Ular.getOrDefault(id, null);
+                if (akt != null) {
+                    akt.seyredilenSure = dakika;
+                    akt.Yaz(M3UVeri.db);
+                }
+            }
+        } else if (m3uBilgiOynayan != null) {
+            if(m3uBilgiOynayan.Tur != M3UBilgi.M3UTur.tv) {
+                m3uBilgiOynayan.seyredilenSure = dakika;
+                m3uBilgiOynayan.Yaz(M3UVeri.db);
+            }
+        }
     }
 }

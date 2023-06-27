@@ -38,12 +38,16 @@ public class CustomMediaController implements View.OnClickListener {
     private Date baslamaZamani;
     private int currentMin;
     private boolean yeterinceSeyrettik;
-    private M3UBilgi m3uBilgi = null;
+    public M3UBilgi m3uBilgi = null;
+    public String bolum;
+    public String sezon;
     private long totalMs;
     private boolean aranaBilir;
 
     private int birimW = 6;
     private int birimH = 6;
+    public M3UBilgi m3uBilgiOynayan;
+    private Bolum aktifBolum;
 
     public CustomMediaController(PlayerFragment mainActivity, ViewGroup anchorView, MediaPlayer mediaPlayer) {
         this.playerFragment = mainActivity;
@@ -244,12 +248,19 @@ public class CustomMediaController implements View.OnClickListener {
         this.totalMs = mediaPlayer.getLength();
         baslamaZamani = new Date();
         yeterinceSeyrettik = false;
-        Log.d("PlayerFragment", m3uBilgi.tvgName + "Playing:" + ":" + totalMs + "/" + aranaBilir);
+        Log.d("PlayerFragment", m3uBilgi.tvgName + "Playing:" + ":" + totalMs + "/" + aranaBilir + BolumSezonAd());
         if (totalMs > 0) {
             seekBar.setVisibility(View.VISIBLE);
             seekBar.setValueTo((float) (totalMs / 1000));
             seekBar.setValues(0f);
+            if (m3uBilgiOynayan.seyredilenSure > 0)
+                mediaPlayer.setTime((long) m3uBilgiOynayan.seyredilenSure * 60 * 1000);
         } else seekBar.setVisibility(View.GONE);
+    }
+
+    private String BolumSezonAd() {
+        if (bolum == null || sezon == null) return "";
+        else return "(" + sezon + "/" + bolum + ")";
     }
 
     public void ZamanAyarla(long timeChanged) {
@@ -263,21 +274,31 @@ public class CustomMediaController implements View.OnClickListener {
                 long farkZaman = (simdZaman.getTime() - baslamaZamani.getTime()) / 60000;
                 if (farkZaman >= 5) {
                     yeterinceSeyrettik = true;
-                    TarihceyeEkle();
+                    this.playerFragment.TarihceyeEkle();
                 }
             }
             int lCurrentMin = currentSec / 60;
             if (currentMin != lCurrentMin) {
                 currentMin = lCurrentMin;
+                this.playerFragment.ZamaniYaz(m3uBilgiOynayan, aktifBolum, currentMin);
             }
         }
     }
 
-    private void TarihceyeEkle() {
-    }
-
-    public void m3uBilgiAyarla(M3UBilgi m3uBilgi) {
+    public void m3uBilgiAyarla(M3UBilgi m3uBilgi, String sezon, String bolum) {
+        this.bolum = bolum;
+        this.sezon = sezon;
         this.m3uBilgi = m3uBilgi;
+        aktifBolum = m3uBilgi.bolumBul(sezon, bolum);
+        if (aktifBolum == null) {
+            this.m3uBilgiOynayan = m3uBilgi;
+        } else {
+            this.m3uBilgiOynayan = M3UVeri.tumM3Ular.getOrDefault(aktifBolum.IDBul(), null);
+            if (this.m3uBilgiOynayan == null) {
+                this.m3uBilgiOynayan = m3uBilgi;
+                aktifBolum = null;
+            }
+        }
     }
 
     public void BuyuklukAyarla() {

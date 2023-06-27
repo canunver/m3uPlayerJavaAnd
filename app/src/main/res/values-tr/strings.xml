@@ -22,4 +22,11 @@
     <string name="tur">Tür</string>
     <string name="select_type">Tür Seçiniz</string>
     <string name="yeni">Yeni</string>
+    <string name="m3u_internet_adresi_1">m3u URL Adresi (1)</string>
+    <string name="m3u_internet_adresi_2">m3u URL Adresi (2)</string>
+    <string name="m3u_internet_adresi_3">m3u URL Adresi (3)</string>
+    <string name="tmdb_erisim_anahtar">TMDB Erişim Anahtarı</string>
+    <string name="iptal">İptal</string>
+    <string name="kaydet">Kaydet</string>
+    <string name="son_tv_kanalini_oynatarak_basla">Son TV Kanalı ile Başla</string>
 </resources>

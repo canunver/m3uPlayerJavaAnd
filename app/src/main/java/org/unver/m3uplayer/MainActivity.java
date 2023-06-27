@@ -55,6 +55,7 @@ public class MainActivity extends AppCompatActivity {
         drawerLayout = findViewById(R.id.drawerLayout);
         navigationView = findViewById(R.id.navigationView);
         M3UVeri.OkuBakayim(this);
+        ProgSettings.AyarlariOku();
 
         AyarlariKapat();
 
@@ -129,8 +130,8 @@ public class MainActivity extends AppCompatActivity {
         rangeSliderYil.setStepSize(1);
     }
 
-    private void AyarlariKapat() {
-        if(ayarlarFragment != null)
+    public void AyarlariKapat() {
+        if (ayarlarFragment != null)
             ayarlarFragment = null;
         anaFragment = new PlayerFragment(this);
         getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, anaFragment).commit();
@@ -145,7 +146,10 @@ public class MainActivity extends AppCompatActivity {
     @Override
     public void onConfigurationChanged(@NonNull Configuration newConfig) {
         super.onConfigurationChanged(newConfig);
-        anaFragment.YonlendirmeAyarla();
+        if (ayarlarFragment != null)
+            ayarlarFragment.YonlendirmeAyarla();
+        else
+            anaFragment.YonlendirmeAyarla();
     }
 
     public void GoruntulenenYap() {

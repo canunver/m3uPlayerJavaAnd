@@ -84,7 +84,17 @@ public class OynaticiAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
         public void onClick(View v) {
             long currTimeInMS = Calendar.getInstance().getTimeInMillis();
             if (currTimeInMS - prevClickTimeInMS < 800) {
-                playerFragment.NesneSecildi(holder.getPosition()); //.getBindingAdapterPosition()
+                String bolum;
+                String sezon;
+                if (holder instanceof SeriViewHolder) {
+                    SeriViewHolder svh = (SeriViewHolder) holder;
+                    sezon = svh.aktifSezonAd;
+                    bolum = svh.aktifBolumAd;
+                } else {
+                    sezon = null;
+                    bolum = null;
+                }
+                playerFragment.NesneSecildi(holder.getAdapterPosition(), sezon, bolum);
             }
             prevClickTimeInMS = currTimeInMS;
         }
@@ -129,7 +139,6 @@ public class OynaticiAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
             filmAd.setText(blg.tvgName);
             filmOzellik.setText(blg.filmYil);
             M3UListeArac.ImageYukle(filmAfis, blg.tvgLogo);
-            //filmAciklama.setText("blg.filmYil");
         }
     }
 
@@ -157,6 +166,7 @@ public class OynaticiAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
             bolumSec = itemView.findViewById(R.id.bolumSec);
 
             sezonSec.setOnItemClickListener((parent, view, position, id) -> SezonSecildi(position));
+            bolumSec.setOnItemClickListener((parent, view, position, id) -> BolumSecildi(position));
             itemView.setOnClickListener(new MyOnClickListener(this));
         }
 
@@ -186,6 +196,9 @@ public class OynaticiAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
             if (s != null) {
                 for (Bolum b : s.bolumler) {
                     al.add(b.bolum);
+                    for (int i = 1; i < b.idler.size(); i++) {
+                        al.add(b.bolum + " (" + (i + 1) + ")");
+                    }
                 }
             }
             if (al.size() == 0)

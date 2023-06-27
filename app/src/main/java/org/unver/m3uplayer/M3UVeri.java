@@ -1,6 +1,6 @@
 package org.unver.m3uplayer;
 
-import android.content.Context;
+import android.content.ContentValues;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.util.Log;
@@ -9,8 +9,6 @@ import java.util.ArrayList;
 import java.util.Hashtable;
 
 public class M3UVeri {
-
-
     public static Hashtable<String, M3UBilgi> tumM3Ular = new Hashtable<>();
     public static ArrayList<M3UGrup> tvGruplari = new ArrayList<>();
     public static ArrayList<M3UGrup> filmGruplari = new ArrayList<>();
@@ -18,6 +16,8 @@ public class M3UVeri {
     public static Hashtable<String, String> tumSerilerAd = new Hashtable<>();
     private static MainActivity context;
     public static int minYil = 10000;
+    private static M3U_DB dbHelper = null;
+    public static SQLiteDatabase db = null;
 
     public static ArrayList<M3UGrup> GrupKodBul(int position) {
         if (position == 0) return tvGruplari;
@@ -25,10 +25,12 @@ public class M3UVeri {
         else return seriGruplari;
     }
 
-    public static void OkuBakayim(MainActivity mcontext) {
-        context = mcontext;
-        M3U_DB dbHelper = new M3U_DB(context);
-        SQLiteDatabase db = dbHelper.getWritableDatabase();
+    public static void OkuBakayim(MainActivity mainActivity) {
+        context = mainActivity;
+        if (dbHelper == null)
+            dbHelper = new M3U_DB(context);
+        if (db == null)
+            db = dbHelper.getWritableDatabase();
 
         Cursor cursor = db.query(M3U_DB.TABLE_M3U, null, null, null, null, null, null);
 
@@ -45,6 +47,8 @@ public class M3UVeri {
                     int gizliIndex = cursor.getColumnIndex("gizli");
                     int adultIndex = cursor.getColumnIndex("adult");
                     int tmdbIdIndex = cursor.getColumnIndex("tmdbId");
+                    int guncellemeTarihIndex = cursor.getColumnIndex("guncellemeTarih");
+                    int seyredilenSureIndex = cursor.getColumnIndex("seyredilenSure");
 
                     do {
                         String ID = cursor.getString(IDIndex);
@@ -58,14 +62,17 @@ public class M3UVeri {
                         int adult = cursor.getInt(adultIndex);
                         int tmdbId = cursor.getInt(tmdbIdIndex);
 
+                        String guncellemeTarih = cursor.getString(guncellemeTarihIndex);
+                        long seyredilenSure = cursor.getLong(seyredilenSureIndex);
+
                         M3UBilgi m3u = new M3UBilgi(ID, tvgId, tvgName,
                                 tvgLogo, groupTitle, urlAdres,
-                                eklemeTarih, gizli, adult, tmdbId);
-                        if(m3u.filmYilInt>0 && m3u.filmYilInt<minYil)
+                                eklemeTarih, gizli, adult, tmdbId, guncellemeTarih, seyredilenSure);
+                        if (m3u.filmYilInt > 0 && m3u.filmYilInt < minYil)
                             minYil = m3u.filmYilInt;
                         GruplaraIsle(m3u, true);
                     } while (cursor.moveToNext());
-                    if(minYil > 3000) minYil = 0;
+                    if (minYil > 3000) minYil = 0;
                 }
             } finally {
                 cursor.close();
@@ -73,8 +80,6 @@ public class M3UVeri {
         }
         if (tumM3Ular.size() == 0 || filmGruplari.size() == 0 || seriGruplari.size() == 0)
             CekBakalim();
-        //else
-        //TurSecildi(0);
     }
 
     private static M3UGrup GrupBulYoksaEkle(ArrayList<M3UGrup> anaGrup, String groupTitle, boolean gelenGrup, boolean yoksaEkle) {
@@ -92,34 +97,38 @@ public class M3UVeri {
         return yeni;
     }
 
-
-    private static void GrupaEkle(ArrayList<M3UGrup> anaGrup, M3UBilgi m3u, boolean gelenGrup) {
+    private static void GrubaEkle(ArrayList<M3UGrup> anaGrup, M3UBilgi m3u, boolean gelenGrup) {
         M3UGrup grp = GrupBulYoksaEkle(anaGrup, m3u.groupTitle, gelenGrup, true);
-        grp.kanallar.add(m3u.ID);
+        if (grp.ProgBul(m3u.ID) == null)
+            grp.kanallar.add(m3u.ID);
     }
 
     public static void GruplaraIsle(M3UBilgi m3u, boolean gelenGrup) {
         tumM3Ular.put(m3u.ID, m3u);
         if (m3u.Tur == M3UBilgi.M3UTur.tv) {
-            GrupaEkle(tvGruplari, m3u, gelenGrup);
+            GrubaEkle(tvGruplari, m3u, gelenGrup);
         } else if (m3u.Tur == M3UBilgi.M3UTur.film) {
-            GrupaEkle(filmGruplari, m3u, gelenGrup);
+            GrubaEkle(filmGruplari, m3u, gelenGrup);
         } else if (m3u.Tur == M3UBilgi.M3UTur.seri) {
-            String m3uID;
             M3UBilgi seri;
             if (!tumSerilerAd.containsKey(m3u.seriAd)) {
-                GrupaEkle(seriGruplari, m3u, gelenGrup);
-                m3uID = m3u.ID;
+                GrubaEkle(seriGruplari, m3u, gelenGrup);
                 tumSerilerAd.put(m3u.seriAd, m3u.ID);
                 seri = m3u;
             } else {
-                m3uID = tumSerilerAd.get(m3u.seriAd);
-                seri = tumM3Ular.get(m3uID);
+                seri = tumM3Ular.get(tumSerilerAd.get(m3u.seriAd));
             }
             Sezon sezon = SezonBulYoksaEkle(seri, m3u.sezon);
-            sezon.bolumler.add(new Bolum(m3u.ID, m3u.bolum));
+            Bolum blm = sezon.BolumBul(m3u.bolum);
+            if (blm == null)
+                sezon.bolumler.add(new Bolum(m3u.ID, m3u.bolum));
+            else
+                blm.AddId(m3u.ID);
+            if (m3u.eklemeTarih.compareTo(seri.eklemeTarih) > 0)
+                seri.eklemeTarih = m3u.eklemeTarih;
         }
     }
+
     public static Sezon SezonBulYoksaEkle(M3UBilgi seri, String sezonAd) {
         for (Sezon item : seri.seriSezonlari) {
             if (item.sezonAd.equalsIgnoreCase(sezonAd))
@@ -132,8 +141,6 @@ public class M3UVeri {
 
     public static void CekBakalim() {
         try {
-            M3U_DB dbHelper = new M3U_DB(context);
-            SQLiteDatabase db = dbHelper.getWritableDatabase();
             new InternettenOku().performNetworkOperation((MainActivity) context, db, "A");
         } catch (Exception e) {
             Log.d("Hata", e.getMessage());
@@ -141,6 +148,7 @@ public class M3UVeri {
     }
 
     public static int SiraBul(M3UBilgi.M3UTur aktifTur) {
+        //mainActivity.aktifTur = position == 2 ? M3UBilgi.M3UTur.seri : (position == 1 ? M3UBilgi.M3UTur.film : M3UBilgi.M3UTur.tv);
         if (aktifTur == M3UBilgi.M3UTur.film) return 1;
         if (aktifTur == M3UBilgi.M3UTur.seri) return 2;
         return 0;
@@ -157,9 +165,48 @@ public class M3UVeri {
 
     public static M3UGrup GrupBul(ArrayList<M3UGrup> grupListesi, String aktifGrupAd) {
         for (M3UGrup g : grupListesi) {
-            if (g.grupAdi == aktifGrupAd)
+            if (g.grupAdi.equals(aktifGrupAd))
                 return g;
         }
         return null;
+    }
+
+    @SuppressWarnings("ReassignedVariable")
+    public static String AyarOku(String kod) {
+        String deger = null;
+        try {
+            Cursor cursor = db.query(M3U_DB.TABLE_AYARLAR, null, "KOD = ?", new String[]{kod}, null, null, null);
+
+            if (cursor != null) {
+                try {
+                    if (cursor.moveToFirst()) {
+                        int DEGERIndex = cursor.getColumnIndex("DEGER");
+                        deger = cursor.getString(DEGERIndex);
+                    }
+                } catch (Exception ex) {
+                    Log.d("M3UVeri", ex.getMessage());
+                } finally {
+                    cursor.close();
+                }
+            }
+        } catch (Exception ex) {
+            Log.d("M3UVeri", ex.getMessage());
+        }
+        return deger;
+    }
+
+    public static void AyarYaz(String kod, String deger) {
+        try {
+            ContentValues values = new ContentValues();
+            values.put("KOD", kod);
+            values.put("DEGER", deger);
+            db.insertWithOnConflict(M3U_DB.TABLE_AYARLAR, null, values, SQLiteDatabase.CONFLICT_REPLACE);
+        } catch (Exception ex) {
+            Log.d("M3UVeri", ex.getMessage());
+        }
+    }
+
+    public static M3UBilgi.M3UTur TurBul(int position) {
+        return position == 2 ? M3UBilgi.M3UTur.seri : (position == 1 ? M3UBilgi.M3UTur.film : M3UBilgi.M3UTur.tv);
     }
 }

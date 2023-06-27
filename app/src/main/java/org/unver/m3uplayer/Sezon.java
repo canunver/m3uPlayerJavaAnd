@@ -10,4 +10,13 @@ public class Sezon {
     public Sezon(String sezonAd) {
         this.sezonAd = sezonAd;
     }
+
+    public Bolum BolumBul(String bolum) {
+        for (Bolum b : bolumler)
+        {
+            if(b.bolum.equals(bolum))
+                return b;
+        }
+        return  null;
+    }
 }

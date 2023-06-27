@@ -12,7 +12,7 @@
         <item>Film</item>
         <item>Series</item>
     </string-array>
-    <!-- TODO: Remove or change this placeholder text -->
+
     <string name="yayin_tur">Broadcast Type</string>
     <string name="arama_metni">Search Text </string>
     <string name="ayarlar">Settings</string>
@@ -24,4 +24,11 @@
     <string name="tur">Type</string>
     <string name="select_type">Select Type</string>
     <string name="yeni">New</string>
+    <string name="m3u_internet_adresi_1">m3u URL Address (1)</string>
+    <string name="m3u_internet_adresi_2">m3u URL Address (2)</string>
+    <string name="m3u_internet_adresi_3">m3u URL Address (3)</string>
+    <string name="tmdb_erisim_anahtar">TMDB Access Key</string>
+    <string name="iptal">Cancel</string>
+    <string name="kaydet">Save</string>
+    <string name="son_tv_kanalini_oynatarak_basla">Start last TV channel</string>
 </resources>

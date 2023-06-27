@@ -1,102 +1,123 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/ayarlarLayout"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:orientation="vertical"
     tools:context=".AyarlarFragment">
 
-    <!-- TODO: Update blank fragment layout -->
-    <TextView
+    <TextView android:id="@+id/lblm3uAdresA"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:text="m3u Internet Adresi (1)" />
-    <EditText
-        android:id="@+id/m3uAdresA"
-        android:layout_width="match_parent"
-        android:layout_height="50dp"
-        android:layout_marginStart="6dp"
-        android:background="@android:drawable/editbox_background"
-        android:inputType="text"
-        app:layout_constraintEnd_toEndOf="parent"
+        android:text="@string/m3u_internet_adresi_1"
         app:layout_constraintStart_toStartOf="parent"
-        tools:ignore="LabelFor,SpeakableTextPresentCheck,VisualLintTextFieldSize"
-        android:importantForAutofill="no" />
+        app:layout_constraintTop_toTopOf="parent" />
 
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:text="m3u Internet Adresi (2)" />
-    <EditText
-        android:id="@+id/m3uAdresB"
+    <EditText android:id="@+id/m3uAdresA"
         android:layout_width="match_parent"
         android:layout_height="50dp"
         android:layout_marginStart="6dp"
         android:background="@android:drawable/editbox_background"
+        android:importantForAutofill="no"
         android:inputType="text"
-        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        tools:ignore="LabelFor,SpeakableTextPresentCheck,VisualLintTextFieldSize"
-        android:importantForAutofill="no" />
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:text="m3u Internet Adresi (3)" />
-    <EditText
-        android:id="@+id/m3uAdresC"
-        android:layout_width="match_parent"
-        android:layout_height="50dp"
-        android:layout_marginStart="6dp"
-        android:background="@android:drawable/editbox_background"
-        android:inputType="text"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        tools:ignore="LabelFor,SpeakableTextPresentCheck,VisualLintTextFieldSize"
-        android:importantForAutofill="no" />
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:text="TMDB Erişim Anahtarı" />
-    <EditText
-        android:id="@+id/tmdbErisimAnahtar"
-        android:layout_width="match_parent"
-        android:layout_height="50dp"
-        android:layout_marginStart="6dp"
-        android:background="@android:drawable/editbox_background"
-        android:inputType="text"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        tools:ignore="LabelFor,SpeakableTextPresentCheck,VisualLintTextFieldSize"
-        android:importantForAutofill="no" />
+        app:layout_constraintTop_toBottomOf="@id/lblm3uAdresA"
+        tools:ignore="LabelFor,SpeakableTextPresentCheck,VisualLintTextFieldSize" />
 
+    <TextView android:id="@+id/lblm3uAdresB"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:text="@string/m3u_internet_adresi_2"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/m3uAdresA" />
 
-    <RelativeLayout
+    <EditText android:id="@+id/m3uAdresB"
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:layout_marginStart="6dp"
+        android:background="@android:drawable/editbox_background"
+        android:importantForAutofill="no"
+        android:inputType="text"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/lblm3uAdresB"
+        tools:ignore="LabelFor,SpeakableTextPresentCheck,VisualLintTextFieldSize" />
+
+    <TextView android:id="@+id/lblm3uAdresC"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:text="@string/m3u_internet_adresi_3"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/m3uAdresB" />
+
+    <EditText android:id="@+id/m3uAdresC"
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:layout_marginStart="6dp"
+        android:background="@android:drawable/editbox_background"
+        android:importantForAutofill="no"
+        android:inputType="text"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/lblm3uAdresC"
+        tools:ignore="LabelFor,SpeakableTextPresentCheck,VisualLintTextFieldSize" />
+
+    <TextView android:id="@+id/lbltmdbErisimAnahtar"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:text="@string/tmdb_erisim_anahtar"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/m3uAdresC" />
+
+    <EditText android:id="@+id/tmdbErisimAnahtar"
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:layout_marginStart="6dp"
+        android:background="@android:drawable/editbox_background"
+        android:importantForAutofill="no"
+        android:inputType="text"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/lbltmdbErisimAnahtar"
+        tools:ignore="LabelFor,SpeakableTextPresentCheck,VisualLintTextFieldSize" />
+
+    <LinearLayout
+        android:id="@+id/cbLayout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="0dp"
-        android:orientation="horizontal">
+        android:orientation="horizontal"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/tmdbErisimAnahtar">
 
-        <Button
-            android:id="@+id/btnIptal"
-            android:layout_width="150dp"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="20dp"
-            android:backgroundTint="@color/design_default_color_error"
-            android:layout_marginRight="20dp"
-            android:layout_toStartOf="@id/btnKaydet"
-            android:text="İptal" />
+        <CheckBox
+            android:id="@+id/sonTvKanalBaslat"
+            android:layout_width="200dp"
+            android:layout_height="50dp"
+            android:text="@string/son_tv_kanalini_oynatarak_basla"
+            app:layout_constraintStart_toStartOf="parent" />
+    </LinearLayout>
 
-        <Button
-            android:id="@+id/btnKaydet"
-            android:layout_width="150dp"
-            android:layout_height="wrap_content"
-            android:layout_alignParentEnd="true"
-            android:text="Kaydet"
-            android:layout_marginTop="20dp"
-            android:layout_marginRight="20dp"
-            tools:ignore="SpeakableTextPresentCheck" />
-    </RelativeLayout>
+    <Button
+        android:id="@+id/btnIptal"
+        android:layout_width="150dp"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="10dp"
+        android:text="@string/iptal"
+        app:layout_constraintEnd_toStartOf="@+id/btnKaydet"
+        app:layout_constraintTop_toBottomOf="@id/cbLayout"
+        tools:ignore="SpeakableTextPresentCheck" />
 
+    <Button
+        android:id="@+id/btnKaydet"
+        android:layout_width="150dp"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="10dp"
+        android:text="@string/kaydet"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/cbLayout"
+        tools:ignore="SpeakableTextPresentCheck" />
 
-</LinearLayout>
+</androidx.constraintlayout.widget.ConstraintLayout>

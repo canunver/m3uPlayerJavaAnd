@@ -22,6 +22,16 @@ public class InternettenOku {
                 M3UListeArac.DegerBul(ilkSatir, "group-title"),
                 ikinciSatir,
                 suAn);
+        M3UBilgi m3uEski = M3UVeri.tumM3Ular.getOrDefault(m3u.ID, null);
+
+        if(m3uEski!=null)
+        {
+            m3u.eklemeTarih = m3uEski.eklemeTarih;
+            m3u.adult = m3uEski.adult;
+            m3u.gizli = m3uEski.gizli;
+            m3u.seyredilenSure = m3uEski.seyredilenSure;
+            m3u.tmdbId = m3uEski.tmdbId;
+        }
         m3u.Yaz(db);
         M3UVeri.GruplaraIsle(m3u, true);
     }
