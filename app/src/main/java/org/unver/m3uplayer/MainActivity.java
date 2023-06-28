@@ -13,7 +13,6 @@ import android.app.AlertDialog;
 import android.content.pm.ActivityInfo;
 import android.content.res.Configuration;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.view.Window;
 import android.widget.AdapterView;
@@ -45,6 +44,7 @@ public class MainActivity extends AppCompatActivity {
     private AlertDialog turAldialog;
     private RangeSlider rangeSliderPuan;
     private RangeSlider rangeSliderYil;
+    private ArrayAdapter<String> aaTur;
 
     @SuppressLint("MissingInflatedId")
     @Override
@@ -60,7 +60,7 @@ public class MainActivity extends AppCompatActivity {
         AyarlariKapat();
 
         String[] turListesi = getResources().getStringArray(R.array.turListesi);
-        ArrayAdapter<String> aaTur = new ArrayAdapter<String>(this, com.google.android.material.R.layout.support_simple_spinner_dropdown_item, turListesi);
+        aaTur = new ArrayAdapter<String>(this, com.google.android.material.R.layout.support_simple_spinner_dropdown_item, turListesi);
         turSecDDL = findViewById(R.id.turSec);
         turSecDDL.setAdapter(aaTur);
         turSecDDL.setText(aaTur.getItem(0), false);
@@ -79,7 +79,7 @@ public class MainActivity extends AppCompatActivity {
         turSecDDL.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                anaFragment.TurSecildi(position);
+                anaFragment.TurSecildi(position, false);
             }
         });
 
@@ -128,6 +128,7 @@ public class MainActivity extends AppCompatActivity {
         rangeSliderYil.setValues((float) M3UVeri.minYil, (float) yil);
         rangeSliderYil.setValueFrom(M3UVeri.minYil);
         rangeSliderYil.setStepSize(1);
+        ArkaPlanIslemleri.baslat();
     }
 
     public void AyarlariKapat() {
@@ -141,6 +142,7 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
+        ArkaPlanIslemleri.kapat();
     }
 
     @Override
@@ -172,5 +174,10 @@ public class MainActivity extends AppCompatActivity {
 //        TurSecildi(M3UVeri.SiraBul(mainActivity.aktifTur));
 //
 //        imm.hideSoftInputFromWindow(filtreAlan.getWindowToken(), 0);
+    }
+
+    public void setAktifTur(int aktifTurPos) {
+        turSecDDL.setText(aaTur.getItem(aktifTurPos), false);
+        this.aktifTur = M3UVeri.TurBul(aktifTurPos);
     }
 }

@@ -9,11 +9,11 @@ public class ProgSettings {
     public static String m3u_internet_adresi_3;
     public static String m3u_internet_adresi_2;
     public static String m3u_internet_adresi_1;
-    private static M3UBilgi.M3UTur sonM3UTur;
-    private static String sonGrup;
-    private static String sonProgID;
-    private static String sonTVGrup;
-    private static String sonTVProgID;
+    public static M3UBilgi.M3UTur sonM3UTur;
+    public static String sonGrup;
+    public static String sonProgID;
+    public static String sonTVGrup;
+    public static String sonTVProgID;
 
     public static int ConvertToInt32(String strDeger, int varsayilanDeger) {
         if (strDeger != null && !strDeger.equals("")) {

@@ -11,9 +11,7 @@ import android.widget.FrameLayout;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 
-
 import androidx.annotation.NonNull;
-import androidx.drawerlayout.widget.DrawerLayout;
 
 import com.google.android.material.slider.RangeSlider;
 
@@ -23,8 +21,8 @@ import java.util.Date;
 
 public class CustomMediaController implements View.OnClickListener {
     private final MediaPlayer mediaPlayer;
-    private PlayerFragment playerFragment;
-    private ViewGroup anchorView;
+    private final PlayerFragment playerFragment;
+    private final ViewGroup anchorView;
 
     private RangeSlider seekBar;
     private long timeout;
@@ -48,6 +46,8 @@ public class CustomMediaController implements View.OnClickListener {
     private int birimH = 6;
     public M3UBilgi m3uBilgiOynayan;
     private Bolum aktifBolum;
+    private boolean oynuyor;
+    private boolean pauseBaslat;
 
     public CustomMediaController(PlayerFragment mainActivity, ViewGroup anchorView, MediaPlayer mediaPlayer) {
         this.playerFragment = mainActivity;
@@ -174,9 +174,11 @@ public class CustomMediaController implements View.OnClickListener {
         if (m3uBilgi == null) return;
         resetTimeout();
         // Tuşlara tıklandığında gerçekleştirilecek işlemleri burada tanımlayabilirsiniz
-        if (view == ekranYerler[0].button) {
+        if (view == ekranYerler[0].button) { // Tam ekran tuşuna tıklandığında yapılacak işlemler
             TamEkranDegistir();
-            // Tam ekran tuşuna tıklandığında yapılacak işlemler
+        }
+        else if (view == ekranYerler[4].button) { // Oynat/Durdur tuşuna tıklandığında yapılacak işlemler
+            OynatDurdurDegistir();
         }
 //        else if (view == ekranYerler[1].button) {
 //            // Altyazı tuşuna tıklandığında yapılacak işlemler
@@ -187,8 +189,27 @@ public class CustomMediaController implements View.OnClickListener {
 //        }
     }
 
+    public void OynatDurdurDegistir() {
+        int resId;
+        if(oynuyor) {
+            mediaPlayer.pause();
+            resId = R.drawable.baseline_play_circle_outline_24;
+        }
+        else {
+            mediaPlayer.play();
+            resId = R.drawable.baseline_pause_circle_outline_24;
+        }
+        oynuyor = !oynuyor;
+        ekranYerler[4].button.setImageResource(resId);
+        //ekranYerler[4].button.requestLayout();
+    }
+
     public void TamEkrandanCik() {
         if (tamEkran) TamEkranDegistir();
+    }
+
+    public void TamEkrandanYap() {
+        if (!tamEkran) TamEkranDegistir();
     }
 
     public void TamEkranDegistir() {
@@ -224,7 +245,6 @@ public class CustomMediaController implements View.OnClickListener {
         @Override
         public void run() {
             showHide(View.GONE);
-            ;
         }
     };
 
@@ -242,20 +262,24 @@ public class CustomMediaController implements View.OnClickListener {
         else showHide(View.GONE);
     }
 
-    public void BilgiAyarla() {
+    public void BilgiAyarla(boolean pauseBaslat) {
         this.durdurulabilir = mediaPlayer.isSeekable();
         this.aranaBilir = mediaPlayer.isSeekable();
         this.totalMs = mediaPlayer.getLength();
+        this.pauseBaslat = pauseBaslat;
         baslamaZamani = new Date();
         yeterinceSeyrettik = false;
         Log.d("PlayerFragment", m3uBilgi.tvgName + "Playing:" + ":" + totalMs + "/" + aranaBilir + BolumSezonAd());
+        oynuyor = true;
         if (totalMs > 0) {
             seekBar.setVisibility(View.VISIBLE);
             seekBar.setValueTo((float) (totalMs / 1000));
             seekBar.setValues(0f);
             if (m3uBilgiOynayan.seyredilenSure > 0)
-                mediaPlayer.setTime((long) m3uBilgiOynayan.seyredilenSure * 60 * 1000);
-        } else seekBar.setVisibility(View.GONE);
+                mediaPlayer.setTime(m3uBilgiOynayan.seyredilenSure * 60 * 1000);
+        }
+        else
+            seekBar.setVisibility(View.GONE);
     }
 
     private String BolumSezonAd() {
@@ -271,7 +295,7 @@ public class CustomMediaController implements View.OnClickListener {
             if (totalMs > 0) seekBar.setValues((float) currentSec);
             if (!yeterinceSeyrettik) {
                 Date simdZaman = new Date();
-                long farkZaman = (simdZaman.getTime() - baslamaZamani.getTime()) / 60000;
+                long farkZaman = (simdZaman.getTime() - baslamaZamani.getTime()) / 6000;
                 if (farkZaman >= 5) {
                     yeterinceSeyrettik = true;
                     this.playerFragment.TarihceyeEkle();
@@ -282,6 +306,11 @@ public class CustomMediaController implements View.OnClickListener {
                 currentMin = lCurrentMin;
                 this.playerFragment.ZamaniYaz(m3uBilgiOynayan, aktifBolum, currentMin);
             }
+        }
+        if(this.pauseBaslat)
+        {
+            this.pauseBaslat = false;
+            this.OynatDurdurDegistir();
         }
     }
 
@@ -307,6 +336,7 @@ public class CustomMediaController implements View.OnClickListener {
             Log.d("CustomMediaController", "BuyuklukAyarla");
         }
     }
+
 
     private static class EkranYer {
         private final int buyukluk;

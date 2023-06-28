@@ -60,6 +60,13 @@ public class PlayerFragment extends Fragment {
     MainActivity mainActivity;
     boolean isLoading = false;
     ArrayAdapter<String> grupAdapter;
+    private String otoAc = null;
+    private M3UBilgi.M3UTur otoTur;
+    private String otoSezon = null;
+    private String otoBolum = null;
+    private boolean pauseBaslat;
+    private boolean tamEkranBaslat;
+    private boolean ilkPlay;
 
     public PlayerFragment(MainActivity mainActivity) {
         this.mainActivity = mainActivity;
@@ -74,6 +81,10 @@ public class PlayerFragment extends Fragment {
     public void onResume() {
         super.onResume();
         createPlayer();
+        if (!ProgSettings.StringIsNUllOrEmpty(otoAc)) {
+            OynatBakalim(M3UVeri.tumM3Ular.getOrDefault(otoAc, null), otoSezon, otoBolum, otoTur != M3UBilgi.M3UTur.tv, true);
+            otoAc = null;
+        }
     }
 
     private void createPlayer() {
@@ -176,13 +187,20 @@ public class PlayerFragment extends Fragment {
         grupSec.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                GrupSecildi(position);
+                GrupSecildi(position, false);
             }
         });
         mVideoView = currView.findViewById(R.id.playerView);
         holder = mVideoView.getHolder();
         YonlendirmeAyarla();
-        TurSecildi(0);
+        int aktifTurPos = 0;
+        if (ProgSettings.son_tv_kanalini_oynatarak_basla && ProgSettings.StringIsNUllOrEmpty(ProgSettings.sonTVProgID))
+            aktifTurPos = 0;
+        else
+            aktifTurPos = M3UVeri.SiraBul(ProgSettings.sonM3UTur);
+        if (aktifTurPos != 0)
+            mainActivity.setAktifTur(aktifTurPos);
+        TurSecildi(aktifTurPos, true);
         return currView;
     }
 
@@ -212,7 +230,7 @@ public class PlayerFragment extends Fragment {
                                 handler.postDelayed(new Runnable() {
                                     @Override
                                     public void run() {
-                                        Yukle(false);
+                                        Yukle(false, false);
                                         isLoading = false;
                                     }
                                 }, 50);
@@ -223,13 +241,23 @@ public class PlayerFragment extends Fragment {
         );
     }
 
-    public void TurSecildi(int position) {
+    public void TurSecildi(int position, boolean acilistan) {
         mainActivity.aktifTur = M3UVeri.TurBul(position);
         ArrayList<String> s = new ArrayList<String>();
         ArrayList<M3UGrup> grup = M3UVeri.GrupKodBul(position);
 
         int yerInd = -1;
-        String simd = grupSec.getText().toString();
+        String simd = null;
+        if (acilistan) {
+            if (ProgSettings.son_tv_kanalini_oynatarak_basla) {
+                if (!ProgSettings.StringIsNUllOrEmpty(ProgSettings.sonTVGrup))
+                    simd = ProgSettings.sonTVGrup;
+            }
+            if (simd == null && !ProgSettings.StringIsNUllOrEmpty(ProgSettings.sonGrup))
+                simd = ProgSettings.sonGrup;
+        }
+        if (simd == null)
+            simd = grupSec.getText().toString();
         for (M3UGrup item : grup) {
             if (item.FiltreyeUygunMu(M3UVeri.tumM3Ular, filtre)) {
                 s.add(item.grupAdi);
@@ -242,19 +270,42 @@ public class PlayerFragment extends Fragment {
         grupAdapter = new ArrayAdapter<String>(mainActivity, com.google.android.material.R.layout.support_simple_spinner_dropdown_item, s);
         grupSec.setAdapter(grupAdapter);
         grupSec.setText(grupAdapter.getItem(yerInd), false);
-        GrupSecildi(yerInd);
+        GrupSecildi(yerInd, acilistan);
     }
 
-    public void GrupSecildi(int position) {
+    public void GrupSecildi(int position, boolean acilistan) {
         aktifGrupAd = grupAdapter.getItem(position);
-        Yukle(true);
+        Yukle(true, acilistan);
+        if (acilistan) {
+            otoAc = null;
+            otoTur = M3UBilgi.M3UTur.tv;
+            otoSezon = null;
+            otoBolum = null;
+            if (ProgSettings.son_tv_kanalini_oynatarak_basla) {
+                if (!ProgSettings.StringIsNUllOrEmpty(ProgSettings.sonTVProgID)) {
+                    otoAc = ProgSettings.sonTVProgID;
+                    otoTur = M3UBilgi.M3UTur.tv;
+                }
+            } else {
+                otoAc = ProgSettings.sonProgID;
+                otoTur = ProgSettings.sonM3UTur;
+            }
+        }
     }
 
-    private void Yukle(boolean ilk) {
+    private void Yukle(boolean ilk, boolean acilistan) {
         M3UGrup bulunanGrup = M3UVeri.GrupBul(M3UVeri.GrupDegiskenBul(mainActivity.aktifTur), aktifGrupAd);
         if (ilk)
             kanalListe.clear();
+        String araProg = null;
+        if (acilistan) {
+            if (ProgSettings.son_tv_kanalini_oynatarak_basla && !ProgSettings.StringIsNUllOrEmpty(ProgSettings.sonTVProgID))
+                araProg = ProgSettings.sonTVProgID;
+            if (araProg == null)
+                araProg = ProgSettings.sonProgID;
+        }
         int basla = kanalListe.size();
+        int scrollPos = 0;
         if (bulunanGrup != null) {
             int kanalSay = 0;
             int eklenenSay = 0;
@@ -265,16 +316,18 @@ public class PlayerFragment extends Fragment {
                     if (kanalSay <= basla) continue;
                     if (eklenenSay++ > 20) break;
                     kanalListe.add(m3u);
+                    if (araProg != null && araProg.equals(m3u.ID))
+                        scrollPos = eklenenSay - 1;
                 }
             }
         }
         if (ilk)
-            recyclerView.scrollToPosition(0);
+            recyclerView.scrollToPosition(scrollPos);
         kanalAdapter.veriDegisti();
     }
 
     public void NesneSecildi(int pos, String sezon, String bolum) {
-        OynatBakalim(kanalListe.get(pos), sezon, bolum);
+        OynatBakalim(kanalListe.get(pos), sezon, bolum, false, false);
     }
 
     public void OynatmaBolgesiBuyuklukAyarla() {
@@ -287,7 +340,7 @@ public class PlayerFragment extends Fragment {
         }
     }
 
-    void OynatBakalim(M3UBilgi m3uBilgiGrup, String sezon, String bolum) {
+    void OynatBakalim(M3UBilgi m3uBilgiGrup, String sezon, String bolum, boolean paused, boolean tamEkran) {
         if (!buyuklukAyarlandi) {
             OynatmaBolgesiBuyuklukAyarla();
         } else
@@ -297,7 +350,10 @@ public class PlayerFragment extends Fragment {
 
         mediaItem = new Media(libVLC, Uri.parse(mediaController.m3uBilgiOynayan.urlAdres));
         mMediaPlayer.setMedia(mediaItem);
+        ilkPlay = true;
         mMediaPlayer.play();
+        pauseBaslat = paused;
+        tamEkranBaslat = tamEkran;
         mMediaPlayer.setEventListener(new MediaPlayer.EventListener() {
             @Override
             public void onEvent(MediaPlayer.Event event) {
@@ -305,7 +361,14 @@ public class PlayerFragment extends Fragment {
                 } else if (event.type == MediaPlayer.Event.PausableChanged) {//İkinci oluşan event 270
                     //Log.d("PlayerFragment", m3uBilgi.tvgName + "TimeChanged");
                 } else if (event.type == MediaPlayer.Event.Playing) {//Üçüncü oluşan event 260
-                    mediaController.BilgiAyarla();
+                    if (ilkPlay) {
+                        mediaController.BilgiAyarla(pauseBaslat);
+                        if (tamEkranBaslat)
+                            mediaController.TamEkrandanYap();
+                        pauseBaslat = false;
+                        tamEkranBaslat = false;
+                        ilkPlay = false;
+                    }
                     //Log.d("PlayerFragment", m3uBilgi.tvgName + "Playing:" + ":"+mMediaPlayer.getTime() + "/" + mMediaPlayer.getLength());
                 } else if (event.type == MediaPlayer.Event.ESAdded) {//Dördüncü oluşan event 276
                     //Log.d("PlayerFragment", m3uBilgi.tvgName + "TimeChanged");
@@ -388,7 +451,7 @@ public class PlayerFragment extends Fragment {
                 }
             }
         } else if (m3uBilgiOynayan != null) {
-            if(m3uBilgiOynayan.Tur != M3UBilgi.M3UTur.tv) {
+            if (m3uBilgiOynayan.Tur != M3UBilgi.M3UTur.tv) {
                 m3uBilgiOynayan.seyredilenSure = dakika;
                 m3uBilgiOynayan.Yaz(M3UVeri.db);
             }
