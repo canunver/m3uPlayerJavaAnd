@@ -77,6 +77,19 @@ public class M3UBilgi {
         return null;
     }
 
+    public String TMDBTur() {
+        if (Tur == M3UTur.film)
+            return "movie";
+        return "tv";
+    }
+
+    public String SorguYap() {
+        if (Tur == M3UTur.film)
+            return filmAd;
+        else
+            return tvgName.replace(" ", "+");
+    }
+
     public enum M3UTur {
         seri, film, tv
     }

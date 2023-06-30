@@ -2,6 +2,7 @@ package org.unver.m3uplayer;
 
 import android.util.Log;
 
+import java.util.Calendar;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -10,9 +11,10 @@ public class ArkaPlanIslemleri {
     private static Timer timer = null;
     private static boolean isPaused;
     private static final long INTERVAL = 10 * 60 * 1000; // 10 dakika
-    private static boolean calisiyor = false;
+    private static MainActivity mainActivity;
     private int state = 0;
-    public static void baslat() {
+    public static void baslat(MainActivity mMainActivity) {
+        mainActivity =  mMainActivity;
         if (timer != null) {
             timer.cancel();
             timer = null;
@@ -22,7 +24,7 @@ public class ArkaPlanIslemleri {
         timer.scheduleAtFixedRate(new TimerTask() {
             @Override
             public void run() {
-                if (!isPaused && !calisiyor) {
+                if (!isPaused && !mainActivity.VeriCekiliyorMu()) {
                     performBackgroundTask();
                 }
             }
@@ -30,16 +32,30 @@ public class ArkaPlanIslemleri {
     }
 
     private static void performBackgroundTask() {
-        calisiyor = true;
+        Log.i("M3UVeri", "performBackgroundTask, sonCekilmeZamani: " + ProgSettings.sonCekilmeZamani);
+
         try {
-            throw new Exception("Hazır değil");
+            if(ProgSettings.sonCekilmeZamani == 0 || GecenSureSaat(Calendar.getInstance().getTimeInMillis(), ProgSettings.sonCekilmeZamani)>=24)
+            {
+                mainActivity.internettenCekiliyorYap(1);
+                M3UVeri.CekBakalim();
+            }
+            else
+            {
+                mainActivity.internettenCekiliyorYap(2);
+                M3UVeri.FilmBilgiCek();
+            }
         } catch (Exception ex) {
-            Log.d("ArkaPlanIslemleri", ex.getMessage());
+            Log.d("M3UVeri", ex.getMessage());
         }
-        calisiyor = false;
+    }
+
+    private static float GecenSureSaat(long simdi, long once) {
+        return (float)(simdi-once)/3600000;
     }
 
     public static void kapat() {
+        Log.i("M3UVeri", "performBackgroundTask bitiyor");
         if (timer != null)
             timer.cancel();
         timer = null;

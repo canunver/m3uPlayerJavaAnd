@@ -1,6 +1,7 @@
 package org.unver.m3uplayer;
 
 import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.Date;
 
 public class ProgSettings {
@@ -14,11 +15,22 @@ public class ProgSettings {
     public static String sonProgID;
     public static String sonTVGrup;
     public static String sonTVProgID;
+    public static long sonCekilmeZamani;
 
     public static int ConvertToInt32(String strDeger, int varsayilanDeger) {
-        if (strDeger != null && !strDeger.equals("")) {
+        if (!StringIsNUllOrEmpty(strDeger)) {
             try {
                 return Integer.parseInt(strDeger);
+            } catch (Exception _) {
+            }
+        }
+        return varsayilanDeger;
+    }
+
+    public static long ConvertToLong(String strDeger, long varsayilanDeger) {
+        if (!StringIsNUllOrEmpty(strDeger)) {
+            try {
+                return Long.parseLong(strDeger);
             } catch (Exception _) {
             }
         }
@@ -42,7 +54,7 @@ public class ProgSettings {
         sonM3UTur = M3UVeri.TurBul(ConvertToInt32(M3UVeri.AyarOku("sonM3UTur"), 0));
         sonGrup = M3UVeri.AyarOku("sonGrup");
         sonProgID = M3UVeri.AyarOku("sonProgID");
-
+        sonCekilmeZamani = ConvertToLong(M3UVeri.AyarOku("sonCekilmeZamani"), 0);
     }
 
     public static void AyarlariYaz() {
@@ -78,4 +90,43 @@ public class ProgSettings {
         return false;
     }
 
+    public static void sonCekilmeZamaniYaz() {
+        sonCekilmeZamani = Calendar.getInstance().getTimeInMillis();
+        M3UVeri.AyarYaz("sonCekilmeZamani", Long.toString(sonCekilmeZamani));
+    }
+
+    public static String ConvertToStr(String[] strDizi) {
+        if (strDizi == null || strDizi.length == 0)
+            return null;
+        String retVal = "";
+        for (String s : strDizi) {
+            if (retVal != "") retVal += ";";
+            retVal += s;
+        }
+        return retVal;
+    }
+
+    public static String ConvertToStr(int[] intDizi) {
+        if (intDizi == null || intDizi.length == 0)
+            return null;
+        String retVal = "";
+        for (int s : intDizi) {
+            if (retVal != "") retVal += ";";
+            retVal += s;
+        }
+        return retVal;
+    }
+
+    public static String[] ConvertToArrayStr(String str) {
+        return str.split(";");
+    }
+
+    public static int[] ConvertToArrayInt(String str) {
+        String[] strs = str.split(";");
+        int[] ints = new int[strs.length];
+        for (int i = 0; i < strs.length; i++) {
+            ints[i] = ProgSettings.ConvertToInt32(strs[i], 0);
+        }
+        return ints;
+    }
 }

@@ -13,6 +13,7 @@ import android.app.AlertDialog;
 import android.content.pm.ActivityInfo;
 import android.content.res.Configuration;
 import android.os.Bundle;
+import android.os.Handler;
 import android.view.View;
 import android.view.Window;
 import android.widget.AdapterView;
@@ -27,12 +28,9 @@ import com.google.android.material.slider.RangeSlider;
 import java.util.Calendar;
 
 public class MainActivity extends AppCompatActivity {
-    private ActionBar actionBar;
     private NavigationView navigationView;
-    private ActionBarDrawerToggle toggle;
     public DrawerLayout drawerLayout;
     private PlayerFragment anaFragment = null;
-    ;
     private AyarlarFragment ayarlarFragment = null;
     public M3UBilgi.M3UTur aktifTur = M3UBilgi.M3UTur.tv;
     AutoCompleteTextView turSecDDL;
@@ -45,11 +43,15 @@ public class MainActivity extends AppCompatActivity {
     private RangeSlider rangeSliderPuan;
     private RangeSlider rangeSliderYil;
     private ArrayAdapter<String> aaTur;
+    private int internettenCekiliyor;
+    private Handler handler;
 
     @SuppressLint("MissingInflatedId")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        handler = new Handler();
+
         requestWindowFeature(Window.FEATURE_NO_TITLE);
         setContentView(R.layout.activity_main);
         drawerLayout = findViewById(R.id.drawerLayout);
@@ -57,7 +59,8 @@ public class MainActivity extends AppCompatActivity {
         M3UVeri.OkuBakayim(this);
         ProgSettings.AyarlariOku();
 
-        AyarlariKapat();
+        anaFragment = new PlayerFragment(this);
+        AyarlariKapat(true);
 
         String[] turListesi = getResources().getStringArray(R.array.turListesi);
         aaTur = new ArrayAdapter<String>(this, com.google.android.material.R.layout.support_simple_spinner_dropdown_item, turListesi);
@@ -107,7 +110,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void handleOnBackPressed() {
                 if (ayarlarFragment != null) {
-                    AyarlariKapat();
+                    AyarlariKapat(false);
                 } else if (anaFragment.TamEkranMi()) {
                     anaFragment.TamEkrandanCik();
                 } else {
@@ -128,13 +131,12 @@ public class MainActivity extends AppCompatActivity {
         rangeSliderYil.setValues((float) M3UVeri.minYil, (float) yil);
         rangeSliderYil.setValueFrom(M3UVeri.minYil);
         rangeSliderYil.setStepSize(1);
-        ArkaPlanIslemleri.baslat();
     }
 
-    public void AyarlariKapat() {
+    public void AyarlariKapat(boolean baslangictan) {
         if (ayarlarFragment != null)
             ayarlarFragment = null;
-        anaFragment = new PlayerFragment(this);
+        //anaFragment = new PlayerFragment(this, baslangictan);
         getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, anaFragment).commit();
         drawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_UNLOCKED);
     }
@@ -163,6 +165,8 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void Cekildi() {
+        internettenCekiliyor = 0;
+        anaFragment.InternettenCekmeIkon(internettenCekiliyor);
     }
 
     public void btnAcClicked(View view) {
@@ -179,5 +183,22 @@ public class MainActivity extends AppCompatActivity {
     public void setAktifTur(int aktifTurPos) {
         turSecDDL.setText(aaTur.getItem(aktifTurPos), false);
         this.aktifTur = M3UVeri.TurBul(aktifTurPos);
+    }
+
+    public void internettenCekiliyorYap(int state) {
+        handler.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                internettenCekiliyor = state;
+                anaFragment.InternettenCekmeIkon(internettenCekiliyor);
+            }
+        }, 50);
+    }
+
+    public boolean M3UCekiliyorMu() {
+        return this.internettenCekiliyor == 1;
+    }
+    public boolean VeriCekiliyorMu() {
+        return this.internettenCekiliyor != 0;
     }
 }

@@ -27,6 +27,7 @@ import android.view.WindowManager;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
+import android.widget.ImageView;
 
 import org.videolan.libvlc.LibVLC;
 import org.videolan.libvlc.Media;
@@ -37,6 +38,7 @@ import org.videolan.libvlc.media.VideoView;
 import java.util.ArrayList;
 
 public class PlayerFragment extends Fragment {
+    private boolean baslangictan;
     private ConstraintLayout anaYerlesim;
     private ConstraintLayout aramaBolmesi;
     private ConstraintLayout oynatmaBolmesi;
@@ -67,8 +69,10 @@ public class PlayerFragment extends Fragment {
     private boolean pauseBaslat;
     private boolean tamEkranBaslat;
     private boolean ilkPlay;
+    private ImageView imgOp;
 
     public PlayerFragment(MainActivity mainActivity) {
+        this.baslangictan = true;
         this.mainActivity = mainActivity;
     }
 
@@ -81,10 +85,11 @@ public class PlayerFragment extends Fragment {
     public void onResume() {
         super.onResume();
         createPlayer();
-        if (!ProgSettings.StringIsNUllOrEmpty(otoAc)) {
+        if (baslangictan && !ProgSettings.StringIsNUllOrEmpty(otoAc)) {
             OynatBakalim(M3UVeri.tumM3Ular.getOrDefault(otoAc, null), otoSezon, otoBolum, otoTur != M3UBilgi.M3UTur.tv, true);
             otoAc = null;
         }
+        baslangictan = false;
     }
 
     private void createPlayer() {
@@ -180,6 +185,7 @@ public class PlayerFragment extends Fragment {
         recyclerView.addItemDecoration(new DividerItemDecoration(mainActivity, LinearLayoutManager.VERTICAL));
         recyclerView.setAdapter(kanalAdapter);
 
+        imgOp = currView.findViewById(R.id.imgOp);
         grupSec = currView.findViewById(R.id.grupSec);
 
         setupPagination();
@@ -201,6 +207,7 @@ public class PlayerFragment extends Fragment {
         if (aktifTurPos != 0)
             mainActivity.setAktifTur(aktifTurPos);
         TurSecildi(aktifTurPos, true);
+        ArkaPlanIslemleri.baslat(mainActivity);
         return currView;
     }
 
@@ -455,6 +462,23 @@ public class PlayerFragment extends Fragment {
                 m3uBilgiOynayan.seyredilenSure = dakika;
                 m3uBilgiOynayan.Yaz(M3UVeri.db);
             }
+        }
+    }
+
+    public void InternettenCekmeIkon(int internettenCekiliyor) {
+        try {
+            if (internettenCekiliyor == 0)
+                imgOp.setVisibility(View.GONE);
+            else {
+                if (internettenCekiliyor == 1)
+                    imgOp.setImageResource(R.drawable.baseline_downloading_24);
+                else
+                    imgOp.setImageResource(R.drawable.baseline_local_movies_24);
+                imgOp.setVisibility(View.VISIBLE);
+            }
+            //anaYerlesim.requestLayout();
+        } catch (Exception ex) {
+            Log.d("M3UVeri", ex.getMessage());
         }
     }
 }

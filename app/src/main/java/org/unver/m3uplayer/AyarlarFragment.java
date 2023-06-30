@@ -76,7 +76,7 @@ public class AyarlarFragment extends Fragment {
         iptalTus.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                mainActivity.AyarlariKapat();
+                mainActivity.AyarlariKapat(false);
             }
         });
 
@@ -103,7 +103,7 @@ public class AyarlarFragment extends Fragment {
                 ProgSettings.son_tv_kanalini_oynatarak_basla = chksonTvKanalBaslat.isChecked();
 
                 ProgSettings.AyarlariYaz();
-                mainActivity.AyarlariKapat();
+                mainActivity.AyarlariKapat(false);
             }
         });
 
