@@ -47,8 +47,6 @@ public class InternettenOku {
     }
 
     public void performNetworkOperation(MainActivity mainActivity, SQLiteDatabase db, String kod) {
-        //String urlStr = "http://panel.atlaspremium11.com:8080/get.php?username=futboloyuncu19341&password=2yegQAhncz&type=m3u_plus&output=mpegts";
-
         ExecutorService executor = Executors.newSingleThreadExecutor();
         executor.execute(() -> {
             try {
@@ -61,7 +59,6 @@ public class InternettenOku {
                 if (responseCode == HttpURLConnection.HTTP_OK) {
                     Log.i("M3UVeri", "Internetten veri alındı");
                     BufferedReader reader = new BufferedReader(new InputStreamReader(connection.getInputStream()));
-                    //StringBuilder content = new StringBuilder();
                     boolean hataVar;
                     String line;
                     db.beginTransaction();
@@ -132,14 +129,18 @@ public class InternettenOku {
                     TVInfo tvInfo;
                     if (ti == null || ti.resultsSay() != 1) {
                         m3u.tmdbId = -1;
+                        Log.d("M3UVeri", "-1 olarak yazılacak");
                         tvInfo = null;
                     } else {
                         tvInfo = ti.InfoAl(0);
                         tvInfo.type = M3UVeri.SiraBul(m3u.Tur);
                         m3u.tmdbId = tvInfo.id;
+                        Log.d("M3UVeri", tvInfo.AnahtarBul() + " olarak yazılacak");
                     }
-                    if(tvInfo!=null)
+                    if (tvInfo != null) {
                         tvInfo.Yaz(M3UVeri.db);
+                        M3UVeri.TMDByeIsle(tvInfo);
+                    }
                     m3u.Yaz(M3UVeri.db);
                 }
                 db.setTransactionSuccessful();

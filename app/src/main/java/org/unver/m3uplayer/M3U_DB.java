@@ -37,8 +37,7 @@ public class M3U_DB extends SQLiteOpenHelper {
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
         if(oldVersion<4) {
             db.execSQL("CREATE TABLE IF NOT EXISTS  " + TABLE_TVINFO + " ("
-            + "type INTEGER PRIMARY KEY,"
-            + "id INTEGER PRIMARY KEY,"
+            + "type_id TEXT PRIMARY KEY,"
             + "name TEXT,"
             + "title TEXT,"
             + "original_name TEXT,"

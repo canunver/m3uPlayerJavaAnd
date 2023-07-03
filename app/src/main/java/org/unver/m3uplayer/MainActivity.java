@@ -19,6 +19,9 @@ import android.view.Window;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
+import android.widget.Button;
+import android.widget.CheckBox;
+import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.TextView;
 
@@ -28,6 +31,7 @@ import com.google.android.material.slider.RangeSlider;
 import java.util.Calendar;
 
 public class MainActivity extends AppCompatActivity {
+    public boolean TVInfoOkundu = false;
     private NavigationView navigationView;
     public DrawerLayout drawerLayout;
     private PlayerFragment anaFragment = null;
@@ -105,6 +109,10 @@ public class MainActivity extends AppCompatActivity {
                 getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, ayarlarFragment).commit();
             }
         });
+        RangeSlider rsGunSay = findViewById(R.id.rsGunSay);
+        CheckBox cbSadeceYeni = findViewById(R.id.cbSadeceYeni);
+
+        Button btnAra = findViewById(R.id.btnAra);
 
         OnBackPressedCallback onBackPressedCallback = new OnBackPressedCallback(true) {
             @Override
@@ -131,6 +139,20 @@ public class MainActivity extends AppCompatActivity {
         rangeSliderYil.setValues((float) M3UVeri.minYil, (float) yil);
         rangeSliderYil.setValueFrom(M3UVeri.minYil);
         rangeSliderYil.setStepSize(1);
+
+        btnAra.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                anaFragment.filtre.SadeceYeniAyarla(cbSadeceYeni.isChecked(), rsGunSay.getValues());
+                anaFragment.filtre.isimFiltreStr = filtreAlan.getText().toString();
+                anaFragment.filtre.PuanAyarla(rangeSliderPuan.getValues());
+                anaFragment.filtre.YilAyarla(rangeSliderYil.getValues(), M3UVeri.minYil, yil);
+                anaFragment.filtre.TurAyarla(msTur.getText().toString());
+                anaFragment.TurSecildi(M3UVeri.SiraBul(aktifTur),false);
+            }
+        });
+
+
     }
 
     public void AyarlariKapat(boolean baslangictan) {
@@ -171,13 +193,6 @@ public class MainActivity extends AppCompatActivity {
 
     public void btnAcClicked(View view) {
         drawerLayout.openDrawer(GravityCompat.START);
-    }
-
-    public void btnAraClicked(View view) {
-//        filtre.filtre = filtreAlan.getText().toString();
-//        TurSecildi(M3UVeri.SiraBul(mainActivity.aktifTur));
-//
-//        imm.hideSoftInputFromWindow(filtreAlan.getWindowToken(), 0);
     }
 
     public void setAktifTur(int aktifTurPos) {

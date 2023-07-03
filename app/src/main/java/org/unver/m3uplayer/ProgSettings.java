@@ -118,10 +118,12 @@ public class ProgSettings {
     }
 
     public static String[] ConvertToArrayStr(String str) {
+        if (ProgSettings.StringIsNUllOrEmpty(str)) return null;
         return str.split(";");
     }
 
     public static int[] ConvertToArrayInt(String str) {
+        if (ProgSettings.StringIsNUllOrEmpty(str)) return null;
         String[] strs = str.split(";");
         int[] ints = new int[strs.length];
         for (int i = 0; i < strs.length; i++) {

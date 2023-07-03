@@ -13,8 +13,9 @@ public class ArkaPlanIslemleri {
     private static final long INTERVAL = 10 * 60 * 1000; // 10 dakika
     private static MainActivity mainActivity;
     private int state = 0;
+
     public static void baslat(MainActivity mMainActivity) {
-        mainActivity =  mMainActivity;
+        mainActivity = mMainActivity;
         if (timer != null) {
             timer.cancel();
             timer = null;
@@ -35,13 +36,15 @@ public class ArkaPlanIslemleri {
         Log.i("M3UVeri", "performBackgroundTask, sonCekilmeZamani: " + ProgSettings.sonCekilmeZamani);
 
         try {
-            if(ProgSettings.sonCekilmeZamani == 0 || GecenSureSaat(Calendar.getInstance().getTimeInMillis(), ProgSettings.sonCekilmeZamani)>=24)
+            if(!mainActivity.TVInfoOkundu)
             {
+                mainActivity.internettenCekiliyorYap(3);
+                M3UVeri.TMDBOku();
+            }
+            if (ProgSettings.sonCekilmeZamani == 0 || GecenSureSaat(Calendar.getInstance().getTimeInMillis(), ProgSettings.sonCekilmeZamani) >= 24) {
                 mainActivity.internettenCekiliyorYap(1);
                 M3UVeri.CekBakalim();
-            }
-            else
-            {
+            } else {
                 mainActivity.internettenCekiliyorYap(2);
                 M3UVeri.FilmBilgiCek();
             }
@@ -51,7 +54,7 @@ public class ArkaPlanIslemleri {
     }
 
     private static float GecenSureSaat(long simdi, long once) {
-        return (float)(simdi-once)/3600000;
+        return (float) (simdi - once) / 3600000;
     }
 
     public static void kapat() {

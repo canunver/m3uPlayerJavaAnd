@@ -47,7 +47,7 @@ public class PlayerFragment extends Fragment {
     private VideoView mVideoView;
     private MediaPlayer mMediaPlayer;
     Media mediaItem;
-    private M3UFiltre filtre = new M3UFiltre(M3UBilgi.M3UTur.tv, "", "", false);
+    public M3UFiltre filtre = new M3UFiltre();
     private RecyclerView recyclerView;
     private OynaticiAdapter kanalAdapter;
     public String aktifGrupAd = "-";

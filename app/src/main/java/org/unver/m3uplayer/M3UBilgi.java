@@ -4,8 +4,92 @@ import android.content.ContentValues;
 import android.database.sqlite.SQLiteDatabase;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 
 public class M3UBilgi {
+    public enum M3UTur {
+        seri, film, tv
+    }
+
+    public String ID;
+    //public String m3uDosyaKod;
+    public String tvgId;
+    public String tvgName;
+    public String tvgLogo;
+    public String groupTitle;
+    public String urlAdres;
+    public String eklemeTarih;
+    public String guncellemeTarih;
+    public int gizli = 0;
+    public int adult = 0;
+    public long tmdbId = 0;
+    public long seyredilenSure = 0;
+    public String uzanti;
+    public M3UTur Tur;
+    public String sezon = "";
+    public String bolum = "";
+    public String seriAd = "";
+    public int filmYilInt = 0;
+    public String filmYil = "";
+    public String filmAd = "";
+    TVInfo tmdbBag = null;
+    public void tmdbBul() {
+        if (tmdbBag == null && tmdbId > 0) {
+            tmdbBag = M3UVeri.tumTMDBler.getOrDefault(TVInfo.AnahtarBul(M3UVeri.SiraBul(Tur), tmdbId), null);
+        }
+    }
+
+    private double tmdbPuan() {
+        tmdbBul();
+        if (tmdbBag == null) return 0;
+        return tmdbBag.popularity * 10;
+    }
+
+    private int tmdbYil() {
+        tmdbBul();
+        if (tmdbBag == null) return 0;
+        return tmdbBag.FilmYil();
+    }
+
+
+    private int[] tmdbGenres() {
+        tmdbBul();
+        if (tmdbBag == null) return null;
+        return tmdbBag.genre_ids;
+    }
+
+
+    public M3UBilgi(String m3uDosyaKod, String tvgId, String tvgName, String tvgLogo, String groupTitle, String urlAdres, String tar) {
+        this.eklemeTarih = tar;
+        this.guncellemeTarih = tar;
+        this.tvgId = tvgId;
+        this.tvgName = tvgName;
+        this.tvgLogo = tvgLogo;
+        this.groupTitle = groupTitle;
+        this.urlAdres = urlAdres;
+        this.tmdbId = 0;
+        this.adult = 0;
+        this.gizli = 0;
+        this.seyredilenSure = 0;
+        DegerleriOlustur(m3uDosyaKod);
+    }
+
+    public M3UBilgi(String ID, String tvgId, String tvgName, String tvgLogo, String groupTitle, String urlAdres, String tar, int gizli, int adult, int tmdbId, String guncellemeTarih, long seyredilenSure) {
+        this.ID = ID;
+        this.eklemeTarih = tar;
+        this.tvgId = tvgId;
+        this.tvgName = tvgName;
+        this.tvgLogo = tvgLogo;
+        this.groupTitle = groupTitle;
+        this.urlAdres = urlAdres;
+        this.tmdbId = tmdbId;
+        this.adult = adult;
+        this.gizli = gizli;
+        this.guncellemeTarih = guncellemeTarih;
+        this.seyredilenSure = seyredilenSure;
+        DegerleriOlustur(null);
+    }
+
     public ArrayList<Sezon> seriSezonlari = new ArrayList<>();
 
     public boolean FiltreUygunMu(M3UFiltre filtre) {
@@ -17,27 +101,42 @@ public class M3UBilgi {
     }
 
     private boolean AdUygunMu(M3UFiltre filtre) {
-        //if (filtre == null || filtre.filtre == null) return true;
-        if (M3UListeArac.IsNullOrWhiteSpace(filtre.filtre)) return true;
-        if (tvgName.toLowerCase().contains(filtre.filtre.toLowerCase())) return true;
+        if (M3UListeArac.IsNullOrWhiteSpace(filtre.isimFiltreStr)) return true;
+        if (tvgName.toLowerCase().contains(filtre.isimFiltreStr.toLowerCase())) return true;
         return false;
     }
 
     private boolean YeniUygunMu(M3UFiltre filtre) {
-        //if (filtre == null) return true;
-        return !filtre.sadeceYeni || (this.eklemeTarih.compareTo(filtre.tarihStr) == 1);
+        return !filtre.sadeceYeni || (this.eklemeTarih.compareTo(filtre.yeniTarihBaslaStr) == 1);
     }
 
     private boolean TurUygunMu(M3UFiltre filtre) {
-        return true;
+        if (filtre.filmTurler == null || filtre.filmTurler.length == 0) return true;
+
+        int[] tmdbTurler = tmdbGenres();
+        if (tmdbTurler == null || tmdbTurler.length == 0) return false;
+        for (int item : tmdbTurler) {
+            for (int ic : filtre.filmTurler) {
+                if (ic == item) return true;
+            }
+        }
+        return false;
     }
 
     private boolean PuanUygunMu(M3UFiltre filtre) {
-        return true;
+        if (filtre.maxPuan <= 0 || filtre.maxPuan < filtre.minPuan) return true;
+        if (Math.round(tmdbPuan()) <= filtre.maxPuan && Math.round(tmdbPuan()) >= filtre.minPuan)
+            return true;
+        return false;
     }
 
     private boolean YilUygunMu(M3UFiltre filtre) {
-        return true;
+
+        if (filtre.maxYil <= 0 || filtre.maxYil < filtre.minYil) return true;
+        int yil = tmdbYil();
+        if (yil < 0) yil = this.filmYilInt;
+        if (yil <= filtre.maxYil && yil >= filtre.minYil) return true;
+        return false;
     }
 
     public Sezon SezonBul(String sezonAd) {
@@ -88,66 +187,6 @@ public class M3UBilgi {
             return filmAd;
         else
             return tvgName.replace(" ", "+");
-    }
-
-    public enum M3UTur {
-        seri, film, tv
-    }
-
-    public String ID;
-    //public String m3uDosyaKod;
-    public String tvgId;
-    public String tvgName;
-    public String tvgLogo;
-    public String groupTitle;
-    public String urlAdres;
-    public String eklemeTarih;
-    public String guncellemeTarih;
-    public int gizli = 0;
-    public int adult = 0;
-    public long tmdbId = 0;
-    public long seyredilenSure = 0;
-
-    // Veri tabanında olmayacaklar
-    public String uzanti;
-    public M3UTur Tur;
-
-    public String sezon = "";
-    public String bolum = "";
-    public String seriAd = "";
-    public int filmYilInt = 0;
-    public String filmYil = "";
-    public String filmAd = "";
-
-    public M3UBilgi(String m3uDosyaKod, String tvgId, String tvgName, String tvgLogo, String groupTitle, String urlAdres, String tar) {
-        this.eklemeTarih = tar;
-        this.guncellemeTarih = tar;
-        this.tvgId = tvgId;
-        this.tvgName = tvgName;
-        this.tvgLogo = tvgLogo;
-        this.groupTitle = groupTitle;
-        this.urlAdres = urlAdres;
-        this.tmdbId = 0;
-        this.adult = 0;
-        this.gizli = 0;
-        this.seyredilenSure = 0;
-        DegerleriOlustur(m3uDosyaKod);
-    }
-
-    public M3UBilgi(String ID, String tvgId, String tvgName, String tvgLogo, String groupTitle, String urlAdres, String tar, int gizli, int adult, int tmdbId, String guncellemeTarih, long seyredilenSure) {
-        this.ID = ID;
-        this.eklemeTarih = tar;
-        this.tvgId = tvgId;
-        this.tvgName = tvgName;
-        this.tvgLogo = tvgLogo;
-        this.groupTitle = groupTitle;
-        this.urlAdres = urlAdres;
-        this.tmdbId = tmdbId;
-        this.adult = adult;
-        this.gizli = gizli;
-        this.guncellemeTarih = guncellemeTarih;
-        this.seyredilenSure = seyredilenSure;
-        DegerleriOlustur(null);
     }
 
     private void DegerleriOlustur(String m3uDosyaKod) {

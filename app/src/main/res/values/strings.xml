@@ -31,4 +31,5 @@
     <string name="iptal">Cancel</string>
     <string name="kaydet">Save</string>
     <string name="son_tv_kanalini_oynatarak_basla">Start last TV channel</string>
+    <string name="search">Search</string>
 </resources>

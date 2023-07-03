@@ -24,4 +24,6 @@ public class TVResponse {
         }
         return donusDeger;
     }
+
+
 }

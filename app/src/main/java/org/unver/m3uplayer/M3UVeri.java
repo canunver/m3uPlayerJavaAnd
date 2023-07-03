@@ -10,6 +10,7 @@ import java.util.ArrayList;
 import java.util.Hashtable;
 
 public class M3UVeri {
+    public static Hashtable<String, TVInfo> tumTMDBler = new Hashtable<>();
     public static Hashtable<String, M3UBilgi> tumM3Ular = new Hashtable<>();
     public static ArrayList<M3UGrup> tvGruplari = new ArrayList<>();
     public static ArrayList<M3UGrup> filmGruplari = new ArrayList<>();
@@ -82,74 +83,10 @@ public class M3UVeri {
             }
             Log.i("M3UVeri", "cursor kapandı");
         }
+    }
 
-        Log.i("M3UVeri", "TVInfo cursor olacak");
-        cursor = db.query(M3U_DB.TABLE_TVINFO, null, null, null, null, null, null);
-        if (cursor != null) {
-            try {
-                if (cursor.moveToFirst()) {
-                    int typeIndex = cursor.getColumnIndex("type");
-                    int idIndex = cursor.getColumnIndex("id");
-                    int nameIndex = cursor.getColumnIndex("name");
-                    int titleIndex = cursor.getColumnIndex("title");
-                    int original_nameIndex = cursor.getColumnIndex("original_name");
-                    int original_titleIndex = cursor.getColumnIndex("original_title");
-                    int poster_pathIndex = cursor.getColumnIndex("poster_path");
-                    int adultIndex = cursor.getColumnIndex("adult");
-                    int popularityIndex = cursor.getColumnIndex("popularity");
-                    int backdrop_pathIndex = cursor.getColumnIndex("backdrop_path");
-                    int vote_averageIndex = cursor.getColumnIndex("vote_average");
-                    int overviewIndex = cursor.getColumnIndex("overview");
-                    int first_air_dateIndex = cursor.getColumnIndex("first_air_date");
-                    int release_dateIndex = cursor.getColumnIndex("release_date");
-                    int original_languageIndex = cursor.getColumnIndex("original_language");
-                    int vote_countIndex = cursor.getColumnIndex("vote_count");
-                    int origin_countryIndex = cursor.getColumnIndex("origin_country");
-                    int genre_idsIndex = cursor.getColumnIndex("genre_ids");
-
-                    do {
-                        int type = cursor.getInt(typeIndex);
-                        int id = cursor.getInt(idIndex);
-
-                        String name = cursor.getString(nameIndex);
-                        String title = cursor.getString(titleIndex);
-                        String original_name = cursor.getString(original_nameIndex);
-                        String original_title = cursor.getString(original_titleIndex);
-                        String poster_path = cursor.getString(poster_pathIndex);
-                        int adult = cursor.getInt(adultIndex);
-
-                        double popularity = cursor.getDouble(popularityIndex);
-                        String backdrop_path = cursor.getString(backdrop_pathIndex);
-
-                        double vote_average = cursor.getDouble(vote_averageIndex);
-                        String overview = cursor.getString(overviewIndex);
-                        String first_air_date = cursor.getString(first_air_dateIndex);
-                        String release_date = cursor.getString(release_dateIndex);
-                        String original_language = cursor.getString(original_languageIndex);
-
-                        int vote_count = cursor.getInt(vote_countIndex);
-                        String origin_country = cursor.getString(origin_countryIndex);
-                        String genre_ids = cursor.getString(genre_idsIndex);
-
-                        TVInfo tvInfo = new TVInfo(type, id, name,
-                                title, original_name, original_title,
-                                poster_path, adult, popularity, backdrop_path,
-                                vote_average, overview, first_air_date, release_date, original_language,
-                                vote_count, origin_country, genre_ids);
-                        //GruplaraIsle(m3u, true);
-                    } while (cursor.moveToNext());
-                }
-            } finally {
-                cursor.close();
-            }
-            Log.i("M3UVeri", "cursor kapandı");
-        }
-
-        Log.i("M3UVeri", "TVInfo cursor oldu");
-
-
-        //        if (tumM3Ular.size() == 0 || filmGruplari.size() == 0 || seriGruplari.size() == 0)
-//            CekBakalim();
+    public static void TMDByeIsle(TVInfo tvInfo) {
+        M3UVeri.tumTMDBler.put(tvInfo.AnahtarBul(), tvInfo);
     }
 
     private static M3UGrup GrupBulYoksaEkle(ArrayList<M3UGrup> anaGrup, String groupTitle, boolean gelenGrup, boolean yoksaEkle) {
@@ -327,7 +264,7 @@ public class M3UVeri {
                     if (m3u != null) {
                         if (m3u.tmdbId == 0) {
                             kanallar.add(m3u);
-                            if (kanallar.size() >= 1) break;
+                            if (kanallar.size() >= 20) break;
                         }
                     }
                     progIndex++;
@@ -335,5 +272,68 @@ public class M3UVeri {
             }
         }
         return kanallar;
+    }
+
+    public static void TMDBOku() {
+        Log.i("M3UVeri", "TVInfo cursor olacak");
+        Cursor cursor = db.query(M3U_DB.TABLE_TVINFO, null, null, null, null, null, null);
+        if (cursor != null) {
+            try {
+                if (cursor.moveToFirst()) {
+                    int typeIdIndex = cursor.getColumnIndex("type_id");
+                    int nameIndex = cursor.getColumnIndex("name");
+                    int titleIndex = cursor.getColumnIndex("title");
+                    int original_nameIndex = cursor.getColumnIndex("original_name");
+                    int original_titleIndex = cursor.getColumnIndex("original_title");
+                    int poster_pathIndex = cursor.getColumnIndex("poster_path");
+                    int adultIndex = cursor.getColumnIndex("adult");
+                    int popularityIndex = cursor.getColumnIndex("popularity");
+                    int backdrop_pathIndex = cursor.getColumnIndex("backdrop_path");
+                    int vote_averageIndex = cursor.getColumnIndex("vote_average");
+                    int overviewIndex = cursor.getColumnIndex("overview");
+                    int first_air_dateIndex = cursor.getColumnIndex("first_air_date");
+                    int release_dateIndex = cursor.getColumnIndex("release_date");
+                    int original_languageIndex = cursor.getColumnIndex("original_language");
+                    int vote_countIndex = cursor.getColumnIndex("vote_count");
+                    int origin_countryIndex = cursor.getColumnIndex("origin_country");
+                    int genre_idsIndex = cursor.getColumnIndex("genre_ids");
+
+                    do {
+                        String typeId = cursor.getString(typeIdIndex);
+
+                        String name = cursor.getString(nameIndex);
+                        String title = cursor.getString(titleIndex);
+                        String original_name = cursor.getString(original_nameIndex);
+                        String original_title = cursor.getString(original_titleIndex);
+                        String poster_path = cursor.getString(poster_pathIndex);
+                        int adult = cursor.getInt(adultIndex);
+
+                        double popularity = cursor.getDouble(popularityIndex);
+                        String backdrop_path = cursor.getString(backdrop_pathIndex);
+
+                        double vote_average = cursor.getDouble(vote_averageIndex);
+                        String overview = cursor.getString(overviewIndex);
+                        String first_air_date = cursor.getString(first_air_dateIndex);
+                        String release_date = cursor.getString(release_dateIndex);
+                        String original_language = cursor.getString(original_languageIndex);
+
+                        int vote_count = cursor.getInt(vote_countIndex);
+                        String origin_country = cursor.getString(origin_countryIndex);
+                        String genre_ids = cursor.getString(genre_idsIndex);
+
+                        TVInfo tvInfo = new TVInfo(typeId, name,
+                                title, original_name, original_title,
+                                poster_path, adult, popularity, backdrop_path,
+                                vote_average, overview, first_air_date, release_date, original_language,
+                                vote_count, origin_country, genre_ids);
+                        TMDByeIsle(tvInfo);
+                    } while (cursor.moveToNext());
+                }
+            } finally {
+                cursor.close();
+            }
+        }
+        Log.i("M3UVeri", "TVInfo cursor oldu");
+        mainActivity.TVInfoOkundu = true;
     }
 }

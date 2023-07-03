@@ -5,7 +5,7 @@ import android.database.sqlite.SQLiteDatabase;
 
 public class TVInfo {
     public int type;
-    public int id;
+    public long id;
     public String name;
     public String title;
     public String original_name;
@@ -23,19 +23,34 @@ public class TVInfo {
     public String[] origin_country;
     public int[] genre_ids;
 
+    public String YayinTarihiBul() {
+        if (ProgSettings.StringIsNUllOrEmpty(first_air_date))
+            return release_date;
+        else
+            return first_air_date;
+    }
+
+    public int FilmYil() {
+        String yt = YayinTarihiBul();
+        if (!ProgSettings.StringIsNUllOrEmpty(yt)) {
+            ProgSettings.ConvertToInt32(yt.substring(yt.length() - 4), 0);
+        }
+        return 0;
+    }
+
     public TVInfo() {
 
     }
 
-    public TVInfo(int type, int id, String name,
+    public TVInfo(String typeId, String name,
                   String title, String original_name, String original_title,
                   String poster_path, int adult, double popularity, String backdrop_path,
                   double vote_average, String overview, String first_air_date, String release_date, String original_language,
                   int vote_count, String origin_country, String genre_ids) {
 
-
-        this.type = type;
-        this.id = id;
+        String[] typeIds = typeId.split("_");
+        this.type = ProgSettings.ConvertToInt32(typeIds[0], 0);
+        this.id = ProgSettings.ConvertToLong(typeIds[1], 0);
         this.name = name;
         this.title = title;
         this.original_name = original_name;
@@ -52,7 +67,6 @@ public class TVInfo {
         this.vote_count = vote_count;
         this.origin_country = ProgSettings.ConvertToArrayStr(origin_country);
         this.genre_ids = ProgSettings.ConvertToArrayInt(genre_ids);
-
     }
 
     public String Name() {
@@ -60,13 +74,6 @@ public class TVInfo {
             return title;
         else
             return name;
-    }
-
-    public String First_air_date() {
-        if (ProgSettings.StringIsNUllOrEmpty(first_air_date))
-            return release_date;
-        else
-            return first_air_date;
     }
 
     public String Original_name() {
@@ -77,7 +84,7 @@ public class TVInfo {
     }
 
     public String ToListStr() {
-        return String.format("%s (%s) - %s", Name(), First_air_date(), Original_name());
+        return String.format("%s (%s) - %s, %s - %s", Name(), YayinTarihiBul(), Original_name(), popularity, vote_average);
     }
 
     public long Yaz(SQLiteDatabase db) {
@@ -86,8 +93,7 @@ public class TVInfo {
         try {
             ContentValues values = new ContentValues();
 
-            values.put("type", type);                                                      //public int
-            values.put("id", id);                                                      //public int
+            values.put("type_id", AnahtarBul());                                       //public int
             values.put("name", name);                                                  //public String
             values.put("title", title);                                                //public String
             values.put("original_name", original_name);                                //public String
@@ -112,4 +118,13 @@ public class TVInfo {
         }
         return rowId;
     }
+
+    public String AnahtarBul() {
+        return AnahtarBul(this.type, this.id);
+    }
+
+    public static String AnahtarBul(int type, long id) {
+        return type + "_" + id;
+    }
+
 }
