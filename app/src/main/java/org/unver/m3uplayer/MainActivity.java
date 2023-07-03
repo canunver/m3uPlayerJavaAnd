@@ -23,6 +23,7 @@ import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.TextView;
 
 import com.google.android.material.navigation.NavigationView;
@@ -112,7 +113,7 @@ public class MainActivity extends AppCompatActivity {
         RangeSlider rsGunSay = findViewById(R.id.rsGunSay);
         CheckBox cbSadeceYeni = findViewById(R.id.cbSadeceYeni);
 
-        Button btnAra = findViewById(R.id.btnAra);
+        ImageButton btnAra = findViewById(R.id.btnAra);
 
         OnBackPressedCallback onBackPressedCallback = new OnBackPressedCallback(true) {
             @Override

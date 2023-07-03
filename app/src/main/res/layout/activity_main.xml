@@ -73,18 +73,38 @@
                     android:layout_marginTop="6dp"
                     android:text="@string/arama_metni" />
 
-                <EditText
-                    android:id="@+id/filtreAd"
+                <RelativeLayout
                     android:layout_width="match_parent"
-                    android:layout_height="50dp"
-                    android:layout_marginStart="6dp"
-                    android:background="@android:drawable/editbox_background"
-                    android:drawableEnd="@android:drawable/ic_menu_search"
-                    android:inputType="text"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="0dp"
+                    android:orientation="horizontal"
                     app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toStartOf="parent"
-                    tools:ignore="LabelFor,SpeakableTextPresentCheck,VisualLintTextFieldSize"
-                    android:importantForAutofill="no" />
+                    app:layout_constraintStart_toStartOf="parent">
+
+                    <EditText
+                        android:id="@+id/filtreAd"
+                        android:layout_width="match_parent"
+                        android:layout_height="50dp"
+                        android:layout_marginStart="6dp"
+                        android:background="@android:drawable/editbox_background"
+                        android:importantForAutofill="no"
+                        android:inputType="text"
+                        android:layout_toStartOf="@id/btnAra"
+
+                        tools:ignore="LabelFor,SpeakableTextPresentCheck,VisualLintTextFieldSize" />
+
+                    <ImageButton
+                        android:id="@+id/btnAra"
+                        android:layout_width="50dp"
+                        android:layout_height="50dp"
+                        android:layout_alignParentEnd="true"
+                        android:clickable="true"
+                        android:scaleType="fitXY"
+                        android:src="@android:drawable/ic_menu_search"
+                        android:background="@android:color/holo_purple"
+                        />
+
+                </RelativeLayout>
 
                 <RelativeLayout
                     android:layout_width="match_parent"
@@ -162,9 +182,9 @@
                         android:layout_alignParentEnd="true"
                         android:layout_toEndOf="@id/cbSadeceYeni"
 
+                        android:stepSize="1"
                         android:valueFrom="15"
                         android:valueTo="100"
-                        android:stepSize="1"
                         tools:ignore="SpeakableTextPresentCheck" />
                 </RelativeLayout>
 
@@ -241,11 +261,6 @@
                         tools:ignore="UseSwitchCompatOrMaterialXml" />
                 </RelativeLayout>
 
-                <Button android:id="@+id/btnAra"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:text="@string/search"
-                    android:drawableEnd="@android:drawable/ic_menu_search" />
 
                 <LinearLayout
                     android:id="@+id/ayarlar"
@@ -260,8 +275,8 @@
                     <ImageView
                         android:layout_width="24dp"
                         android:layout_height="24dp"
-                        android:src="@drawable/baseline_settings_24"
-                        android:importantForAccessibility="no" />
+                        android:importantForAccessibility="no"
+                        android:src="@drawable/baseline_settings_24" />
 
                     <TextView
                         android:layout_width="wrap_content"
@@ -285,8 +300,8 @@
                     <ImageView
                         android:layout_width="24dp"
                         android:layout_height="24dp"
-                        android:src="@drawable/baseline_key_24"
-                        android:importantForAccessibility="no" />
+                        android:importantForAccessibility="no"
+                        android:src="@drawable/baseline_key_24" />
 
                     <TextView
                         android:layout_width="wrap_content"
