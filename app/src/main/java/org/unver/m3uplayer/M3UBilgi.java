@@ -4,9 +4,25 @@ import android.content.ContentValues;
 import android.database.sqlite.SQLiteDatabase;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 
 public class M3UBilgi {
+
+    public String afisBul(int size) {
+        tmdbBul();
+        if (tmdbBag == null)
+            return tvgLogo;
+        else
+            return "https://image.tmdb.org/t/p/w" + size + tmdbBag.poster_path;
+    }
+
+    public String aciklamaBul() {
+        tmdbBul();
+        if (tmdbBag != null)
+            return tmdbBag.overview;
+        else
+            return this.filmYil + " yılında çekilmiştir.";
+    }
+
     public enum M3UTur {
         seri, film, tv
     }
@@ -33,9 +49,10 @@ public class M3UBilgi {
     public String filmYil = "";
     public String filmAd = "";
     TVInfo tmdbBag = null;
+
     public void tmdbBul() {
         if (tmdbBag == null && tmdbId > 0) {
-            tmdbBag = M3UVeri.tumTMDBler.getOrDefault(TVInfo.AnahtarBul(M3UVeri.SiraBul(Tur), tmdbId), null);
+            tmdbBag = M3UVeri.tumTMDBler.getOrDefault(TVInfo.anahtarBul(M3UVeri.SiraBul(Tur), tmdbId), null);
         }
     }
 
@@ -87,6 +104,22 @@ public class M3UBilgi {
         this.gizli = gizli;
         this.guncellemeTarih = guncellemeTarih;
         this.seyredilenSure = seyredilenSure;
+        DegerleriOlustur(null);
+    }
+
+    public M3UBilgi(M3UBilgi m3u) {
+        this.ID = m3u.ID + "_S";
+        this.eklemeTarih = m3u.eklemeTarih;
+        this.tvgId = m3u.tvgId;
+        this.tvgName = m3u.tvgName;
+        this.tvgLogo = m3u.tvgLogo;
+        this.groupTitle = m3u.groupTitle;
+        this.urlAdres = m3u.urlAdres;
+        this.tmdbId = m3u.tmdbId;
+        this.adult = m3u.adult;
+        this.gizli = m3u.gizli;
+        this.guncellemeTarih = m3u.guncellemeTarih;
+        this.seyredilenSure = m3u.seyredilenSure;
         DegerleriOlustur(null);
     }
 

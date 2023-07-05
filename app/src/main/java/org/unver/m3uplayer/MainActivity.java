@@ -2,8 +2,6 @@ package org.unver.m3uplayer;
 
 import androidx.activity.OnBackPressedCallback;
 import androidx.annotation.NonNull;
-import androidx.appcompat.app.ActionBar;
-import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
@@ -19,9 +17,7 @@ import android.view.Window;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
-import android.widget.Button;
 import android.widget.CheckBox;
-import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.TextView;
@@ -35,7 +31,7 @@ public class MainActivity extends AppCompatActivity {
     public boolean TVInfoOkundu = false;
     private NavigationView navigationView;
     public DrawerLayout drawerLayout;
-    private PlayerFragment anaFragment = null;
+    private YayinFragment anaFragment = null;
     private AyarlarFragment ayarlarFragment = null;
     public M3UBilgi.M3UTur aktifTur = M3UBilgi.M3UTur.tv;
     AutoCompleteTextView turSecDDL;
@@ -49,7 +45,7 @@ public class MainActivity extends AppCompatActivity {
     private RangeSlider rangeSliderYil;
     private ArrayAdapter<String> aaTur;
     private int internettenCekiliyor;
-    private Handler handler;
+    public Handler handler;
 
     @SuppressLint("MissingInflatedId")
     @Override
@@ -64,7 +60,7 @@ public class MainActivity extends AppCompatActivity {
         M3UVeri.OkuBakayim(this);
         ProgSettings.AyarlariOku();
 
-        anaFragment = new PlayerFragment(this);
+        anaFragment = new YayinFragment(this);
         AyarlariKapat(true);
 
         String[] turListesi = getResources().getStringArray(R.array.turListesi);
@@ -76,7 +72,7 @@ public class MainActivity extends AppCompatActivity {
         filtreAlan = (EditText) findViewById(R.id.filtreAd);
         msTur = findViewById(R.id.msTur);
         turAldialog = DialogTanimlar.TurAl(this, FilmTurYonetim.TurIsimler(1), msTur);
-
+        DialogTanimlar.TMDBDialogOl(this);
         msTur.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -152,8 +148,6 @@ public class MainActivity extends AppCompatActivity {
                 anaFragment.TurSecildi(M3UVeri.SiraBul(aktifTur),false);
             }
         });
-
-
     }
 
     public void AyarlariKapat(boolean baslangictan) {

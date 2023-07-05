@@ -1,66 +1,82 @@
 <?xml version="1.0" encoding="utf-8" ?>
-<androidx.constraintlayout.widget.ConstraintLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/satirBilgi"
-    android:padding="8dp"
-    android:background="?android:attr/selectableItemBackground"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content">
+    android:layout_height="wrap_content"
+    android:background="?android:attr/selectableItemBackground"
+    android:padding="8dp">
 
     <ImageView
         android:id="@+id/filmAfis"
         android:layout_width="200dp"
         android:layout_height="250dp"
-        android:layout_marginTop="2dp"
         android:layout_marginStart="6dp"
+        android:layout_marginTop="2dp"
         android:layout_marginEnd="6dp"
         android:background="@color/cardview_shadow_end_color"
         android:contentDescription="@string/app_name"
         app:layout_constraintEnd_toEndOf="parent"
 
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        >
-    </ImageView>
+        app:layout_constraintTop_toTopOf="parent"></ImageView>
 
     <TextView
         android:id="@+id/filmAd"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginStart="6dp"
-        android:layout_marginEnd="6dp"
         android:layout_marginTop="2dp"
+        android:layout_marginEnd="6dp"
         android:background="@color/cardview_shadow_end_color"
         android:text="@string/app_name"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/filmAfis"
-        />
+        app:layout_constraintTop_toBottomOf="@id/filmAfis" />
 
     <TextView
         android:id="@+id/filmOzellik"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginStart="6dp"
-        android:layout_marginEnd="6dp"
         android:layout_marginTop="2dp"
+        android:layout_marginEnd="6dp"
+        android:layout_marginBottom="1dp"
         android:background="@color/cardview_shadow_end_color"
         android:text="@string/app_name"
-        android:layout_marginBottom="1dp"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/filmAd"
-        />
+        app:layout_constraintTop_toBottomOf="@id/filmAd" />
+
     <TextView
         android:id="@+id/filmAciklama"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginStart="6dp"
-        android:layout_marginEnd="6dp"
         android:layout_marginTop="2dp"
+        android:layout_marginEnd="6dp"
+        android:layout_marginBottom="2dp"
         android:background="@color/cardview_shadow_end_color"
         android:text="@string/app_name"
-        android:layout_marginBottom="2dp"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/filmOzellik"
-        />
+        app:layout_constraintTop_toBottomOf="@id/filmOzellik" />
+
+    <LinearLayout android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/filmAciklama">
+
+        <Button
+            android:id="@+id/filmTmdb"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="7dp"
+            android:text="TMDB Bağla" />
+
+        <Button
+            android:id="@+id/filmOzellikler"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="7dp"
+            android:text="Özellikler" />
+    </LinearLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>

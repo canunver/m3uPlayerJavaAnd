@@ -37,7 +37,7 @@ import org.videolan.libvlc.media.VideoView;
 
 import java.util.ArrayList;
 
-public class PlayerFragment extends Fragment {
+public class YayinFragment extends Fragment {
     private boolean baslangictan;
     private ConstraintLayout anaYerlesim;
     private ConstraintLayout aramaBolmesi;
@@ -49,7 +49,7 @@ public class PlayerFragment extends Fragment {
     Media mediaItem;
     public M3UFiltre filtre = new M3UFiltre();
     private RecyclerView recyclerView;
-    private OynaticiAdapter kanalAdapter;
+    private YayinListesiAdapter kanalAdapter;
     public String aktifGrupAd = "-";
     ArrayList<M3UBilgi> kanalListe = new ArrayList<>();
     AutoCompleteTextView grupSec;
@@ -71,7 +71,7 @@ public class PlayerFragment extends Fragment {
     private boolean ilkPlay;
     private ImageView imgOp;
 
-    public PlayerFragment(MainActivity mainActivity) {
+    public YayinFragment(MainActivity mainActivity) {
         this.baslangictan = true;
         this.mainActivity = mainActivity;
     }
@@ -178,7 +178,7 @@ public class PlayerFragment extends Fragment {
         }
 
         recyclerView = (RecyclerView) currView.findViewById(R.id.recyclerView);
-        kanalAdapter = new OynaticiAdapter(this, kanalListe);
+        kanalAdapter = new YayinListesiAdapter(this, kanalListe);
         LinearLayoutManager mLayoutManager = new LinearLayoutManager(this.getContext());
         recyclerView.setLayoutManager(mLayoutManager);
         recyclerView.setItemAnimator(new DefaultItemAnimator());
@@ -333,8 +333,14 @@ public class PlayerFragment extends Fragment {
         kanalAdapter.veriDegisti();
     }
 
-    public void NesneSecildi(int pos, String sezon, String bolum) {
-        OynatBakalim(kanalListe.get(pos), sezon, bolum, false, false);
+    public void NesneSecildi(int islem, int pos, String sezon, String bolum) {
+        M3UBilgi item = kanalListe.get(pos);
+        if(islem == 1)
+            OynatBakalim(item, sezon, bolum, false, false);
+        else if(islem == 2)
+        {
+            DialogTanimlar.tmdbDialogGoster(item);
+        }
     }
 
     public void OynatmaBolgesiBuyuklukAyarla() {
@@ -369,6 +375,10 @@ public class PlayerFragment extends Fragment {
                     //Log.d("PlayerFragment", m3uBilgi.tvgName + "TimeChanged");
                 } else if (event.type == MediaPlayer.Event.Playing) {//Üçüncü oluşan event 260
                     if (ilkPlay) {
+                        mediaController.SesleriAyarla(mMediaPlayer.getTracks(Media.Track.Type.Audio));
+                        //Media.Track[] subtitleTracks =
+                        mediaController.AltyazilariAyarla(mMediaPlayer.getTracks(Media.Track.Type.Text));
+
                         mediaController.BilgiAyarla(pauseBaslat);
                         if (tamEkranBaslat)
                             mediaController.TamEkrandanYap();

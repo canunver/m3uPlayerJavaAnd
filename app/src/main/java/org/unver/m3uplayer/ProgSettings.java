@@ -21,7 +21,7 @@ public class ProgSettings {
         if (!StringIsNUllOrEmpty(strDeger)) {
             try {
                 return Integer.parseInt(strDeger);
-            } catch (Exception _) {
+            } catch (Exception $) {
             }
         }
         return varsayilanDeger;
@@ -31,7 +31,7 @@ public class ProgSettings {
         if (!StringIsNUllOrEmpty(strDeger)) {
             try {
                 return Long.parseLong(strDeger);
-            } catch (Exception _) {
+            } catch (Exception $) {
             }
         }
         return varsayilanDeger;

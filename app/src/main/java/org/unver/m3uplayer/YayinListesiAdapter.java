@@ -6,8 +6,10 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
@@ -15,15 +17,15 @@ import androidx.recyclerview.widget.RecyclerView;
 import java.util.ArrayList;
 import java.util.Calendar;
 
-public class OynaticiAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
+public class YayinListesiAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     private static final int VIEW_TYPE_FILM = 1;
     private static final int VIEW_TYPE_SERI = 2;
     private static final int VIEW_TYPE_TV = 0;
-    private final PlayerFragment playerFragment;
+    private final YayinFragment yayinFragment;
     private final ArrayList<M3UBilgi> data;
 
-    public OynaticiAdapter(PlayerFragment playerFragment, ArrayList<M3UBilgi> data) {
-        this.playerFragment = playerFragment;
+    public YayinListesiAdapter(YayinFragment yayinFragment, ArrayList<M3UBilgi> data) {
+        this.yayinFragment = yayinFragment;
         this.data = data;
     }
 
@@ -53,12 +55,14 @@ public class OynaticiAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
     @Override
     public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, int position) {
         M3UBilgi blg = data.get(position);
-        if (blg.Tur == M3UBilgi.M3UTur.film)
-            ((FilmViewHolder) holder).bind(blg, position);
-        else if (blg.Tur == M3UBilgi.M3UTur.seri)
-            ((SeriViewHolder) holder).bind(blg, position);
-        else if (blg.Tur == M3UBilgi.M3UTur.tv)
+        if (blg.Tur == M3UBilgi.M3UTur.tv)
             ((KanalViewHolder) holder).bind(blg, position);
+        {
+            if (blg.Tur == M3UBilgi.M3UTur.film)
+                ((FilmViewHolder) holder).bind(blg, position);
+            else if (blg.Tur == M3UBilgi.M3UTur.seri)
+                ((SeriViewHolder) holder).bind(blg, position);
+        }
     }
 
     @Override
@@ -82,8 +86,21 @@ public class OynaticiAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
 
         @Override
         public void onClick(View v) {
-            long currTimeInMS = Calendar.getInstance().getTimeInMillis();
-            if (currTimeInMS - prevClickTimeInMS < 800) {
+            int islem = 0;
+            if(v.getId() == R.id.filmTmdb)
+            {
+                islem = 2;
+            }
+            else {
+                long currTimeInMS = Calendar.getInstance().getTimeInMillis();
+                if (currTimeInMS - prevClickTimeInMS < 800) {
+                    islem = 1;
+                }
+                prevClickTimeInMS = currTimeInMS;
+            }
+
+            if(islem!=0)
+            {
                 String bolum;
                 String sezon;
                 if (holder instanceof SeriViewHolder) {
@@ -94,9 +111,8 @@ public class OynaticiAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
                     sezon = null;
                     bolum = null;
                 }
-                playerFragment.NesneSecildi(holder.getAdapterPosition(), sezon, bolum);
+                yayinFragment.NesneSecildi(islem, holder.getAdapterPosition(), sezon, bolum);
             }
-            prevClickTimeInMS = currTimeInMS;
         }
     }
 
@@ -132,13 +148,16 @@ public class OynaticiAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
             filmAfis = itemView.findViewById(R.id.filmAfis);
             filmOzellik = itemView.findViewById(R.id.filmOzellik);
             filmAciklama = itemView.findViewById(R.id.filmAciklama);
+            Button filmTmdb = itemView.findViewById(R.id.filmTmdb);
+            filmTmdb.setOnClickListener(new MyOnClickListener(this));
             itemView.setOnClickListener(new MyOnClickListener(this));
         }
 
         public void bind(M3UBilgi blg, int ignoredPosition) {
             filmAd.setText(blg.tvgName);
-            filmOzellik.setText(blg.filmYil);
-            M3UListeArac.ImageYukle(filmAfis, blg.tvgLogo);
+            filmOzellik.setText("Puan, Türler,  Yayın Tarihi ");
+            filmAciklama.setText(blg.aciklamaBul());
+            M3UListeArac.ImageYukle(filmAfis, blg.afisBul(500));
         }
     }
 
@@ -182,10 +201,12 @@ public class OynaticiAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
                 al.add(s.sezonAd);
             }
 
-            sezonAdapter = new ArrayAdapter<>(playerFragment.mainActivity, com.google.android.material.R.layout.support_simple_spinner_dropdown_item, al);
+            sezonAdapter = new ArrayAdapter<>(yayinFragment.mainActivity, com.google.android.material.R.layout.support_simple_spinner_dropdown_item, al);
             sezonSec.setAdapter(sezonAdapter);
-            sezonSec.setText(sezonAdapter.getItem(0), false);
-            SezonSecildi(0);
+            if(sezonAdapter!=null && !sezonAdapter.isEmpty()) {
+                sezonSec.setText(sezonAdapter.getItem(0), false);
+                SezonSecildi(0);
+            }
         }
 
         public void SezonSecildi(int position) {
@@ -204,7 +225,7 @@ public class OynaticiAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
             if (al.size() == 0)
                 al.add("-");
 
-            bolumAdapter = new ArrayAdapter<>(playerFragment.mainActivity, com.google.android.material.R.layout.support_simple_spinner_dropdown_item, al);
+            bolumAdapter = new ArrayAdapter<>(yayinFragment.mainActivity, com.google.android.material.R.layout.support_simple_spinner_dropdown_item, al);
             bolumSec.setAdapter(bolumAdapter);
             bolumSec.setText(bolumAdapter.getItem(0), false);
             BolumSecildi(0);

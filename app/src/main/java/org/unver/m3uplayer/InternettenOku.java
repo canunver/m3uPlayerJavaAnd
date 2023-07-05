@@ -14,7 +14,6 @@ import java.security.SecureRandom;
 import java.security.cert.X509Certificate;
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.Hashtable;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -43,7 +42,7 @@ public class InternettenOku {
             m3u.tmdbId = m3uEski.tmdbId;
         }
         m3u.Yaz(db);
-        M3UVeri.GruplaraIsle(m3u, true);
+        M3UVeri.GruplaraIsle(m3u, true, false);
     }
 
     public void performNetworkOperation(MainActivity mainActivity, SQLiteDatabase db, String kod) {
@@ -135,7 +134,7 @@ public class InternettenOku {
                         tvInfo = ti.InfoAl(0);
                         tvInfo.type = M3UVeri.SiraBul(m3u.Tur);
                         m3u.tmdbId = tvInfo.id;
-                        Log.d("M3UVeri", tvInfo.AnahtarBul() + " olarak yazılacak");
+                        Log.d("M3UVeri", tvInfo.anahtarBul() + " olarak yazılacak");
                     }
                     if (tvInfo != null) {
                         tvInfo.Yaz(M3UVeri.db);
@@ -176,17 +175,20 @@ public class InternettenOku {
         HttpsURLConnection.setDefaultSSLSocketFactory(sslContext.getSocketFactory());
         HttpsURLConnection.setDefaultHostnameVerifier((hostname, session) -> true);
         trustInit = true;
-
     }
 
-    private TVResponse TMDBInfoBul(M3UBilgi m3u) throws Exception {
+    public TVResponse TMDBInfoBul(M3UBilgi m3u) throws Exception {
+        return getTmdbInfo(m3u.TMDBTur(), m3u.SorguYap());
+    }
+
+    public static TVResponse getTmdbInfo(String tmdbTur, String sorgu) {
         Log.i("M3UVeri", "TMDB veri alınacak");
         StringBuilder response = new StringBuilder();
         HttpURLConnection connection = null;
         try {
             if (!trustInit) doTrustInit();
 
-            String urlStr = String.format("https://api.themoviedb.org/3/search/%s?language=tr-TR&query=%s", m3u.TMDBTur(), m3u.SorguYap());
+            String urlStr = String.format("https://api.themoviedb.org/3/search/%s?language=tr-TR&query=%s",tmdbTur, sorgu);
             Log.d("M3UVeri", "TMDB veri alınacak:" + urlStr + " " + ProgSettings.tmdb_erisim_anahtar);
             URL url = new URL(urlStr);
             connection = (HttpURLConnection) url.openConnection();
@@ -207,10 +209,6 @@ public class InternettenOku {
         }
         if (connection != null)
             connection.disconnect();
-        return TMDBInfoYap(response, m3u);
-    }
-
-    private TVResponse TMDBInfoYap(StringBuilder response, M3UBilgi m3u) {
         if (response == null) return null;
         if (response.length() == 0) return null;
 

@@ -22,6 +22,15 @@ public class TVInfo {
     public int vote_count;
     public String[] origin_country;
     public int[] genre_ids;
+    public String toString()
+    {
+        return title + "("+ release_date + ")";
+    }
+
+    public TVInfo(String s) {
+        this.name = s;
+        this.id=12;
+    }
 
     public String YayinTarihiBul() {
         if (ProgSettings.StringIsNUllOrEmpty(first_air_date))
@@ -93,7 +102,7 @@ public class TVInfo {
         try {
             ContentValues values = new ContentValues();
 
-            values.put("type_id", AnahtarBul());                                       //public int
+            values.put("type_id", anahtarBul());                                       //public int
             values.put("name", name);                                                  //public String
             values.put("title", title);                                                //public String
             values.put("original_name", original_name);                                //public String
@@ -119,12 +128,11 @@ public class TVInfo {
         return rowId;
     }
 
-    public String AnahtarBul() {
-        return AnahtarBul(this.type, this.id);
+    public String anahtarBul() {
+        return anahtarBul(this.type, this.id);
     }
 
-    public static String AnahtarBul(int type, long id) {
+    public static String anahtarBul(int type, long id) {
         return type + "_" + id;
     }
-
 }

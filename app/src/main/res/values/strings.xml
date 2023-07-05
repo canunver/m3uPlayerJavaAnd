@@ -32,4 +32,6 @@
     <string name="kaydet">Save</string>
     <string name="son_tv_kanalini_oynatarak_basla">Start last TV channel</string>
     <string name="search">Search</string>
+    <string name="TurSec">Select Genre</string>
+    <string name="tmdb_aramasi_icin_kriter_giriniz">TMDB araması için kriter giriniz.</string>
 </resources>

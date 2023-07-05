@@ -5,7 +5,6 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.util.Log;
 
-import java.util.AbstractCollection;
 import java.util.ArrayList;
 import java.util.Hashtable;
 
@@ -35,9 +34,10 @@ public class M3UVeri {
             db = dbHelper.getWritableDatabase();
 
         Log.i("M3UVeri", "M3U cursor olacak");
-        Cursor cursor = db.query(M3U_DB.TABLE_M3U, null, null, null, null, null, null);
+        Cursor cursor = db.query(M3U_DB.TABLE_M3U, null, null, null, null, null, "groupTitle, tvgName");
         Log.i("M3UVeri", "M3U cursor oldu");
-
+        tumM3Ular.clear();
+        tumSerilerAd.clear();
         if (cursor != null) {
             try {
                 if (cursor.moveToFirst()) {
@@ -74,7 +74,7 @@ public class M3UVeri {
                                 eklemeTarih, gizli, adult, tmdbId, guncellemeTarih, seyredilenSure);
                         if (m3u.filmYilInt > 0 && m3u.filmYilInt < minYil)
                             minYil = m3u.filmYilInt;
-                        GruplaraIsle(m3u, true);
+                        GruplaraIsle(m3u, true, true);
                     } while (cursor.moveToNext());
                     if (minYil > 3000) minYil = 0;
                 }
@@ -82,11 +82,26 @@ public class M3UVeri {
                 cursor.close();
             }
             Log.i("M3UVeri", "cursor kapandı");
+//            db.beginTransaction();
+//            tumSerilerAd.forEach(new BiConsumer<String, String>() {
+//                @Override
+//                public void accept(String s, String s2) {
+//                    M3UBilgi seri = tumM3Ular.getOrDefault(s2, null);
+//                    if (seri != null) {
+//                        Log.i("M3UVeri", "s2:" + s2 + ", seri:" + seri.tvgName + " id:" + seri.ID);
+//                        seri.Yaz(db);
+//                    }
+//                }
+//            });
+//            db.setTransactionSuccessful();
+//            db.endTransaction();
+//            Log.i("M3UVeri", "Bu sefer olacak mı, Serileri veri tabanına yazdık kardeşim, bu kodu sil be koçum");
+
         }
     }
 
     public static void TMDByeIsle(TVInfo tvInfo) {
-        M3UVeri.tumTMDBler.put(tvInfo.AnahtarBul(), tvInfo);
+        M3UVeri.tumTMDBler.put(tvInfo.anahtarBul(), tvInfo);
     }
 
     private static M3UGrup GrupBulYoksaEkle(ArrayList<M3UGrup> anaGrup, String groupTitle, boolean gelenGrup, boolean yoksaEkle) {
@@ -110,31 +125,64 @@ public class M3UVeri {
             grp.kanallar.add(m3u.ID);
     }
 
-    public static void GruplaraIsle(M3UBilgi m3u, boolean gelenGrup) {
-        tumM3Ular.put(m3u.ID, m3u);
+    public static void GruplaraIsle(M3UBilgi m3u, boolean gelenGrup, boolean veriTabanindan) {
         if (m3u.Tur == M3UBilgi.M3UTur.tv) {
+            tumM3Ular.put(m3u.ID, m3u);
             GrubaEkle(tvGruplari, m3u, gelenGrup);
         } else if (m3u.Tur == M3UBilgi.M3UTur.film) {
+            tumM3Ular.put(m3u.ID, m3u);
             GrubaEkle(filmGruplari, m3u, gelenGrup);
         } else if (m3u.Tur == M3UBilgi.M3UTur.seri) {
             M3UBilgi seri;
-            if (!tumSerilerAd.containsKey(m3u.seriAd)) {
-                GrubaEkle(seriGruplari, m3u, gelenGrup);
+            String mevcutId = tumSerilerAd.getOrDefault(m3u.seriAd, null);
+            if (m3u.ID.endsWith("_S")) {
+                if (mevcutId == null) {
+                    GrubaEkle(seriGruplari, m3u, gelenGrup);
+                } else {
+                    seri = tumM3Ular.get(mevcutId);
+                    m3u.seriSezonlari = seri.seriSezonlari;
+                    m3u.eklemeTarih = seri.eklemeTarih;
+                }
                 tumSerilerAd.put(m3u.seriAd, m3u.ID);
-                seri = m3u;
+                tumM3Ular.put(m3u.ID, m3u);
             } else {
-                seri = tumM3Ular.get(tumSerilerAd.get(m3u.seriAd));
+                tumM3Ular.put(m3u.ID, m3u);
+                if (mevcutId == null) {
+                    seri = new M3UBilgi(m3u);
+                    seri.tmdbId = 0;
+                    tumM3Ular.put(seri.ID, seri);
+                    GrubaEkle(seriGruplari, seri, gelenGrup);
+                    tumSerilerAd.put(seri.seriAd, seri.ID);
+                    if (!veriTabanindan)
+                        seri.Yaz(M3UVeri.db);
+                } else {
+                    seri = tumM3Ular.getOrDefault(mevcutId, null);
+                }
+                Sezon sezon = SezonBulYoksaEkle(seri, m3u.sezon);
+                Bolum blm = sezon.BolumBul(m3u.bolum);
+                if (blm == null)
+                    sezon.bolumler.add(new Bolum(m3u.ID, m3u.bolum));
+                else
+                    blm.AddId(m3u.ID);
+                if (m3u.eklemeTarih.compareTo(seri.eklemeTarih) > 0)
+                    seri.eklemeTarih = m3u.eklemeTarih;
             }
-            Sezon sezon = SezonBulYoksaEkle(seri, m3u.sezon);
-            Bolum blm = sezon.BolumBul(m3u.bolum);
-            if (blm == null)
-                sezon.bolumler.add(new Bolum(m3u.ID, m3u.bolum));
-            else
-                blm.AddId(m3u.ID);
-            if (m3u.eklemeTarih.compareTo(seri.eklemeTarih) > 0)
-                seri.eklemeTarih = m3u.eklemeTarih;
         }
     }
+
+//    private static void Logla(String int_sezon_ekle, M3UBilgi m3u, M3UBilgi seri) {
+//        if (m3u == null && seri == null)
+//            Log.d("M3USeri", int_sezon_ekle + " Hoppalaaa");
+//        else {
+//            if (m3u != null && m3u.seriAd.startsWith("White Line") || seri != null && seri.seriAd.startsWith("White Line"))
+//                Log.d("M3USeri", int_sezon_ekle + " *** " + StringYap(m3u) + " *** " + StringYap(seri));
+//        }
+//    }
+
+//    private static String StringYap(M3UBilgi m3u) {
+//        if (m3u == null) return "null";
+//        return "ID:" + m3u.ID + ", Ad:" + m3u.seriAd + ", sezon:" + m3u.seriSezonlari.size();
+//    }
 
     public static Sezon SezonBulYoksaEkle(M3UBilgi seri, String sezonAd) {
         for (Sezon item : seri.seriSezonlari) {
