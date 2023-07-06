@@ -87,11 +87,11 @@ public class YayinListesiAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
         @Override
         public void onClick(View v) {
             int islem = 0;
-            if(v.getId() == R.id.filmTmdb)
-            {
+            if (v.getId() == R.id.filmTmdb || v.getId() == R.id.seriTmdb) {
                 islem = 2;
-            }
-            else {
+            } else if (v.getId() == R.id.seriTmdbDetay) {
+                islem = 3;
+            } else {
                 long currTimeInMS = Calendar.getInstance().getTimeInMillis();
                 if (currTimeInMS - prevClickTimeInMS < 800) {
                     islem = 1;
@@ -99,8 +99,7 @@ public class YayinListesiAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
                 prevClickTimeInMS = currTimeInMS;
             }
 
-            if(islem!=0)
-            {
+            if (islem != 0) {
                 String bolum;
                 String sezon;
                 if (holder instanceof SeriViewHolder) {
@@ -165,10 +164,12 @@ public class YayinListesiAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
         public TextView seriAd;
         public TextView seriOzellik;
         public TextView seriAciklama;
+        public TextView bolumAciklama;
         public ImageView seriAfis;
         public AutoCompleteTextView sezonSec;
         public AutoCompleteTextView bolumSec;
         public String aktifSezonAd;
+        public Sezon aktifSezon;
         public String aktifBolumAd;
         public ArrayAdapter<String> sezonAdapter;
         public ArrayAdapter<String> bolumAdapter;
@@ -183,6 +184,13 @@ public class YayinListesiAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
             seriAciklama = itemView.findViewById(R.id.seriAciklama);
             sezonSec = itemView.findViewById(R.id.sezonSec);
             bolumSec = itemView.findViewById(R.id.bolumSec);
+            bolumAciklama = itemView.findViewById(R.id.bolumAciklama);
+
+            Button seriTmdb = itemView.findViewById(R.id.seriTmdb);
+            seriTmdb.setOnClickListener(new MyOnClickListener(this));
+
+            Button bolumTmdb = itemView.findViewById(R.id.seriTmdbDetay);
+            bolumTmdb.setOnClickListener(new MyOnClickListener(this));
 
             sezonSec.setOnItemClickListener((parent, view, position, id) -> SezonSecildi(position));
             bolumSec.setOnItemClickListener((parent, view, position, id) -> BolumSecildi(position));
@@ -194,7 +202,7 @@ public class YayinListesiAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
             seriAd.setText(blg.seriAd);
             seriOzellik.setText(blg.filmYil);
             M3UListeArac.ImageYukle(seriAfis, blg.tvgLogo);
-            //seriAciklama.setText("blg.seriYil");
+            seriAciklama.setText(blg.aciklamaBul());
 
             ArrayList<String> al = new ArrayList<>();
             for (Sezon s : blg.seriSezonlari) {
@@ -203,7 +211,7 @@ public class YayinListesiAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
 
             sezonAdapter = new ArrayAdapter<>(yayinFragment.mainActivity, com.google.android.material.R.layout.support_simple_spinner_dropdown_item, al);
             sezonSec.setAdapter(sezonAdapter);
-            if(sezonAdapter!=null && !sezonAdapter.isEmpty()) {
+            if (sezonAdapter != null && !sezonAdapter.isEmpty()) {
                 sezonSec.setText(sezonAdapter.getItem(0), false);
                 SezonSecildi(0);
             }
@@ -211,11 +219,11 @@ public class YayinListesiAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
 
         public void SezonSecildi(int position) {
             aktifSezonAd = sezonAdapter.getItem(position);
+            aktifSezon = blg.SezonBul(aktifSezonAd);
 
             ArrayList<String> al = new ArrayList<>();
-            Sezon s = blg.SezonBul(aktifSezonAd);
-            if (s != null) {
-                for (Bolum b : s.bolumler) {
+            if (aktifSezon != null) {
+                for (Bolum b : aktifSezon.bolumler) {
                     al.add(b.bolum);
                     for (int i = 1; i < b.idler.size(); i++) {
                         al.add(b.bolum + " (" + (i + 1) + ")");
@@ -233,6 +241,13 @@ public class YayinListesiAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
 
         public void BolumSecildi(int position) {
             aktifBolumAd = bolumAdapter.getItem(position);
+            String aciklama;
+            if (aktifSezon != null) {
+                Bolum b = aktifSezon.bolumler.get(position);
+                aciklama = b.tmdbAciklamaBul();
+            } else
+                aciklama = aktifSezonAd + aktifBolumAd;
+            bolumAciklama.setText(aciklama);
         }
     }
 }

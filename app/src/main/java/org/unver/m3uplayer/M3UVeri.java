@@ -322,9 +322,10 @@ public class M3UVeri {
         return kanallar;
     }
 
-    public static void TMDBOku() {
+    public static TVInfo TMDBOkuIc(String selection) {
         Log.i("M3UVeri", "TVInfo cursor olacak");
-        Cursor cursor = db.query(M3U_DB.TABLE_TVINFO, null, null, null, null, null, null);
+        Cursor cursor = db.query(M3U_DB.TABLE_TVINFO, null, selection, null, null, null, null);
+        TVInfo son = null;
         if (cursor != null) {
             try {
                 if (cursor.moveToFirst()) {
@@ -374,7 +375,10 @@ public class M3UVeri {
                                 poster_path, adult, popularity, backdrop_path,
                                 vote_average, overview, first_air_date, release_date, original_language,
                                 vote_count, origin_country, genre_ids);
-                        TMDByeIsle(tvInfo);
+                        if (selection == null)
+                            TMDByeIsle(tvInfo);
+                        else
+                            son = tvInfo;
                     } while (cursor.moveToNext());
                 }
             } finally {
@@ -382,6 +386,15 @@ public class M3UVeri {
             }
         }
         Log.i("M3UVeri", "TVInfo cursor oldu");
+        return son;
+    }
+
+    public static void TMDBOku() {
+        TMDBOkuIc(null);
         mainActivity.TVInfoOkundu = true;
+    }
+
+    public static TVInfo TVInfoOku(int type, long tmdbId) {
+        return TMDBOkuIc("type_id ='" + TVInfo.anahtarBul(type, tmdbId)+ "'");
     }
 }

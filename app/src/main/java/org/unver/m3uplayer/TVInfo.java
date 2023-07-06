@@ -22,17 +22,13 @@ public class TVInfo {
     public int vote_count;
     public String[] origin_country;
     public int[] genre_ids;
+
     public String toString()
     {
-        return title + "("+ release_date + ")";
+        return nameTitle() + "("+ yayinTarihiBul()  + ")";
     }
 
-    public TVInfo(String s) {
-        this.name = s;
-        this.id=12;
-    }
-
-    public String YayinTarihiBul() {
+    public String yayinTarihiBul() {
         if (ProgSettings.StringIsNUllOrEmpty(first_air_date))
             return release_date;
         else
@@ -40,7 +36,7 @@ public class TVInfo {
     }
 
     public int FilmYil() {
-        String yt = YayinTarihiBul();
+        String yt = yayinTarihiBul();
         if (!ProgSettings.StringIsNUllOrEmpty(yt)) {
             ProgSettings.ConvertToInt32(yt.substring(yt.length() - 4), 0);
         }
@@ -77,8 +73,24 @@ public class TVInfo {
         this.origin_country = ProgSettings.ConvertToArrayStr(origin_country);
         this.genre_ids = ProgSettings.ConvertToArrayInt(genre_ids);
     }
+    public TVInfo(int type, long id, String name, String air_date, String overview, double vote_average) {
+        this.type = type;
+        this.id = id;
+        this.name = name;
+        this.original_name = name;
+        this.adult = false;
+        this.popularity = 0;
+        this.backdrop_path = null;
+        this.vote_average = vote_average;
+        this.overview = overview;
+        this.first_air_date = air_date;
+        this.release_date = air_date;
+        this.origin_country = null;
+        this.genre_ids = null;
+    }
 
-    public String Name() {
+
+    public String nameTitle() {
         if (ProgSettings.StringIsNUllOrEmpty(name))
             return title;
         else
@@ -93,7 +105,7 @@ public class TVInfo {
     }
 
     public String ToListStr() {
-        return String.format("%s (%s) - %s, %s - %s", Name(), YayinTarihiBul(), Original_name(), popularity, vote_average);
+        return String.format("%s (%s) - %s, %s - %s", nameTitle(), yayinTarihiBul(), Original_name(), popularity, vote_average);
     }
 
     public long Yaz(SQLiteDatabase db) {
@@ -134,5 +146,9 @@ public class TVInfo {
 
     public static String anahtarBul(int type, long id) {
         return type + "_" + id;
+    }
+
+    public int voteAverage() {
+        return (int)vote_average*10;
     }
 }

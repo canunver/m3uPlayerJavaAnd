@@ -181,6 +181,47 @@ public class InternettenOku {
         return getTmdbInfo(m3u.TMDBTur(), m3u.SorguYap());
     }
 
+    private TMDBBolum TMDBInfoBulSeri(M3UBilgi m3u, String sezonAd, String bolumNo) {
+        StringBuilder response = new StringBuilder();
+        HttpURLConnection connection = null;
+        try {
+            if (!trustInit) doTrustInit();
+            String urlStr = String.format("https://api.themoviedb.org/3/tv/%s/season/%s/episode/%s?language=%s", m3u.tmdbId, sezonAd.substring(1), bolumNo.substring(1), ProgSettings.TMDBDil);
+
+            Log.d("M3UVeri", "TMDB bölüm alınacak:" + urlStr + " " + ProgSettings.tmdb_erisim_anahtar);
+            URL url = new URL(urlStr);
+            connection = (HttpURLConnection) url.openConnection();
+            connection.setRequestMethod("GET");
+            connection.setRequestProperty("Authorization", "Bearer " + ProgSettings.tmdb_erisim_anahtar);
+            connection.setRequestProperty("accept", "application/json");
+            int responseCode = connection.getResponseCode();
+            if (responseCode == HttpURLConnection.HTTP_OK) {
+                BufferedReader reader = new BufferedReader(new InputStreamReader(connection.getInputStream()));
+                String line;
+                while ((line = reader.readLine()) != null) {
+                    response.append(line);
+                }
+                reader.close();
+            } else
+                Log.d("M3UVeri", "TMDB veri OK Değil: " + responseCode);
+        } catch (Exception ex) {
+            Log.d("M3UVeri", "TMDB veri alınamadı" + ex.getMessage());
+        }
+        if (connection != null)
+            connection.disconnect();
+        if (response == null) return null;
+        if (response.length() == 0) return null;
+
+        Gson gson = new Gson();
+
+        TMDBBolum gelenObj = gson.fromJson(response.toString(), TMDBBolum.class);
+        if (gelenObj != null) {
+            Log.d("M3UVeri", "TMDB, Gelen nesne:" + gelenObj.ToListStr());
+        } else
+            Log.d("M3UVeri", "TMDB, Gelen nesne çevrilemedi" + response.toString());
+        return gelenObj;
+    }
+
     public static TVResponse getTmdbInfo(String tmdbTur, String sorgu) {
         Log.i("M3UVeri", "TMDB veri alınacak");
         StringBuilder response = new StringBuilder();
@@ -188,7 +229,7 @@ public class InternettenOku {
         try {
             if (!trustInit) doTrustInit();
 
-            String urlStr = String.format("https://api.themoviedb.org/3/search/%s?language=tr-TR&query=%s",tmdbTur, sorgu);
+            String urlStr = String.format("https://api.themoviedb.org/3/search/%s?language=%s&query=%s", tmdbTur, ProgSettings.TMDBDil, sorgu);
             Log.d("M3UVeri", "TMDB veri alınacak:" + urlStr + " " + ProgSettings.tmdb_erisim_anahtar);
             URL url = new URL(urlStr);
             connection = (HttpURLConnection) url.openConnection();
@@ -220,6 +261,88 @@ public class InternettenOku {
         } else
             Log.d("M3UVeri", "TMDB, Gelen nesne çevrilemedi" + response.toString());
         return gelenObj;
+    }
+
+    class TMDBBolum {
+        public String air_date;
+        public int episode_number;
+        public String name;
+        public String overview;
+        public long id;
+        public int season_number;
+        public double vote_average;
+
+        public String ToListStr() {
+            return id + ":" + name + "(" + air_date + ", " + vote_average + ")";
+        }
+    }
+
+    class BolumBilgi {
+        private final TMDBBolum ti;
+        private final Bolum blm;
+
+        public BolumBilgi(TMDBBolum ti, Bolum blm) {
+            this.ti = ti;
+            this.blm = blm;
+        }
+    }
+
+    public void performNetworkOperationTMDBSeri(MainActivity mainActivity, SQLiteDatabase db, M3UBilgi m3u) {
+        ExecutorService executor = Executors.newSingleThreadExecutor();
+        executor.execute(() -> {
+            boolean globHata = false;
+            ArrayList<BolumBilgi> cevaplar = new ArrayList<>();
+            try {
+                for (Sezon sez : m3u.seriSezonlari) {
+                    for (Bolum blm : sez.bolumler) {
+                        TMDBBolum tmdbBolum;
+                        try {
+                            tmdbBolum = TMDBInfoBulSeri(m3u, sez.sezonAd, blm.bolum);
+                        } catch (Exception ex) {
+                            Log.d("M3UVeri", "Hata:" + ex.getMessage());
+                            tmdbBolum = null;
+                        }
+                        cevaplar.add(new BolumBilgi(tmdbBolum, blm));
+                    }
+
+                }
+            } catch (Exception e) {
+                globHata = true;
+                e.printStackTrace();
+            }
+
+            if (!globHata) {
+                db.beginTransaction();
+                for (int i = 0; i < cevaplar.size(); i++) {
+                    BolumBilgi bb = cevaplar.get(i);
+                    TVInfo tvInfo;
+                    long yazId = -1;
+                    if (bb.ti == null) {
+                        yazId = -1;
+                        Log.d("M3UVeri", "-1 olarak yazılacak");
+                        tvInfo = null;
+                    } else {
+                        tvInfo = new TVInfo(9, bb.ti.id, bb.ti.name, bb.ti.air_date, bb.ti.overview, bb.ti.vote_average);
+                        yazId = tvInfo.id;
+                        Log.d("M3UVeri", tvInfo.anahtarBul() + " olarak yazılacak");
+                    }
+                    if (tvInfo != null) {
+                        tvInfo.Yaz(M3UVeri.db);
+                        //M3UVeri.TMDByeIsle(tvInfo);
+                    }
+                    for (String bolumM3UId : bb.blm.idler) {
+                        M3UBilgi bolM3u = M3UVeri.tumM3Ular.getOrDefault(bolumM3UId, null);
+                        bolM3u.tmdbId = yazId;
+                        bolM3u.Yaz(M3UVeri.db);
+                    }
+                }
+                db.setTransactionSuccessful();
+                db.endTransaction();
+            }
+            mainActivity.Cekildi();
+        });
+
+        executor.shutdown();
     }
 }
 

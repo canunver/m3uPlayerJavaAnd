@@ -56,16 +56,22 @@ public class M3UBilgi {
         }
     }
 
-    private double tmdbPuan() {
+    private int tmdbPuan() {
         tmdbBul();
         if (tmdbBag == null) return 0;
-        return tmdbBag.popularity * 10;
+        return tmdbBag.voteAverage();
     }
 
     private int tmdbYil() {
         tmdbBul();
         if (tmdbBag == null) return 0;
         return tmdbBag.FilmYil();
+    }
+
+    private String tmdbName() {
+        tmdbBul();
+        if (tmdbBag == null) return "";
+        return tmdbBag.nameTitle();
     }
 
 
@@ -136,6 +142,7 @@ public class M3UBilgi {
     private boolean AdUygunMu(M3UFiltre filtre) {
         if (M3UListeArac.IsNullOrWhiteSpace(filtre.isimFiltreStr)) return true;
         if (tvgName.toLowerCase().contains(filtre.isimFiltreStr.toLowerCase())) return true;
+        if (tmdbName().toLowerCase().contains(filtre.isimFiltreStr.toLowerCase())) return true;
         return false;
     }
 

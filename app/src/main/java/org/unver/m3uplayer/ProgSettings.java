@@ -16,6 +16,7 @@ public class ProgSettings {
     public static String sonTVGrup;
     public static String sonTVProgID;
     public static long sonCekilmeZamani;
+    public static String TMDBDil = "tr-TR";
 
     public static int ConvertToInt32(String strDeger, int varsayilanDeger) {
         if (!StringIsNUllOrEmpty(strDeger)) {

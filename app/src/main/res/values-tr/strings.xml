@@ -32,4 +32,6 @@
     <string name="search">Search</string>
     <string name="TurSec">Select Genre</string>
     <string name="tmdb_aramasi_icin_kriter_giriniz">TMDB araması için kriter giriniz.</string>
+    <string name="bolum_cekme_basladi">Tüm bölümlerin çekimi için işlem başlatıldı</string>
+    <string name="once_dizi_cek">Bölüm çekmek için, önce dizi bilgisi çekilmeli</string>
 </resources>

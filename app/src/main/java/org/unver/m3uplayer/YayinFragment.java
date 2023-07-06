@@ -28,6 +28,7 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.ImageView;
+import android.widget.Toast;
 
 import org.videolan.libvlc.LibVLC;
 import org.videolan.libvlc.Media;
@@ -335,11 +336,17 @@ public class YayinFragment extends Fragment {
 
     public void NesneSecildi(int islem, int pos, String sezon, String bolum) {
         M3UBilgi item = kanalListe.get(pos);
-        if(islem == 1)
+        if (islem == 1)
             OynatBakalim(item, sezon, bolum, false, false);
-        else if(islem == 2)
-        {
+        else if (islem == 2) {
             DialogTanimlar.tmdbDialogGoster(item);
+        } else if (islem == 3) {
+            if (item.tmdbId > 0) {
+                new InternettenOku().performNetworkOperationTMDBSeri(mainActivity, M3UVeri.db, item);
+                Toast.makeText(mainActivity, R.string.bolum_cekme_basladi, Toast.LENGTH_SHORT).show();
+            }
+            else
+                Toast.makeText(mainActivity, R.string.once_dizi_cek, Toast.LENGTH_SHORT).show();
         }
     }
 

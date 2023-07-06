@@ -217,14 +217,15 @@ public class DialogTanimlar {
                                 ti.type = M3UVeri.SiraBul(arananM3U.Tur);
                                 arananM3U.tmdbId = ti.id;
                                 arananM3U.Yaz(M3UVeri.db);
+                                Log.d("Cek", "arananM3U.tmdbId: " + arananM3U.tmdbId + ", " + "ti.tostr:" + ti.toString());
                                 M3UVeri.tumTMDBler.put(ti.anahtarBul(), ti);
                                 ti.Yaz(M3UVeri.db);
                                 hata = "";
                             } else
-                                hata = "bu da neeee!";
+                                hata = "Seçilen nesne alınamadı!";
                         } else
-                            hata = "Ne oldu bööle";
-                        if(!ProgSettings.StringIsNUllOrEmpty(hata))
+                            hata = "Seçilen nesne bulunamadı!";
+                        if (!ProgSettings.StringIsNUllOrEmpty(hata))
                             Toast.makeText(mainActivity, hata, Toast.LENGTH_SHORT).show();
                     }
                 })
@@ -241,7 +242,10 @@ public class DialogTanimlar {
     public static void tmdbDialogGoster(M3UBilgi m3u) {
         arananM3U = m3u;
         tvInfoArrayAdapter.setSelectedItemPosition(-1);
-        tmdbAraText.setText(m3u.tvgName);
+        if (m3u.Tur == M3UBilgi.M3UTur.seri)
+            tmdbAraText.setText(m3u.seriAd);
+        else
+            tmdbAraText.setText(m3u.tvgName);
         tmdbAldialog.show();
     }
 }

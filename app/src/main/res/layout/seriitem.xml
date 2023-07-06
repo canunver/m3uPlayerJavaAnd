@@ -20,8 +20,7 @@
         app:layout_constraintEnd_toEndOf="parent"
 
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        >
+        app:layout_constraintTop_toTopOf="parent">
     </ImageView>
     <TextView
         android:id="@+id/seriAd"
@@ -33,8 +32,33 @@
         android:background="@color/cardview_shadow_end_color"
         android:text="@string/app_name"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/seriAfis"
-        />
+        app:layout_constraintTop_toBottomOf="@id/seriAfis"/>
+
+    <TextView
+        android:id="@+id/seriOzellik"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="6dp"
+        android:layout_marginEnd="6dp"
+        android:layout_marginTop="2dp"
+        android:background="@color/cardview_shadow_end_color"
+        android:text="@string/app_name"
+        android:layout_marginBottom="1dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/seriAd" />
+
+    <TextView
+        android:id="@+id/seriAciklama"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="6dp"
+        android:layout_marginEnd="6dp"
+        android:layout_marginTop="2dp"
+        android:background="@color/cardview_shadow_end_color"
+        android:text="@string/app_name"
+        android:layout_marginBottom="2dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/seriOzellik" />
 
     <com.google.android.material.textfield.TextInputLayout
         style="@style/Widget.Material3.TextInputLayout.OutlinedBox.ExposedDropdownMenu"
@@ -47,8 +71,7 @@
         android:layout_marginEnd="0dp"
 
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/seriAd"
-        >
+        app:layout_constraintTop_toBottomOf="@id/seriAciklama">
 
         <AutoCompleteTextView
             android:id="@+id/sezonSec"
@@ -59,11 +82,8 @@
             android:layout_marginTop="0dp"
             android:layout_marginLeft="0dp"
             android:layout_marginRight="0dp"
-
             android:inputType="none"
-            android:text="@string/app_name"
-
-         />
+            android:text="@string/app_name"/>
     </com.google.android.material.textfield.TextInputLayout>
     <com.google.android.material.textfield.TextInputLayout
         style="@style/Widget.Material3.TextInputLayout.OutlinedBox.ExposedDropdownMenu"
@@ -77,8 +97,7 @@
         android:layout_marginEnd="32dp"
 
         app:layout_constraintStart_toEndOf="@id/sezonSecCont"
-        app:layout_constraintTop_toBottomOf="@id/seriAd"
-        >
+        app:layout_constraintTop_toBottomOf="@id/seriAciklama">
 
         <AutoCompleteTextView
             android:id="@+id/bolumSec"
@@ -95,20 +114,7 @@
     </com.google.android.material.textfield.TextInputLayout>
 
     <TextView
-        android:id="@+id/seriOzellik"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="6dp"
-        android:layout_marginEnd="6dp"
-        android:layout_marginTop="2dp"
-        android:background="@color/cardview_shadow_end_color"
-        android:text="@string/app_name"
-        android:layout_marginBottom="1dp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/sezonSecCont"
-        />
-    <TextView
-        android:id="@+id/seriAciklama"
+        android:id="@+id/bolumAciklama"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginStart="6dp"
@@ -118,6 +124,33 @@
         android:text="@string/app_name"
         android:layout_marginBottom="2dp"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/seriOzellik"
-        />
+        app:layout_constraintTop_toBottomOf="@id/sezonSecCont" />
+
+    <LinearLayout android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/bolumAciklama">
+
+        <Button
+            android:id="@+id/seriTmdb"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="5dp"
+            android:text="TMDB Bağla" />
+
+        <Button
+            android:id="@+id/seriTmdbDetay"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="5dp"
+            android:text="Bölüm Çek" />
+
+        <Button
+            android:id="@+id/seriOzellikler"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="5dp"
+            android:text="Özellikler" />
+    </LinearLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>
