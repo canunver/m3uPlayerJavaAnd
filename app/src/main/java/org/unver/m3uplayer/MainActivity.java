@@ -27,17 +27,20 @@ import com.google.android.material.slider.RangeSlider;
 
 import java.util.Calendar;
 
+
 public class MainActivity extends AppCompatActivity {
     public boolean TVInfoOkundu = false;
     private NavigationView navigationView;
     public DrawerLayout drawerLayout;
     private YayinFragment anaFragment = null;
     private AyarlarFragment ayarlarFragment = null;
+    private GrupFragment grupFragment;
     public M3UBilgi.M3UTur aktifTur = M3UBilgi.M3UTur.tv;
     AutoCompleteTextView turSecDDL;
     private EditText filtreAlan;
     private View menParolaGir;
     private View menAyarlar;
+    private View menkullaniciGruplari;
     private AlertDialog parolaAldialog;
     private TextView msTur;
     private AlertDialog turAldialog;
@@ -106,6 +109,18 @@ public class MainActivity extends AppCompatActivity {
                 getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, ayarlarFragment).commit();
             }
         });
+
+        menkullaniciGruplari = findViewById(R.id.kullaniciGruplari);
+        menkullaniciGruplari.setOnClickListener(new View.OnClickListener() {
+
+            @Override
+            public void onClick(View v) {
+                drawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED);
+                grupFragment = new GrupFragment(that);
+                getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, grupFragment).commit();
+            }
+        });
+
         RangeSlider rsGunSay = findViewById(R.id.rsGunSay);
         CheckBox cbSadeceYeni = findViewById(R.id.cbSadeceYeni);
 
@@ -114,7 +129,9 @@ public class MainActivity extends AppCompatActivity {
         OnBackPressedCallback onBackPressedCallback = new OnBackPressedCallback(true) {
             @Override
             public void handleOnBackPressed() {
-                if (ayarlarFragment != null) {
+                if (grupFragment != null) {
+                    AyarlariKapat(false);
+                } else if (ayarlarFragment != null) {
                     AyarlariKapat(false);
                 } else if (anaFragment.TamEkranMi()) {
                     anaFragment.TamEkrandanCik();
@@ -151,6 +168,8 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void AyarlariKapat(boolean baslangictan) {
+        if (grupFragment != null)
+            grupFragment = null;
         if (ayarlarFragment != null)
             ayarlarFragment = null;
         //anaFragment = new PlayerFragment(this, baslangictan);

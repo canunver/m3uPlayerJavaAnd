@@ -114,7 +114,7 @@ public class M3UBilgi {
     }
 
     public M3UBilgi(M3UBilgi m3u) {
-        this.ID = m3u.ID + "_S";
+        this.ID = m3u.seriAd;
         this.eklemeTarih = m3u.eklemeTarih;
         this.tvgId = m3u.tvgId;
         this.tvgName = m3u.tvgName;

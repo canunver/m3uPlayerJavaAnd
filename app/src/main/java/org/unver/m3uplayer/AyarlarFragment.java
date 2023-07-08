@@ -19,7 +19,6 @@ import android.widget.EditText;
  * create an instance of this fragment.
  */
 public class AyarlarFragment extends Fragment {
-
     private final MainActivity mainActivity;
     private View currView;
     private View iptalTus;
@@ -34,7 +33,6 @@ public class AyarlarFragment extends Fragment {
     private ConstraintLayout ayarlarYerlersim;
 
     public AyarlarFragment(MainActivity mainActivity) {
-        // Required empty public constructor
         this.mainActivity = mainActivity;
     }
 
@@ -46,7 +44,6 @@ public class AyarlarFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
         currView = inflater.inflate(R.layout.fragment_ayarlar, container, false);
 
         ayarlarYerlersim = currView.findViewById(R.id.ayarlarLayout);

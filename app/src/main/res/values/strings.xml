@@ -33,7 +33,8 @@
     <string name="son_tv_kanalini_oynatarak_basla">Start last TV channel</string>
     <string name="search">Search</string>
     <string name="TurSec">Select Genre</string>
-    <string name="tmdb_aramasi_icin_kriter_giriniz">TMDB araması için kriter giriniz.</string>
-    <string name="bolum_cekme_basladi">Tüm bölümlerin çekimi için işlem başlatıldı</string>
-    <string name="once_dizi_cek">Bölüm çekmek için, önce dizi bilgisi çekilmeli</string>
+    <string name="tmdb_aramasi_icin_kriter_giriniz">Enter criteria to search TMDB database.</string>
+    <string name="bolum_cekme_basladi">The process which gets episodes info started</string>
+    <string name="once_dizi_cek">To get information about episodes you have to get serie info</string>
+    <string name="kullan_c_gruplar">Kullanıcı Grupları</string>
 </resources>

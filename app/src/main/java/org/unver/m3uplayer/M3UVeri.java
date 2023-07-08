@@ -135,39 +135,45 @@ public class M3UVeri {
         } else if (m3u.Tur == M3UBilgi.M3UTur.seri) {
             M3UBilgi seri;
             String mevcutId = tumSerilerAd.getOrDefault(m3u.seriAd, null);
-            if (m3u.ID.endsWith("_S")) {
-                if (mevcutId == null) {
-                    GrubaEkle(seriGruplari, m3u, gelenGrup);
+            if (mevcutId == null) {
+                if (m3u.ID.equals(m3u.seriAd)) {
+                    seri = m3u;
                 } else {
-                    seri = tumM3Ular.get(mevcutId);
-                    m3u.seriSezonlari = seri.seriSezonlari;
-                    m3u.eklemeTarih = seri.eklemeTarih;
-                }
-                tumSerilerAd.put(m3u.seriAd, m3u.ID);
-                tumM3Ular.put(m3u.ID, m3u);
-            } else {
-                tumM3Ular.put(m3u.ID, m3u);
-                if (mevcutId == null) {
                     seri = new M3UBilgi(m3u);
                     seri.tmdbId = 0;
-                    tumM3Ular.put(seri.ID, seri);
-                    GrubaEkle(seriGruplari, seri, gelenGrup);
-                    tumSerilerAd.put(seri.seriAd, seri.ID);
-                    if (!veriTabanindan)
-                        seri.Yaz(M3UVeri.db);
-                } else {
-                    seri = tumM3Ular.getOrDefault(mevcutId, null);
                 }
+                tumM3Ular.put(seri.ID, seri);
+                GrubaEkle(seriGruplari, seri, gelenGrup);
+                tumSerilerAd.put(seri.seriAd, seri.ID);
+            } else {
+                seri = tumM3Ular.getOrDefault(mevcutId, null);
+                if (!seri.groupTitle.equals(m3u.groupTitle)) {
+                    GrubaEkle(seriGruplari, seri, gelenGrup);
+                }
+            }
+            if (!m3u.ID.equals(m3u.seriAd)) {
                 Sezon sezon = SezonBulYoksaEkle(seri, m3u.sezon);
                 Bolum blm = sezon.BolumBul(m3u.bolum);
                 if (blm == null)
                     sezon.bolumler.add(new Bolum(m3u.ID, m3u.bolum));
                 else
                     blm.AddId(m3u.ID);
-                if (m3u.eklemeTarih.compareTo(seri.eklemeTarih) > 0)
-                    seri.eklemeTarih = m3u.eklemeTarih;
+                seri.eklemeTarih = BuyukBul(seri.eklemeTarih, m3u.eklemeTarih);
+                seri.guncellemeTarih = BuyukBul(seri.guncellemeTarih, m3u.guncellemeTarih);
+                tumM3Ular.put(m3u.ID, m3u);
+            } else {
+                seri.gizli = m3u.gizli;
+                seri.adult = m3u.adult;
+                seri.tmdbId = m3u.tmdbId;
             }
         }
+    }
+
+    private static String BuyukBul(String tarih1, String tarih2) {
+        if (ProgSettings.StringIsNUllOrEmpty(tarih1)) return tarih2;
+        if (ProgSettings.StringIsNUllOrEmpty(tarih2)) return tarih1;
+        if (tarih1.compareTo(tarih2) > 0) return tarih1;
+        else return tarih2;
     }
 
 //    private static void Logla(String int_sezon_ekle, M3UBilgi m3u, M3UBilgi seri) {
@@ -395,6 +401,6 @@ public class M3UVeri {
     }
 
     public static TVInfo TVInfoOku(int type, long tmdbId) {
-        return TMDBOkuIc("type_id ='" + TVInfo.anahtarBul(type, tmdbId)+ "'");
+        return TMDBOkuIc("type_id ='" + TVInfo.anahtarBul(type, tmdbId) + "'");
     }
 }

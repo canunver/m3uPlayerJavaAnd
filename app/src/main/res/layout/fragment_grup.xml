@@ -1,0 +1,248 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_height="match_parent"
+    android:layout_width="match_parent"
+    tools:context=".GrupFragment">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/grupYonetimLayout"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <TextView
+            android:id="@+id/lblKulGrup"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:text="@string/kullan_c_gruplar"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/kulGrupSecCont"
+            style="@style/Widget.Material3.TextInputLayout.OutlinedBox.ExposedDropdownMenu"
+
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="6dp"
+            android:layout_marginTop="0dp"
+            android:layout_marginEnd="0dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/lblKulGrup">
+
+            <AutoCompleteTextView
+                android:id="@+id/kulGrupSec"
+                android:layout_width="match_parent"
+
+                android:layout_height="55dp"
+                android:layout_marginLeft="2dp"
+                android:layout_marginRight="2dp"
+
+                android:inputType="none"
+                tools:ignore="LabelFor,SpeakableTextPresentCheck,VisualLintTextFieldSize" />
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <ListView
+            android:id="@+id/grupKanallari"
+            android:layout_width="match_parent"
+            android:layout_height="350dp"
+            android:maxHeight="350dp"
+            android:minHeight="200dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.0"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/kulGrupSecCont" />
+
+        <LinearLayout
+            android:id="@+id/komutGrup1"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/grupKanallari">
+
+            <Button
+                android:id="@+id/secKanalSil"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="5dp"
+                android:text="Sil" />
+
+            <Button
+                android:id="@+id/secKanalYukari"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="5dp"
+                android:text="Yukarı" />
+
+            <Button
+                android:id="@+id/secKanalAsagi"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="5dp"
+                android:text="Aşağı" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/komutGrup2"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/komutGrup1">
+            <Button
+                android:id="@+id/secKanalYet"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="5dp"
+                android:text="Yeti." />
+
+            <Button
+                android:id="@+id/secKanalGiz"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="5dp"
+                android:text="Gizle" />
+
+            <Button
+                android:id="@+id/grupYet"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="5dp"
+                android:text="G Yeti." />
+
+            <Button
+                android:id="@+id/grupGiz"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="5dp"
+                android:text="G. Giz." />
+        </LinearLayout>
+
+        <TextView
+            android:id="@+id/lblGelGrup"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:text="Gelen Gruplar"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/komutGrup2" />
+
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/gelGrupSecCont"
+            style="@style/Widget.Material3.TextInputLayout.OutlinedBox.ExposedDropdownMenu"
+
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="6dp"
+            android:layout_marginTop="0dp"
+            android:layout_marginEnd="0dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/lblGelGrup">
+
+            <AutoCompleteTextView
+                android:id="@+id/gelGrupSec"
+                android:layout_width="match_parent"
+
+                android:layout_height="55dp"
+                android:layout_marginLeft="2dp"
+                android:layout_marginRight="2dp"
+
+                android:inputType="none"
+                tools:ignore="LabelFor,SpeakableTextPresentCheck,VisualLintTextFieldSize" />
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <RelativeLayout
+            android:id="@+id/araGrupCont"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="6dp"
+            android:orientation="horizontal"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/gelGrupSecCont">
+
+            <EditText
+                android:id="@+id/filtreAd"
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                android:layout_marginStart="6dp"
+                android:layout_toStartOf="@id/btnAra"
+                android:background="@android:drawable/editbox_background"
+                android:importantForAutofill="no"
+                android:inputType="text"
+                tools:ignore="LabelFor,SpeakableTextPresentCheck,VisualLintTextFieldSize" />
+
+            <ImageButton
+                android:id="@+id/btnAra"
+                android:layout_width="50dp"
+                android:layout_height="50dp"
+                android:layout_alignParentEnd="true"
+                android:background="@android:color/holo_purple"
+                android:clickable="true"
+                android:scaleType="fitXY"
+                android:src="@android:drawable/ic_menu_search"
+                tools:ignore="SpeakableTextPresentCheck" />
+        </RelativeLayout>
+
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/grupIcinKanalSecCont"
+            style="@style/Widget.Material3.TextInputLayout.OutlinedBox.ExposedDropdownMenu"
+
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="6dp"
+            android:layout_marginTop="0dp"
+            android:layout_marginEnd="0dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/araGrupCont">
+
+            <AutoCompleteTextView
+                android:id="@+id/grupIcinKanalSec"
+                android:layout_width="match_parent"
+
+                android:layout_height="55dp"
+                android:layout_marginLeft="2dp"
+                android:layout_marginRight="2dp"
+
+                android:inputType="none"
+                tools:ignore="LabelFor,SpeakableTextPresentCheck,VisualLintTextFieldSize" />
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <LinearLayout
+            android:id="@+id/komutGrup3"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/grupIcinKanalSecCont">
+            <Button
+                android:id="@+id/secKanaliEkle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="5dp"
+                android:text="Grupa Ekle" />
+
+            <Button
+                android:id="@+id/glnGrupYet"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="5dp"
+                android:text="G. Yet." />
+
+            <Button
+                android:id="@+id/glnGrupGizle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="5dp"
+                android:text="G. Giz." />
+
+        </LinearLayout>
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</ScrollView>

@@ -304,7 +304,6 @@ public class InternettenOku {
                         }
                         cevaplar.add(new BolumBilgi(tmdbBolum, blm));
                     }
-
                 }
             } catch (Exception e) {
                 globHata = true;

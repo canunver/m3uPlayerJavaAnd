@@ -8,7 +8,7 @@ import androidx.annotation.Nullable;
 
 public class M3U_DB extends SQLiteOpenHelper {
     public static final String DATABASE_NAME = "M3UVeri.db";
-    private static final int DATABASE_VERSION = 4;
+    private static final int DATABASE_VERSION = 5;
 
     public static final String TABLE_M3U = "M3U";
     public static final String TABLE_AYARLAR = "AYARLAR";
@@ -30,42 +30,39 @@ public class M3U_DB extends SQLiteOpenHelper {
                 + "eklemeTarih TEXT,"
                 + "gizli INTEGER,"
                 + "adult INTEGER,"
-                + "tmdbId INTEGER)" );
+                + "tmdbId INTEGER,"
+                + "guncellemeTarih TEXT,"
+                + "seyredilenSure INTEGER"
+                + ")" );
+
+        db.execSQL("CREATE TABLE IF NOT EXISTS  " + TABLE_AYARLAR + " ("
+                + "KOD TEXT PRIMARY KEY,"
+                + "DEGER TEXT)");
+
+        db.execSQL("CREATE TABLE IF NOT EXISTS  " + TABLE_TVINFO + " ("
+                + "type_id TEXT PRIMARY KEY,"
+                + "name TEXT,"
+                + "title TEXT,"
+                + "original_name TEXT,"
+                + "original_title TEXT,"
+                + "poster_path TEXT,"
+                + "adult INTEGER,"
+                + "popularity REAL,"
+                + "backdrop_path TEXT,"
+                + "vote_average REAL,"
+                + "overview TEXT,"
+
+                + "first_air_date TEXT,"
+                + "release_date TEXT,"
+                + "original_language TEXT,"
+                + "vote_count TEXT,"
+                + "origin_country TEXT,"
+                + "genre_ids TEXT)");
     }
 
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-        if(oldVersion<4) {
-            db.execSQL("CREATE TABLE IF NOT EXISTS  " + TABLE_TVINFO + " ("
-            + "type_id TEXT PRIMARY KEY,"
-            + "name TEXT,"
-            + "title TEXT,"
-            + "original_name TEXT,"
-            + "original_title TEXT,"
-            + "poster_path TEXT,"
-            + "adult INTEGER,"
-            + "popularity REAL,"
-            + "backdrop_path TEXT,"
-            + "vote_average REAL,"
-            + "overview TEXT,"
-
-            + "first_air_date TEXT,"
-            + "release_date TEXT,"
-            + "original_language TEXT,"
-            + "vote_count TEXT,"
-            + "origin_country TEXT,"
-            + "genre_ids TEXT)");
-        }
-
-        if(oldVersion<3) {
-            db.execSQL(String.format("ALTER TABLE %s ADD COLUMN guncellemeTarih TEXT  ", TABLE_M3U));
-            db.execSQL(String.format("ALTER TABLE %s ADD COLUMN seyredilenSure INTEGER", TABLE_M3U));
-        }
-
-        if(oldVersion<2) {
-            db.execSQL("CREATE TABLE IF NOT EXISTS  " + TABLE_AYARLAR + " ("
-                    + "KOD TEXT PRIMARY KEY,"
-                    + "DEGER TEXT)");
-        }
+//        if(oldVersion<2) {
+//        }
     }
 }
