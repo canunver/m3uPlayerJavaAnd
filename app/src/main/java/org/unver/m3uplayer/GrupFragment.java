@@ -31,6 +31,9 @@ public class GrupFragment extends Fragment {
                              Bundle savedInstanceState) {
         View frgmnt = inflater.inflate(R.layout.fragment_grup, container, false);
 
+
+        //mainActivity.GruplariBul();
+
         Button kulGrupMenuButton = frgmnt.findViewById(R.id.kulGrupMenu);
         Button gelGrupMenuButton = frgmnt.findViewById(R.id.gelGrupMenu);
         PopupMenu popupMenuKul = new PopupMenu(frgmnt.getContext(), kulGrupMenuButton);

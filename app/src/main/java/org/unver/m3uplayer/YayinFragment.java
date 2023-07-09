@@ -251,11 +251,20 @@ public class YayinFragment extends Fragment {
 
     public void TurSecildi(int position, boolean acilistan) {
         mainActivity.aktifTur = M3UVeri.TurBul(position);
+
+        Object[] donenler = GrupListesiOl(mainActivity, acilistan, filtre, grupSec.getText().toString(), 0, true);
+        grupAdapter = (ArrayAdapter<String>) donenler[0];
+        int yerInd = (int) donenler[1];
+        grupSec.setAdapter(grupAdapter);
+        grupSec.setText(grupAdapter.getItem(yerInd), false);
+        GrupSecildi(yerInd, acilistan);
+    }
+
+    public static Object[] GrupListesiOl(MainActivity mainActivity, boolean acilistan, M3UFiltre filtre, String simd, int hepsi0Kul1Inen2, boolean sadeceAd) {
         ArrayList<String> s = new ArrayList<String>();
-        ArrayList<M3UGrup> grup = M3UVeri.GrupKodBul(position);
+        ArrayList<M3UGrup> grupTutan = M3UVeri.GrupKodBul(M3UVeri.SiraBul(mainActivity.aktifTur));
 
         int yerInd = -1;
-        String simd = null;
         if (acilistan) {
             if (ProgSettings.son_tv_kanalini_oynatarak_basla) {
                 if (!ProgSettings.StringIsNUllOrEmpty(ProgSettings.sonTVGrup))
@@ -264,10 +273,8 @@ public class YayinFragment extends Fragment {
             if (simd == null && !ProgSettings.StringIsNUllOrEmpty(ProgSettings.sonGrup))
                 simd = ProgSettings.sonGrup;
         }
-        if (simd == null)
-            simd = grupSec.getText().toString();
-        for (M3UGrup item : grup) {
-            if (item.FiltreyeUygunMu(M3UVeri.tumM3Ular, filtre)) {
+        for (M3UGrup item : grupTutan) {
+            if (item.FiltreyeUygunMu(M3UVeri.tumM3Ular, filtre) && item.GrupTurUygunMu(hepsi0Kul1Inen2) && item.GizlilikKontrol()) {
                 s.add(item.grupAdi);
                 if (item.grupAdi.equals(simd))
                     yerInd = s.size() - 1;
@@ -275,10 +282,10 @@ public class YayinFragment extends Fragment {
         }
         if (yerInd == -1) yerInd = 0;
         if (s.isEmpty()) s.add("-");
-        grupAdapter = new ArrayAdapter<String>(mainActivity, com.google.android.material.R.layout.support_simple_spinner_dropdown_item, s);
-        grupSec.setAdapter(grupAdapter);
-        grupSec.setText(grupAdapter.getItem(yerInd), false);
-        GrupSecildi(yerInd, acilistan);
+        Object[] donenler = new Object[2];
+        donenler[0] = new ArrayAdapter<String>(mainActivity, com.google.android.material.R.layout.support_simple_spinner_dropdown_item, s);
+        donenler[1] = yerInd;
+        return donenler;
     }
 
     public void GrupSecildi(int position, boolean acilistan) {
@@ -344,8 +351,7 @@ public class YayinFragment extends Fragment {
             if (item.tmdbId > 0) {
                 new InternettenOku().performNetworkOperationTMDBSeri(mainActivity, M3UVeri.db, item);
                 Toast.makeText(mainActivity, R.string.bolum_cekme_basladi, Toast.LENGTH_SHORT).show();
-            }
-            else
+            } else
                 Toast.makeText(mainActivity, R.string.once_dizi_cek, Toast.LENGTH_SHORT).show();
         }
     }
