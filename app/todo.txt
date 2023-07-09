@@ -1,4 +1,5 @@
 == YAPILACAK GELİŞTİRMELER
+- TODO: 9.07.2023 internetten kanal çekmeyi 3 M3U adresi için de yap
 - TODO: 8.07.2023 grup yönetimi eklenemeli, seçili türe gruplar ve kanallar gelmeli
         1. Yeni kullanıcı grubu ekleme, Grup seçilince, gruptaki kanalları, sıra numarası ile gösterme
         2. Seçilen grubu, yetişkin ya da gizli yapma

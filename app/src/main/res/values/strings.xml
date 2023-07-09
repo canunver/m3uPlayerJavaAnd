@@ -33,8 +33,23 @@
     <string name="son_tv_kanalini_oynatarak_basla">Start last TV channel</string>
     <string name="search">Search</string>
     <string name="TurSec">Select Genre</string>
-    <string name="tmdb_aramasi_icin_kriter_giriniz">Enter criteria to search TMDB database.</string>
+    <string name="tmdb_aramasi_icin_kriter_giriniz">Enter criteria for searching TMDB database.</string>
     <string name="bolum_cekme_basladi">The process which gets episodes info started</string>
     <string name="once_dizi_cek">To get information about episodes you have to get serie info</string>
-    <string name="kullan_c_gruplar">Kullanıcı Grupları</string>
+    <string name="kullanici_gruplari">User Groups</string>
+    <string name="kanallari_yukari_tasi">Move Up Selected</string>
+    <string name="kanallari_asagi_tasi">Mode Down Selected</string>
+    <string name="kanallari_sil">Delete Selected</string>
+    <string name="kanallari_gizle">Hide Channels</string>
+    <string name="kanallari_yetiskin_yap">Make Adult</string>
+    <string name="kanallari_ac">Unhide Channels</string>
+    <string name="kanallari_normal_yap">Make Normal</string>
+    <string name="yeni_grup_ekle">Add New Group</string>
+    <string name="grubun_adini_degistir">Rename Group</string>
+    <string name="grubu_sil">Delete Group</string>
+    <string name="grubu_gizle">Hide Group</string>
+    <string name="grubu_yetiskin_yap">Make Group Adult</string>
+    <string name="gizliligi_kaldir">Unhide Group</string>
+    <string name="yetiskinligi_kaldir">Make Group Normal</string>
+    <string name="arama_metni_giriniz">Enter search criteria ...</string>
 </resources>

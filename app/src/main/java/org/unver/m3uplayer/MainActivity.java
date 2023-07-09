@@ -172,7 +172,7 @@ public class MainActivity extends AppCompatActivity {
             grupFragment = null;
         if (ayarlarFragment != null)
             ayarlarFragment = null;
-        //anaFragment = new PlayerFragment(this, baslangictan);
+
         getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, anaFragment).commit();
         drawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_UNLOCKED);
     }
@@ -186,7 +186,9 @@ public class MainActivity extends AppCompatActivity {
     @Override
     public void onConfigurationChanged(@NonNull Configuration newConfig) {
         super.onConfigurationChanged(newConfig);
-        if (ayarlarFragment != null)
+        if (grupFragment != null)
+            grupFragment.YonlendirmeAyarla();
+        else if (ayarlarFragment != null)
             ayarlarFragment.YonlendirmeAyarla();
         else
             anaFragment.YonlendirmeAyarla();

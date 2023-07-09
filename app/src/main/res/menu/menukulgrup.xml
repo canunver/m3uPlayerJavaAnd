@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item
+        android:id="@+id/action_yukari_tasi"
+        android:title="@string/kanallari_yukari_tasi" />
+    <item
+        android:id="@+id/action_asagi_tasi"
+        android:title="@string/kanallari_asagi_tasi" />
+    <item
+        android:id="@+id/action_knl_sil"
+        android:title="@string/kanallari_sil" />
+    <item
+        android:id="@+id/action_knl_gizle"
+        android:title="@string/kanallari_gizle" />
+    <item
+        android:id="@+id/action_knl_yet"
+        android:title="@string/kanallari_yetiskin_yap" />
+    <item
+        android:id="@+id/action_knl_ac"
+        android:title="@string/kanallari_ac" />
+    <item
+        android:id="@+id/action_knl_normal"
+        android:title="@string/kanallari_normal_yap" />
+    <item
+        android:id="@+id/action_grp_yeni"
+        android:title="@string/yeni_grup_ekle" />
+    <item
+        android:id="@+id/action_grp_ad_degistir"
+        android:title="@string/grubun_adini_degistir" />
+    <item
+        android:id="@+id/action_grp_sil"
+        android:title="@string/grubu_sil" />
+    <item
+        android:id="@+id/action_kulgrp_gizle"
+        android:title="@string/grubu_gizle" />
+    <item
+        android:id="@+id/action_kulgrp_yet"
+        android:title="@string/grubu_yetiskin_yap" />
+    <item
+        android:id="@+id/action_kulgrp_ac"
+        android:title="@string/gizliligi_kaldir" />
+    <item
+        android:id="@+id/action_kulgrp_yet_ac"
+        android:title="@string/yetiskinligi_kaldir" />
+</menu>

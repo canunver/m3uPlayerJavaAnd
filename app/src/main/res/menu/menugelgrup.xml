@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item
+        android:id="@+id/action_gelgrp_gizle"
+        android:title="@string/grubu_gizle" />
+    <item
+        android:id="@+id/action_gelgrp_yet"
+        android:title="@string/grubu_yetiskin_yap" />
+
+    <item
+        android:id="@+id/action_gelgrp_ac"
+        android:title="@string/gizliligi_kaldir" />
+    <item
+        android:id="@+id/action_gelgrp_yet_ac"
+        android:title="@string/yetiskinligi_kaldir" />
+
+</menu>
