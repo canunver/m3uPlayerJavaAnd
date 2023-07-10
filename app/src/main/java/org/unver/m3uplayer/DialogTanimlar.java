@@ -24,35 +24,6 @@ import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
-class TVInfoAdapter extends ArrayAdapter<TVInfo> {
-    private int selectedItemPosition;
-
-    public TVInfoAdapter(@NonNull Context context, int resource, @NonNull List<TVInfo> objects) {
-        super(context, resource, objects);
-    }
-
-    @Override
-    public View getView(int position, View convertView, ViewGroup parent) {
-        View view = super.getView(position, convertView, parent);
-
-        if (position == selectedItemPosition) {
-            view.setBackgroundColor(Color.BLUE);
-        } else {
-            view.setBackgroundColor(Color.WHITE);
-        }
-        return view;
-    }
-
-    public void setSelectedItemPosition(int position) {
-        selectedItemPosition = position;
-        notifyDataSetChanged(); // Değişikliği bildir
-    }
-
-    public int getSelectedItemPosition() {
-        return selectedItemPosition;
-    }
-}
-
 public class DialogTanimlar {
     private static AlertDialog alertDialogTurSec;
     private static M3UBilgi arananM3U;
@@ -142,8 +113,8 @@ public class DialogTanimlar {
         textView.setText(stringBuilder.toString());
     }
 
-    public static List<TVInfo> tmdbSecimList = new ArrayList<>();
-    public static TVInfoAdapter tvInfoArrayAdapter;
+    public static List<KodAd> tmdbSecimList = new ArrayList<>();
+    public static KodAdAdapter tvInfoArrayAdapter;
     public static AlertDialog tmdbAldialog;
     private static EditText tmdbAraText;
 
@@ -157,7 +128,7 @@ public class DialogTanimlar {
         ListView tmdbListeView = dialogView.findViewById(R.id.tmdbListeView);
         tmdbListeView.setChoiceMode(ListView.CHOICE_MODE_SINGLE);
 
-        tvInfoArrayAdapter = new TVInfoAdapter(mainActivity, android.R.layout.simple_list_item_1, tmdbSecimList);
+        tvInfoArrayAdapter = new KodAdAdapter(mainActivity, android.R.layout.simple_list_item_1, tmdbSecimList, false);
         tmdbListeView.setAdapter(tvInfoArrayAdapter);
 
         tmdbListeView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -180,7 +151,7 @@ public class DialogTanimlar {
                         if (tr != null && tr.results != null && tr.results.length > 0) {
                             tmdbSecimList.clear();
                             for (TVInfo a : tr.results) {
-                                tmdbSecimList.add(a);
+                                tmdbSecimList.add(new KodAd(a.anahtarBul(), a.toString(), a));
                             }
                             this.DegerAta(true);
                         }
@@ -212,8 +183,9 @@ public class DialogTanimlar {
                         String hata;
                         int secili = tvInfoArrayAdapter.getSelectedItemPosition();
                         if (secili != -1) {
-                            TVInfo ti = tvInfoArrayAdapter.getItem(secili);
-                            if (ti != null) {
+                            KodAd ka = tvInfoArrayAdapter.getItem(secili);
+                            if (ka != null) {
+                                TVInfo ti = (TVInfo) ka.o;
                                 ti.type = M3UVeri.SiraBul(arananM3U.Tur);
                                 arananM3U.tmdbId = ti.id;
                                 arananM3U.Yaz(M3UVeri.db);
