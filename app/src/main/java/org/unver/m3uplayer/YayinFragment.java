@@ -252,36 +252,45 @@ public class YayinFragment extends Fragment {
     public void TurSecildi(int position, boolean acilistan) {
         mainActivity.aktifTur = M3UVeri.TurBul(position);
 
-        Object[] donenler = GrupListesiOl(mainActivity, acilistan, filtre, grupSec.getText().toString(), 0, true);
+        Object[] donenler = GrupListesiOl(mainActivity, acilistan, filtre, grupSec.getText().toString(), 0, true, true);
         grupAdapter = (ArrayAdapter<String>) donenler[0];
         int yerInd = (int) donenler[1];
         grupSec.setAdapter(grupAdapter);
-        grupSec.setText(grupAdapter.getItem(yerInd), false);
-        GrupSecildi(yerInd, acilistan);
+        if (yerInd > -1) {
+            grupSec.setText(grupAdapter.getItem(yerInd), false);
+            GrupSecildi(yerInd, acilistan);
+        }
     }
 
-    public static Object[] GrupListesiOl(MainActivity mainActivity, boolean acilistan, M3UFiltre filtre, String simd, int hepsi0Kul1Inen2, boolean sadeceAd) {
+    public static Object[] GrupListesiOl(MainActivity mainActivity, boolean acilistan, M3UFiltre filtre, String simd, int hepsi0Kul1Inen2, boolean sadeceAd, boolean bosKalmasin) {
         ArrayList<String> s = new ArrayList<String>();
         ArrayList<M3UGrup> grupTutan = M3UVeri.GrupKodBul(M3UVeri.SiraBul(mainActivity.aktifTur));
 
         int yerInd = -1;
+        String sondaki = null;
         if (acilistan) {
             if (ProgSettings.son_tv_kanalini_oynatarak_basla) {
                 if (!ProgSettings.StringIsNUllOrEmpty(ProgSettings.sonTVGrup))
-                    simd = ProgSettings.sonTVGrup;
+                    sondaki = ProgSettings.sonTVGrup;
             }
-            if (simd == null && !ProgSettings.StringIsNUllOrEmpty(ProgSettings.sonGrup))
-                simd = ProgSettings.sonGrup;
+            if (sondaki == null && !ProgSettings.StringIsNUllOrEmpty(ProgSettings.sonGrup))
+                sondaki = ProgSettings.sonGrup;
+            if (sondaki != null)
+                simd = sondaki;
         }
         for (M3UGrup item : grupTutan) {
             if (item.FiltreyeUygunMu(M3UVeri.tumM3Ular, filtre) && item.GrupTurUygunMu(hepsi0Kul1Inen2) && item.GizlilikKontrol()) {
                 s.add(item.grupAdi);
-                if (item.grupAdi.equals(simd))
+                if (simd != null && item.grupAdi.equals(simd))
                     yerInd = s.size() - 1;
             }
         }
-        if (yerInd == -1) yerInd = 0;
-        if (s.isEmpty()) s.add("-");
+        if (bosKalmasin && s.isEmpty()) {
+            s.add("-");
+        }
+        if (s.size() > 0 && yerInd == -1)
+            yerInd = 0;
+
         Object[] donenler = new Object[2];
         donenler[0] = new ArrayAdapter<String>(mainActivity, com.google.android.material.R.layout.support_simple_spinner_dropdown_item, s);
         donenler[1] = yerInd;
