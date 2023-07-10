@@ -14,6 +14,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.view.View;
 import android.view.Window;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
@@ -49,6 +50,7 @@ public class MainActivity extends AppCompatActivity {
     private ArrayAdapter<String> aaTur;
     private int internettenCekiliyor;
     public Handler handler;
+    private InputMethodManager imm;
 
     @SuppressLint("MissingInflatedId")
     @Override
@@ -154,9 +156,11 @@ public class MainActivity extends AppCompatActivity {
         rangeSliderYil.setValueFrom(M3UVeri.minYil);
         rangeSliderYil.setStepSize(1);
 
+        imm = (InputMethodManager) getSystemService(this.INPUT_METHOD_SERVICE);
         btnAra.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                imm.hideSoftInputFromWindow(filtreAlan.getWindowToken(), 0);
                 anaFragment.filtre.SadeceYeniAyarla(cbSadeceYeni.isChecked(), rsGunSay.getValues());
                 anaFragment.filtre.isimFiltreStr = filtreAlan.getText().toString();
                 anaFragment.filtre.PuanAyarla(rangeSliderPuan.getValues());

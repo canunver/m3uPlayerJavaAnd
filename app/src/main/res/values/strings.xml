@@ -52,4 +52,12 @@
     <string name="gizliligi_kaldir">Unhide Group</string>
     <string name="yetiskinligi_kaldir">Make Group Normal</string>
     <string name="arama_metni_giriniz">Enter search criteria ...</string>
+    <string name="yeni_grup_ismi_gir">" Yeni Grup İsmini Giriniz"</string>
+    <string name="yeni_grup_ismi_degistir">Grubun İsmini Değiştiriniz</string>
+    <string name="AdBosOlamaz">Ad boş olamaz</string>
+    <string name="AdBosluklaBaslamaz">Ad boşluk karakteri ile başlayamaz!</string>
+    <string name="AdRakamlaBaslamaz">Ad rakamla başlayamaz!</string>
+    <string name="ZatenVarOlanBirIsimKullanilamaz">Zaten var olan bir isim kullanılamaz!</string>
+    <string name="EskiGrupBulunamadi">Eski grup bulunamadi</string>
+    <string name="GelenGrupAdDegismez">M3U dosyasından bulunan grubun adı değiştirilemez!</string>
 </resources>

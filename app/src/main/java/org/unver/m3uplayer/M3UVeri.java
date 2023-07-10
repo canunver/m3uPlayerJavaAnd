@@ -28,16 +28,57 @@ public class M3UVeri {
 
     public static void OkuBakayim(MainActivity mainActivity) {
         M3UVeri.mainActivity = mainActivity;
+        tvGruplari.clear();
+        seriGruplari.clear();
+        filmGruplari.clear();
+        tumM3Ular.clear();
+        tumSerilerAd.clear();
         if (dbHelper == null)
             dbHelper = new M3U_DB(M3UVeri.mainActivity);
         if (db == null)
             db = dbHelper.getWritableDatabase();
 
+        Log.i("M3UVeri", "GRUP cursor olacak");
+        String query = "SELECT GRUP.type_name, GRUP.gelenGrup, GRUP.gizli, GRUP.yetiskin, GRUPDETAY.ID  FROM GRUP LEFT OUTER JOIN GRUPDETAY ON GRUP.type_name = GRUPDETAY.type_name order by GRUP.gelenGrup, GRUP.type_name";
+        Cursor cursorGrup = db.rawQuery(query, null);
+        Log.i("M3UVeri", "GRUP cursor oldu");
+
+        if (cursorGrup != null) {
+            try {
+                if (cursorGrup.moveToFirst()) {
+                    int type_nameIndex = cursorGrup.getColumnIndex("type_name");
+                    int gelenGrupIndex = cursorGrup.getColumnIndex("gelenGrup");
+                    int gizliIndex = cursorGrup.getColumnIndex("gizli");
+                    int yetiskinIndex = cursorGrup.getColumnIndex("yetiskin");
+                    int M3UIDIndex = cursorGrup.getColumnIndex("ID");
+                    M3UGrup m3uGrp = null;
+                    do {
+                        String type_name = cursorGrup.getString(type_nameIndex);
+                        boolean gelenGrup = cursorGrup.getInt(gelenGrupIndex) == 1;
+                        boolean gizli = cursorGrup.getInt(gizliIndex) == 1;
+                        boolean yetiskin = cursorGrup.getInt(yetiskinIndex) == 1;
+                        String M3UID = cursorGrup.getString(M3UIDIndex);
+                        if (m3uGrp == null || !type_name.equals(m3uGrp.anahtarBul())) {
+                            m3uGrp = new M3UGrup(type_name, gelenGrup, gizli, yetiskin);
+                            if (m3uGrp.turSira >= 0 && !ProgSettings.StringIsNUllOrEmpty(m3uGrp.grupAdi)) {
+                                M3UVeri.GrupKodBul(m3uGrp.turSira).add(m3uGrp);
+                            } else
+                                m3uGrp = null;
+                        }
+                        if (m3uGrp != null && !ProgSettings.StringIsNUllOrEmpty(M3UID))
+                            m3uGrp.kanallar.add(M3UID);
+
+                    } while (cursorGrup.moveToNext());
+                }
+            } finally {
+                cursorGrup.close();
+            }
+            Log.i("M3UVeri", "GRUP cursor kapandı");
+        }
+
         Log.i("M3UVeri", "M3U cursor olacak");
         Cursor cursor = db.query(M3U_DB.TABLE_M3U, null, null, null, null, null, "groupTitle, tvgName");
         Log.i("M3UVeri", "M3U cursor oldu");
-        tumM3Ular.clear();
-        tumSerilerAd.clear();
         if (cursor != null) {
             try {
                 if (cursor.moveToFirst()) {
@@ -96,7 +137,6 @@ public class M3UVeri {
 //            db.setTransactionSuccessful();
 //            db.endTransaction();
 //            Log.i("M3UVeri", "Bu sefer olacak mı, Serileri veri tabanına yazdık kardeşim, bu kodu sil be koçum");
-
         }
     }
 
@@ -112,7 +152,7 @@ public class M3UVeri {
         }
         M3UGrup yeni;
         if (yoksaEkle) {
-            yeni = new M3UGrup(groupTitle, gelenGrup);
+            yeni = new M3UGrup(M3UVeri.SiraBul(mainActivity.aktifTur), groupTitle, gelenGrup);
             anaGrup.add(yeni);
         } else
             yeni = null;
@@ -403,4 +443,36 @@ public class M3UVeri {
     public static TVInfo TVInfoOku(int type, long tmdbId) {
         return TMDBOkuIc("type_id ='" + TVInfo.anahtarBul(type, tmdbId) + "'");
     }
+
+    public static boolean GrupIsmiVarMi(M3UBilgi.M3UTur aktifTur, String ad) {
+        M3UGrup grup = GrupBul(GrupDegiskenBul(aktifTur), ad);
+        if (grup != null)
+            return true;
+        return false;
+    }
+
+    public static int GrupIsminiYaz(M3UBilgi.M3UTur aktifTur, String eskiAd, String yeniAd) {
+        if (ProgSettings.StringIsNUllOrEmpty(yeniAd))
+            return R.string.AdBosOlamaz;
+        if (yeniAd.startsWith(" "))
+            return R.string.AdBosluklaBaslamaz;
+        if (Character.isDigit(yeniAd.charAt(0)))
+            return R.string.AdRakamlaBaslamaz;
+        if (M3UVeri.GrupIsmiVarMi(aktifTur, yeniAd))
+            return R.string.ZatenVarOlanBirIsimKullanilamaz;
+
+        if (eskiAd != null) {
+            M3UGrup grup = GrupBul(GrupDegiskenBul(aktifTur), eskiAd);
+            if (grup == null)
+                return R.string.EskiGrupBulunamadi;
+            if (grup.gelenGrup)
+                return R.string.GelenGrupAdDegismez;
+            grup.AdDegistir(M3UVeri.db, yeniAd);
+        } else {
+            M3UGrup grup = new M3UGrup(SiraBul(aktifTur), yeniAd, false);
+            grup.Kaydet(db);
+        }
+        return 0;
+    }
+
 }

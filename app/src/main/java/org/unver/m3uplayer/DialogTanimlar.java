@@ -68,14 +68,14 @@ public class DialogTanimlar {
         builder.setView(passwordInput);
 
 // Tamam ve İptal düğmelerini ekleyin
-        builder.setPositiveButton("Tamam", new DialogInterface.OnClickListener() {
+        builder.setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 String password = passwordInput.getText().toString();
                 // Parola girişi tamamlandı, yapılacak işlemleri burada gerçekleştirin
             }
         });
-        builder.setNegativeButton("İptal", new DialogInterface.OnClickListener() {
+        builder.setNegativeButton(android.R.string.cancel, new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 dialog.cancel();
@@ -101,7 +101,7 @@ public class DialogTanimlar {
             }
         });
 
-        builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+        builder.setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialogInterface, int i) {
                 alertDialogTurSec.dismiss();
@@ -206,7 +206,7 @@ public class DialogTanimlar {
         });
 
         builder.setView(dialogView)
-                .setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                .setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         String hata;
@@ -229,7 +229,7 @@ public class DialogTanimlar {
                             Toast.makeText(mainActivity, hata, Toast.LENGTH_SHORT).show();
                     }
                 })
-                .setNegativeButton("İptal", new DialogInterface.OnClickListener() {
+                .setNegativeButton(android.R.string.cancel, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         // İptal düğmesine basılınca yapılacak işlemler
