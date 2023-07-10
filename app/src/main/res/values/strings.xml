@@ -60,4 +60,5 @@
     <string name="ZatenVarOlanBirIsimKullanilamaz">Zaten var olan bir isim kullanılamaz!</string>
     <string name="EskiGrupBulunamadi">Eski grup bulunamadi</string>
     <string name="GelenGrupAdDegismez">M3U dosyasından bulunan grubun adı değiştirilemez!</string>
+    <string name="aranan30danFazla">Aranan sonucunda 30\'dan fazla kayıt bulundu, 30 tanesi gösteriliyor.</string>
 </resources>

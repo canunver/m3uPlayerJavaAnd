@@ -132,7 +132,7 @@
             app:layout_constraintTop_toBottomOf="@+id/gelenGrupIslemCont">
 
             <EditText
-                android:id="@+id/filtreAd"
+                android:id="@+id/filtreAranacak"
                 android:layout_width="0dp"
                 android:layout_height="50dp"
                 android:layout_marginStart="6dp"
@@ -145,7 +145,7 @@
                 tools:ignore="LabelFor,SpeakableTextPresentCheck,VisualLintTextFieldSize" />
 
             <ImageButton
-                android:id="@+id/btnAra"
+                android:id="@+id/btnEklenecekAra"
                 android:layout_width="59dp"
                 android:layout_height="50dp"
                 android:layout_alignParentEnd="true"
@@ -180,7 +180,7 @@
                     android:id="@+id/grupIcinKanalSec"
                     android:layout_width="match_parent"
 
-                    android:layout_height="55dp"
+                    android:layout_height="wrap_content"
                     android:layout_marginLeft="2dp"
                     android:layout_marginRight="2dp"
 

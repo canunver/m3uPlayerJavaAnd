@@ -50,7 +50,7 @@ public class MainActivity extends AppCompatActivity {
     private ArrayAdapter<String> aaTur;
     private int internettenCekiliyor;
     public Handler handler;
-    private InputMethodManager imm;
+    public InputMethodManager imm;
 
     @SuppressLint("MissingInflatedId")
     @Override

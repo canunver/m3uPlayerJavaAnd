@@ -12,12 +12,15 @@ import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.Toast;
 
+import java.util.ArrayList;
 import java.util.Comparator;
 
 public class GrupFragment extends Fragment {
@@ -26,6 +29,12 @@ public class GrupFragment extends Fragment {
     private ArrayAdapter<String> grupAdapterGel;
     private ArrayAdapter<String> grupAdapterKul;
     private AutoCompleteTextView grupSecKul;
+    private AutoCompleteTextView grupSecGel;
+    private EditText filtreAranacak;
+    private AutoCompleteTextView grupIcinKanalSec;
+    private KodAdAdapter grupIcinKanalSecAdapter;
+    private ArrayList<KodAd> kanalListe;
+    private int secilenPosition;
 
     public GrupFragment(MainActivity mainActivity) {
         this.mainActivity = mainActivity;
@@ -56,7 +65,7 @@ public class GrupFragment extends Fragment {
         Object[] donenlerGel = YayinFragment.GrupListesiOl(mainActivity, false, null, null, 2, false, false);
         grupAdapterGel = (ArrayAdapter<String>) donenlerGel[0];
         int yerIndGel = (int) donenlerGel[1];
-        AutoCompleteTextView grupSecGel = frgmnt.findViewById(R.id.gelGrupSec);
+        grupSecGel = frgmnt.findViewById(R.id.gelGrupSec);
 
         grupSecGel.setAdapter(grupAdapterGel);
         if (yerIndGel >= 0) {
@@ -107,7 +116,57 @@ public class GrupFragment extends Fragment {
                 popupMenuGel.show();
             }
         });
+
+        //AutoCompleteTextView grupSecGel = frgmnt.findViewById(R.id.gelGrupSec);
+        filtreAranacak = frgmnt.findViewById(R.id.filtreAranacak);
+        ImageButton btnEklenecekAra = frgmnt.findViewById(R.id.btnEklenecekAra);
+        btnEklenecekAra.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mainActivity.imm.hideSoftInputFromWindow(filtreAranacak.getWindowToken(), 0);
+                ArananKanallariDoldur();
+            }
+        });
+        grupIcinKanalSec = frgmnt.findViewById(R.id.grupIcinKanalSec);
+        grupIcinKanalSec.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                secilenPosition = position;
+            }
+        });
+        Button secKanaliEkle = frgmnt.findViewById(R.id.secKanaliEkle);
+        kanalListe = new ArrayList<>();
+        grupIcinKanalSecAdapter = new KodAdAdapter(mainActivity, com.google.android.material.R.layout.support_simple_spinner_dropdown_item, kanalListe, false);
+        secKanaliEkle.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Toast.makeText(frgmnt.getContext(), "Elma:" + grupIcinKanalSec.getText().toString() + ":" + kanalListe.get(secilenPosition).toString(), Toast.LENGTH_SHORT).show();
+            }
+        });
         return frgmnt;
+    }
+
+    private void ArananKanallariDoldur() {
+        M3UGrup bulunanGrup = M3UVeri.GrupBul(M3UVeri.GrupDegiskenBul(mainActivity.aktifTur), grupSecGel.getText().toString());
+        if (bulunanGrup != null) {
+            M3UFiltre f = new M3UFiltre();
+            f.isimFiltreStr = filtreAranacak.getText().toString();
+            kanalListe.clear();
+            for (String kanalId : bulunanGrup.kanallar) {
+                M3UBilgi m3u = M3UVeri.tumM3Ular.get(kanalId);
+                if (m3u.FiltreUygunMu(f)) {
+                    kanalListe.add(new KodAd(m3u.ID, m3u.tvgName, m3u));
+                    if (kanalListe.size() > 30) {
+                        Toast.makeText(frgmnt.getContext(), R.string.aranan30danFazla, Toast.LENGTH_SHORT).show();
+                        break;
+                    }
+                }
+            }
+
+            grupIcinKanalSec.setAdapter(grupIcinKanalSecAdapter);
+            grupIcinKanalSec.clearListSelection();
+            grupIcinKanalSec.setText("");
+        }
     }
 
     private void GrupIsmiAl(String kulGrupIsmi) {
