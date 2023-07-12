@@ -1,17 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
     <item
-        android:id="@+id/action_gelgrp_gizle"
-        android:title="@string/grubu_gizle" />
+        android:id="@+id/action_gelgrp_gizle_ac"
+        android:title="@string/grubu_gizle_ac" />
     <item
-        android:id="@+id/action_gelgrp_yet"
-        android:title="@string/grubu_yetiskin_yap" />
-
+        android:id="@+id/action_gelgrp_yet_normal"
+        android:title="@string/grubu_yetiskin_yap_yapma" />
     <item
-        android:id="@+id/action_gelgrp_ac"
-        android:title="@string/gizliligi_kaldir" />
+        android:id="@+id/action_gelknl_gizle_ac"
+        android:title="@string/kanali_gizle_ac" />
     <item
-        android:id="@+id/action_gelgrp_yet_ac"
-        android:title="@string/yetiskinligi_kaldir" />
-
+        android:id="@+id/action_gelknl_yet_normal"
+        android:title="@string/kanali_yetiskin_yap_yapma" />
 </menu>

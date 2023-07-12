@@ -1,11 +1,14 @@
 package org.unver.m3uplayer;
 
+import android.content.Context;
+
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 
 public class ProgSettings {
     public static boolean son_tv_kanalini_oynatarak_basla;
+    public static boolean tamEkranBaslat;
     public static String tmdb_erisim_anahtar;
     public static String m3u_internet_adresi_3;
     public static String m3u_internet_adresi_2;
@@ -49,6 +52,7 @@ public class ProgSettings {
         m3u_internet_adresi_3 = M3UVeri.AyarOku("m3u_internet_adresi_3");
         tmdb_erisim_anahtar = M3UVeri.AyarOku("tmdb_erisim_anahtar");
         son_tv_kanalini_oynatarak_basla = ConvertToInt32(M3UVeri.AyarOku("son_tv_kanalini_oynatarak_basla"), 0) == 1;
+        tamEkranBaslat = ConvertToInt32(M3UVeri.AyarOku("tamEkranBaslat"), 0) == 1;
 
         sonTVGrup = M3UVeri.AyarOku("sonTVGrup");
         sonTVProgID = M3UVeri.AyarOku("sonTVProgID");
@@ -64,6 +68,7 @@ public class ProgSettings {
         M3UVeri.AyarYaz("m3u_internet_adresi_3", m3u_internet_adresi_3);
         M3UVeri.AyarYaz("tmdb_erisim_anahtar", tmdb_erisim_anahtar);
         M3UVeri.AyarYaz("son_tv_kanalini_oynatarak_basla", son_tv_kanalini_oynatarak_basla ? "1" : "0");
+        M3UVeri.AyarYaz("tamEkranBaslat", tamEkranBaslat ? "1" : "0");
     }
 
     public static void TarihceyeEkle(M3UBilgi.M3UTur aktifTur, String aktifGrupAd, String id) {
@@ -131,5 +136,15 @@ public class ProgSettings {
             ints[i] = ProgSettings.ConvertToInt32(strs[i], 0);
         }
         return ints;
+    }
+
+    public static String GizliBul(Context c, boolean gizli) {
+        if(gizli) return c.getString(R.string.GizliIlkHarf);
+        else return "_";
+    }
+
+    public static String YetiskinBul(Context c, boolean yetiskin) {
+        if(yetiskin) return c.getString(R.string.YetiskinIlkHarf);
+        else return "_";
     }
 }

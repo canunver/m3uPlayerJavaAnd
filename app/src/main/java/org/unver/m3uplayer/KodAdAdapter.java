@@ -43,7 +43,7 @@ public class KodAdAdapter extends ArrayAdapter<KodAd> {
 
     public void setSelectedItemPosition(int position) {
         if (cokluSecim || (selectedItemPosition == position && position > -1)) {
-            KodAd ka = objects.get(selectedItemPosition);
+            KodAd ka = objects.get(position);
             ka.secili = !ka.secili;
             selectedItemPosition = -1;
         } else {

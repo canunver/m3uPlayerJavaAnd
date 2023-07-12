@@ -23,6 +23,26 @@ public class M3UBilgi {
             return this.filmYil + " yılında çekilmiştir.";
     }
 
+    public void ozellikDegistir(boolean gizliDegistir, boolean yetiskinDegistir) {
+        if (gizliDegistir || yetiskinDegistir) {
+            if (gizliDegistir)
+                this.gizli = this.gizli == 0 ? 1 : 0;
+
+            if (yetiskinDegistir)
+                this.adult = this.adult == 0 ? 1 : 0;
+
+            ContentValues values = new ContentValues();
+            values.put("gizli", gizli);
+            values.put("adult", adult);
+
+            M3UVeri.db.update(M3U_DB.TABLE_M3U, values, "ID=?", new String[]{String.valueOf(ID)});
+        }
+    }
+
+    public String tvgNameOzellikliAl() {
+        return ProgSettings.GizliBul(M3UVeri.mainActivity, gizli == 1) + ProgSettings.YetiskinBul(M3UVeri.mainActivity, adult == 1) + " " + tvgName;
+    }
+
     public enum M3UTur {
         seri, film, tv
     }

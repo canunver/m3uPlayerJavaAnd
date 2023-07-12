@@ -21,4 +21,15 @@ public class KodAd {
     public String toString() {
         return ad;
     }
+
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+        KodAd myObject = (KodAd) o;
+        return kod.equals(myObject.kod);
+    }
 }

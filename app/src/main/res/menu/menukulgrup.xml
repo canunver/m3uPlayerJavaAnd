@@ -10,17 +10,14 @@
         android:id="@+id/action_knl_sil"
         android:title="@string/kanallari_sil" />
     <item
-        android:id="@+id/action_knl_gizle"
-        android:title="@string/kanallari_gizle" />
+        android:id="@+id/action_knl_gizle_ac"
+        android:title="@string/kanallari_gizle_ac" />
     <item
-        android:id="@+id/action_knl_yet"
-        android:title="@string/kanallari_yetiskin_yap" />
-    <item
-        android:id="@+id/action_knl_ac"
-        android:title="@string/kanallari_ac" />
-    <item
-        android:id="@+id/action_knl_normal"
-        android:title="@string/kanallari_normal_yap" />
+        android:id="@+id/action_knl_yet_normal"
+        android:title="@string/kanallari_yetiskin_yap_yapma" />
+
+    <item android:title="-----------" android:enabled="false" />
+
     <item
         android:id="@+id/action_grp_yeni"
         android:title="@string/yeni_grup_ekle" />
@@ -31,15 +28,9 @@
         android:id="@+id/action_grp_sil"
         android:title="@string/grubu_sil" />
     <item
-        android:id="@+id/action_kulgrp_gizle"
-        android:title="@string/grubu_gizle" />
+        android:id="@+id/action_kulgrp_gizle_ac"
+        android:title="@string/grubu_gizle_ac" />
     <item
-        android:id="@+id/action_kulgrp_yet"
-        android:title="@string/grubu_yetiskin_yap" />
-    <item
-        android:id="@+id/action_kulgrp_ac"
-        android:title="@string/gizliligi_kaldir" />
-    <item
-        android:id="@+id/action_kulgrp_yet_ac"
-        android:title="@string/yetiskinligi_kaldir" />
+        android:id="@+id/action_kulgrp_yet_normal"
+        android:title="@string/grubu_yetiskin_yap_yapma" />
 </menu>

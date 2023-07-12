@@ -1,23 +1,17 @@
 package org.unver.m3uplayer;
 
 import android.app.AlertDialog;
-import android.content.Context;
 import android.content.DialogInterface;
-import android.graphics.Color;
 import android.text.InputType;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
-
-import androidx.annotation.NonNull;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -135,7 +129,7 @@ public class DialogTanimlar {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 tvInfoArrayAdapter.setSelectedItemPosition(position);
-                tmdbListeView.setSelection(position);
+                //tmdbListeView.setSelection(position);
             }
         });
 
@@ -220,4 +214,33 @@ public class DialogTanimlar {
             tmdbAraText.setText(m3u.tvgName);
         tmdbAldialog.show();
     }
+
+    public static void onayAl(int titleId, int messageId, final OnayDialogGeriBildirim geriBildirim) {
+        AlertDialog.Builder builder = new AlertDialog.Builder(M3UVeri.mainActivity);
+        builder.setTitle(M3UVeri.mainActivity.getString(titleId));
+        builder.setMessage(M3UVeri.mainActivity.getString(messageId));
+        builder.setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                if (geriBildirim != null) {
+                    geriBildirim.onDialogTusaBasildi(true);
+                }
+            }
+        });
+
+        builder.setNegativeButton(android.R.string.no, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                if (geriBildirim != null) {
+                    geriBildirim.onDialogTusaBasildi(false);
+                }
+            }
+        });
+        AlertDialog dialog = builder.create();
+        dialog.show();
+    }
+
+
 }
+
+

@@ -98,6 +98,13 @@
             android:layout_height="50dp"
             android:text="@string/son_tv_kanalini_oynatarak_basla"
             app:layout_constraintStart_toStartOf="parent" />
+
+        <CheckBox
+            android:id="@+id/tamEkranBaslat"
+            android:layout_width="200dp"
+            android:layout_height="50dp"
+            android:text="@string/tamEkranBaslat"
+            app:layout_constraintStart_toStartOf="parent" />
     </LinearLayout>
 
     <Button

@@ -8,7 +8,7 @@ import androidx.annotation.Nullable;
 
 public class M3U_DB extends SQLiteOpenHelper {
     public static final String DATABASE_NAME = "M3UVeri.db";
-    private static final int DATABASE_VERSION = 6;
+    private static final int DATABASE_VERSION = 1;
     public static final String TABLE_M3U = "M3U";
     public static final String TABLE_AYARLAR = "AYARLAR";
     public static final String TABLE_TVINFO = "TVINFO";
@@ -69,7 +69,8 @@ public class M3U_DB extends SQLiteOpenHelper {
         db.execSQL("CREATE TABLE IF NOT EXISTS  " + TABLE_GRUPDETAY + " ("
                 + "type_name_ID TEXT PRIMARY KEY,"
                 + "type_name TEXT,"
-                + "ID TEXT)"
+                + "ID TEXT,"
+                + "sira_No TEXT)"
         );
     }
 

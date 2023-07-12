@@ -87,7 +87,7 @@ public class YayinFragment extends Fragment {
         super.onResume();
         createPlayer();
         if (baslangictan && !ProgSettings.StringIsNUllOrEmpty(otoAc)) {
-            OynatBakalim(M3UVeri.tumM3Ular.getOrDefault(otoAc, null), otoSezon, otoBolum, otoTur != M3UBilgi.M3UTur.tv, true);
+            OynatBakalim(M3UVeri.tumM3Ular.getOrDefault(otoAc, null), otoSezon, otoBolum, otoTur != M3UBilgi.M3UTur.tv, ProgSettings.tamEkranBaslat);
             otoAc = null;
         }
         baslangictan = false;
@@ -251,18 +251,23 @@ public class YayinFragment extends Fragment {
 
     public void TurSecildi(int position, boolean acilistan) {
         mainActivity.aktifTur = M3UVeri.TurBul(position);
-
-        Object[] donenler = GrupListesiOl(mainActivity, acilistan, filtre, grupSec.getText().toString(), 0, true, true);
+        String simdSecText = grupSec.getText().toString();
+        Object[] donenler = GrupListesiOl(mainActivity, acilistan, filtre, simdSecText, 0, true, true, false);
         grupAdapter = (ArrayAdapter<String>) donenler[0];
         int yerInd = (int) donenler[1];
+        ArrayList<String> strler = (ArrayList<String>) donenler[2];
         grupSec.setAdapter(grupAdapter);
         if (yerInd > -1) {
-            grupSec.setText(grupAdapter.getItem(yerInd), false);
+            //grupSec.clearListSelection();
+            //Log.d("basla", "Tur seçildi grup say:" + grupAdapter.getCount() + " fil:" + grupAdapter.getFilter().toString());
+            grupSec.setText(strler.get(yerInd), false);
+            //grupSec.setSelection(0, 1);
+            //grupAdapter.notifyDataSetChanged();
             GrupSecildi(yerInd, acilistan);
         }
     }
 
-    public static Object[] GrupListesiOl(MainActivity mainActivity, boolean acilistan, M3UFiltre filtre, String simd, int hepsi0Kul1Inen2, boolean sadeceAd, boolean bosKalmasin) {
+    public static Object[] GrupListesiOl(MainActivity mainActivity, boolean acilistan, M3UFiltre filtre, String simd, int hepsi0Kul1Inen2, boolean sadeceAd, boolean bosKalmasin, boolean ozelliklerOlsun) {
         ArrayList<String> s = new ArrayList<String>();
         ArrayList<M3UGrup> grupTutan = M3UVeri.GrupKodBul(M3UVeri.SiraBul(mainActivity.aktifTur));
 
@@ -279,8 +284,8 @@ public class YayinFragment extends Fragment {
                 simd = sondaki;
         }
         for (M3UGrup item : grupTutan) {
-            if (item.FiltreyeUygunMu(M3UVeri.tumM3Ular, filtre) && item.GrupTurUygunMu(hepsi0Kul1Inen2) && item.GizlilikKontrol()) {
-                s.add(item.grupAdi);
+            if (item.filtreyeUygunMu(M3UVeri.tumM3Ular, filtre) && item.grupTurUygunMu(hepsi0Kul1Inen2) && item.gizlilikKontrol()) {
+                s.add(item.grupAdiBul(mainActivity, ozelliklerOlsun));
                 if (simd != null && item.grupAdi.equals(simd))
                     yerInd = s.size() - 1;
             }
@@ -291,9 +296,12 @@ public class YayinFragment extends Fragment {
         if (s.size() > 0 && yerInd == -1)
             yerInd = 0;
 
-        Object[] donenler = new Object[2];
+        Object[] donenler = new Object[3];
         donenler[0] = new ArrayAdapter<String>(mainActivity, com.google.android.material.R.layout.support_simple_spinner_dropdown_item, s);
         donenler[1] = yerInd;
+        donenler[2] = s;
+        //Log.d("basla", "Tur seçildi gruplar bulundu:" + s.size());
+
         return donenler;
     }
 
@@ -318,7 +326,7 @@ public class YayinFragment extends Fragment {
     }
 
     private void Yukle(boolean ilk, boolean acilistan) {
-        M3UGrup bulunanGrup = M3UVeri.GrupBul(M3UVeri.GrupDegiskenBul(mainActivity.aktifTur), aktifGrupAd);
+        M3UGrup bulunanGrup = M3UVeri.GrupBul(mainActivity, M3UVeri.GrupDegiskenBul(mainActivity.aktifTur), aktifGrupAd, false);
         if (ilk)
             kanalListe.clear();
         String araProg = null;

@@ -18,10 +18,12 @@ import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
+import android.widget.ListView;
 import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.Comparator;
+import java.util.List;
 
 public class GrupFragment extends Fragment {
     private final MainActivity mainActivity;
@@ -34,7 +36,14 @@ public class GrupFragment extends Fragment {
     private AutoCompleteTextView grupIcinKanalSec;
     private KodAdAdapter grupIcinKanalSecAdapter;
     private ArrayList<KodAd> kanalListe;
-    private int secilenPosition;
+    private int secilenPosition = -1;
+    private KodAdAdapter grupKanallariAdapter;
+    private ListView grupKanallari;
+    private List<KodAd> grupKanalListesi = new ArrayList<>();
+    private int secIndKul;
+    private int secIndGel;
+    private ArrayList<String> grupAdapterArray;
+    private ArrayList<String> grupAdapterGelArray;
 
     public GrupFragment(MainActivity mainActivity) {
         this.mainActivity = mainActivity;
@@ -50,28 +59,30 @@ public class GrupFragment extends Fragment {
                              Bundle savedInstanceState) {
         frgmnt = inflater.inflate(R.layout.fragment_grup, container, false);
 
-
-        Object[] donenlerKul = YayinFragment.GrupListesiOl(mainActivity, false, null, null, 1, false, false);
-        grupAdapterKul = (ArrayAdapter<String>) donenlerKul[0];
-        int yerIndKul = (int) donenlerKul[1];
         grupSecKul = frgmnt.findViewById(R.id.kulGrupSec);
+        grupSecKul.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                GrupSecildiKul(position);
+                grupKanallariAdapter.notifyDataSetChanged();
+            }
 
-        grupSecKul.setAdapter(grupAdapterKul);
-        if (yerIndKul >= 0) {
-            grupSecKul.setText(grupAdapterKul.getItem(yerIndKul), false);
-            GrupSecildiKul(yerIndKul);
-        }
+        });
 
-        Object[] donenlerGel = YayinFragment.GrupListesiOl(mainActivity, false, null, null, 2, false, false);
+        kullaniciGruplariOl(null);
+
+        Object[] donenlerGel = YayinFragment.GrupListesiOl(mainActivity, false, null, null, 2, false, false, true);
         grupAdapterGel = (ArrayAdapter<String>) donenlerGel[0];
-        int yerIndGel = (int) donenlerGel[1];
+        grupAdapterGelArray = (ArrayList<String>) donenlerGel[2];
         grupSecGel = frgmnt.findViewById(R.id.gelGrupSec);
-
         grupSecGel.setAdapter(grupAdapterGel);
-        if (yerIndGel >= 0) {
-            grupSecGel.setText(grupAdapterGel.getItem(yerIndGel), false);
-            GrupSecildiGel(yerIndGel);
-        }
+        grupSecGel.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                secIndGel = position;
+            }
+        });
+
 
         Button kulGrupMenuButton = frgmnt.findViewById(R.id.kulGrupMenu);
         Button gelGrupMenuButton = frgmnt.findViewById(R.id.gelGrupMenu);
@@ -80,17 +91,66 @@ public class GrupFragment extends Fragment {
         popupMenuKul.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
             @Override
             public boolean onMenuItemClick(MenuItem item) {
-                if (item.getItemId() == R.id.action_grp_yeni) {
+                if (item.getItemId() == R.id.action_asagi_tasi || item.getItemId() == R.id.action_yukari_tasi) {
+                    kanallariTasi(item.getItemId() == R.id.action_yukari_tasi);
+                    return true;
+                } else if (item.getItemId() == R.id.action_knl_gizle_ac || item.getItemId() == R.id.action_knl_yet_normal) {
+                    kanallariDegistir(item.getItemId() == R.id.action_knl_gizle_ac, item.getItemId() == R.id.action_knl_yet_normal);
+                    return true;
+                } else if (item.getItemId() == R.id.action_knl_sil) {
+                    DialogTanimlar.onayAl(R.string.onaySilmeBaslik, R.string.onaySilmeMesaj,
+                            new OnayDialogGeriBildirim() {
+                                @Override
+                                public boolean onDialogTusaBasildi(boolean onaylandi) {
+                                    if (onaylandi) {
+                                        M3UGrup bulunanGrup = M3UVeri.GrupBul(mainActivity, M3UVeri.GrupDegiskenBul(mainActivity.aktifTur), grupSecKul.getText().toString(), true);
+                                        if (bulunanGrup != null) {
+
+                                            boolean degisti = false;
+                                            for (int i = grupKanalListesi.size() - 1; i >= 0; i--) {
+                                                KodAd ka = grupKanalListesi.get(i);
+                                                if (ka.secili) {
+                                                    grupKanalListesi.remove(i);
+                                                    degisti = true;
+                                                }
+                                            }
+                                            if (degisti) {
+                                                bulunanGrup.listeYenile(grupKanalListesi);
+                                                grupKanallariAdapter.notifyDataSetChanged();
+                                            }
+                                        } else
+                                            Toast.makeText(frgmnt.getContext(), R.string.secilenGrupBulunamadi, Toast.LENGTH_SHORT).show();
+                                    }
+                                    return true;
+                                }
+                            }
+                    );
+                    return true;
+                } else if (item.getItemId() == R.id.action_grp_yeni) {
                     GrupIsmiAl(null);
                     return true;
                 } else if (item.getItemId() == R.id.action_grp_ad_degistir) {
                     GrupIsmiAl(grupSecKul.getText().toString());
                     return true;
-                } else {
-                    Toast.makeText(frgmnt.getContext(), "ItemId: " + item.getItemId(), Toast.LENGTH_SHORT).show();
-
-                    return false;
+                } else if (item.getItemId() == R.id.action_grp_sil) {
+                    M3UGrup bulunanGrup = M3UVeri.GrupBul(mainActivity, M3UVeri.GrupDegiskenBul(mainActivity.aktifTur), grupSecKul.getText().toString(), true);
+                    if (bulunanGrup != null) {
+                        if (bulunanGrup.kanallar.size() > 0) {
+                            Toast.makeText(frgmnt.getContext(), R.string.kanalliGrupSilinemez, Toast.LENGTH_LONG).show();
+                        } else {
+                            bulunanGrup.sil();
+                            M3UVeri.GrupDegiskenBul(mainActivity.aktifTur).remove(bulunanGrup);
+                            kullaniciGruplariOl(null);
+                            grupKanallariAdapter.notifyDataSetChanged();
+                        }
+                    } else
+                        Toast.makeText(frgmnt.getContext(), R.string.secilenGrupBulunamadi, Toast.LENGTH_SHORT).show();
+                    return true;
+                } else if (item.getItemId() == R.id.action_kulgrp_gizle_ac || item.getItemId() == R.id.action_kulgrp_yet_normal) {
+                    grupOzellikDegistir(item.getItemId() == R.id.action_kulgrp_gizle_ac, item.getItemId() == R.id.action_kulgrp_yet_normal);
+                    return true;
                 }
+                return false;
             }
         });
         PopupMenu popupMenuGel = new PopupMenu(frgmnt.getContext(), gelGrupMenuButton);
@@ -98,7 +158,13 @@ public class GrupFragment extends Fragment {
         popupMenuGel.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
             @Override
             public boolean onMenuItemClick(MenuItem item) {
-                Toast.makeText(frgmnt.getContext(), "Hayda", Toast.LENGTH_SHORT).show();
+                if (item.getItemId() == R.id.action_gelknl_gizle_ac || item.getItemId() == R.id.action_gelknl_yet_normal) {
+                    gelKanaliDegistir(item.getItemId() == R.id.action_gelknl_gizle_ac, item.getItemId() == R.id.action_gelknl_yet_normal);
+                    return true;
+                } else if (item.getItemId() == R.id.action_gelgrp_gizle_ac || item.getItemId() == R.id.action_gelgrp_yet_normal) {
+                    gelGrupOzellikDegistir(item.getItemId() == R.id.action_gelgrp_gizle_ac, item.getItemId() == R.id.action_gelgrp_yet_normal);
+                    return true;
+                }
                 return false;
             }
         });
@@ -140,33 +206,173 @@ public class GrupFragment extends Fragment {
         secKanaliEkle.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Toast.makeText(frgmnt.getContext(), "Elma:" + grupIcinKanalSec.getText().toString() + ":" + kanalListe.get(secilenPosition).toString(), Toast.LENGTH_SHORT).show();
+                if (secilenPosition >= 0)
+                    KanalEkle(kanalListe.get(secilenPosition));
             }
         });
+
+        grupKanallari = frgmnt.findViewById(R.id.grupKanallari);
+        grupKanallari.setChoiceMode(ListView.CHOICE_MODE_MULTIPLE);
+        grupKanallariAdapter = new KodAdAdapter(mainActivity, android.R.layout.simple_list_item_1, grupKanalListesi, true);
+        grupKanallari.setAdapter(grupKanallariAdapter);
+        grupKanallari.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                grupKanallariAdapter.setSelectedItemPosition(position);
+            }
+        });
+
         return frgmnt;
     }
 
+    private void gelGrupOzellikDegistir(boolean gizliDegistir, boolean yetiskinDegistir) {
+        M3UGrup bulunanGrup = M3UVeri.GrupBul(mainActivity, M3UVeri.GrupDegiskenBul(mainActivity.aktifTur), grupSecGel.getText().toString(), true);
+        if (bulunanGrup != null) {
+            if (bulunanGrup.ozellikDegistir(gizliDegistir, yetiskinDegistir)) {
+                String tut = bulunanGrup.grupAdiBul(mainActivity, true);
+                grupSecGel.setText(tut, false);
+                grupAdapterGelArray.set(secIndGel, tut);
+                grupAdapterGel.notifyDataSetChanged();
+            }
+        } else
+            Toast.makeText(frgmnt.getContext(), R.string.secilenGrupBulunamadi, Toast.LENGTH_SHORT).show();
+    }
+
+    private void grupOzellikDegistir(boolean gizliDegistir, boolean yetiskinDegistir) {
+        M3UGrup bulunanGrup = M3UVeri.GrupBul(mainActivity, M3UVeri.GrupDegiskenBul(mainActivity.aktifTur), grupSecKul.getText().toString(), true);
+        if (bulunanGrup != null) {
+            if (bulunanGrup.ozellikDegistir(gizliDegistir, yetiskinDegistir)) {
+                String tut = bulunanGrup.grupAdiBul(mainActivity, true);
+                grupSecKul.setText(tut, false);
+                grupAdapterArray.set(secIndKul, tut);
+                grupAdapterKul.notifyDataSetChanged();
+            }
+        } else
+            Toast.makeText(frgmnt.getContext(), R.string.secilenGrupBulunamadi, Toast.LENGTH_SHORT).show();
+    }
+
+    private void kullaniciGruplariOl(String simd) {
+        Object[] donenlerKul = YayinFragment.GrupListesiOl(mainActivity, false, null, simd, 1, false, false, true);
+        grupAdapterKul = (ArrayAdapter<String>) donenlerKul[0];
+        int yerIndKul = (int) donenlerKul[1];
+        grupAdapterArray = (ArrayList<String>) donenlerKul[2];
+        grupSecKul.setAdapter(grupAdapterKul);
+        if (yerIndKul >= 0) {
+            grupSecKul.setText(grupAdapterKul.getItem(yerIndKul), false);
+            GrupSecildiKul(yerIndKul);
+        }
+    }
+
+    private void kanallariDegistir(boolean gizliDegistir, boolean yetiskinDegistir) {
+        M3UGrup bulunanGrup = M3UVeri.GrupBul(mainActivity, M3UVeri.GrupDegiskenBul(mainActivity.aktifTur), grupSecKul.getText().toString(), true);
+        if (bulunanGrup != null) {
+            boolean degisti = false;
+            for (int i = 0; i < grupKanalListesi.size(); i++) {
+                KodAd simdiki = grupKanalListesi.get(i);
+                if (simdiki.secili) {
+                    M3UBilgi m = (M3UBilgi) simdiki.o;
+                    m.ozellikDegistir(gizliDegistir, yetiskinDegistir);
+                    simdiki.ad = m.tvgNameOzellikliAl();
+                    degisti = true;
+                }
+            }
+            if (degisti)
+                grupKanallariAdapter.notifyDataSetChanged();
+        } else
+            Toast.makeText(frgmnt.getContext(), R.string.secilenGrupBulunamadi, Toast.LENGTH_SHORT).show();
+    }
+
+    private void gelKanaliDegistir(boolean gizliDegistir, boolean yetiskinDegistir) {
+        if (secilenPosition >= 0) {
+            KodAd simdiki = kanalListe.get(secilenPosition);
+            M3UBilgi m = (M3UBilgi) simdiki.o;
+            m.ozellikDegistir(gizliDegistir, yetiskinDegistir);
+            simdiki.ad = m.tvgNameOzellikliAl();
+            grupIcinKanalSec.setText(simdiki.ad, false);
+            kanalListe.set(secilenPosition, simdiki);
+            grupIcinKanalSecAdapter.notifyDataSetChanged();
+        }
+    }
+
+    private void kanallariTasi(boolean siranoDusur) {
+        boolean degisti = false;
+
+        M3UGrup bulunanGrup = M3UVeri.GrupBul(mainActivity, M3UVeri.GrupDegiskenBul(mainActivity.aktifTur), grupSecKul.getText().toString(), true);
+        if (bulunanGrup != null) {
+            for (int i = 1; i < grupKanalListesi.size(); i++) {
+                int islenen;
+                if (siranoDusur)
+                    islenen = i;
+                else
+                    islenen = grupKanalListesi.size() - i - 1;
+                KodAd simdiki = grupKanalListesi.get(islenen);
+                if (simdiki.secili) {
+                    int yerDegistir;
+                    if (siranoDusur)
+                        yerDegistir = islenen - 1;
+                    else
+                        yerDegistir = islenen + 1;
+                    KodAd degisecek = grupKanalListesi.get(yerDegistir);
+                    if (!degisecek.secili) {
+                        grupKanalListesi.set(islenen, degisecek);
+                        grupKanalListesi.set(yerDegistir, simdiki);
+                        degisti = true;
+                    }
+                }
+            }
+            if (degisti) {
+                grupKanallariAdapter.notifyDataSetChanged();
+                bulunanGrup.listeYenile(grupKanalListesi);
+            }
+        } else
+            Toast.makeText(frgmnt.getContext(), R.string.secilenGrupBulunamadi, Toast.LENGTH_SHORT).show();
+    }
+
+    private void KanalEkle(KodAd kodAd) {
+        M3UBilgi m3u = (M3UBilgi) kodAd.o;
+        KodAd ka = new KodAd(m3u.ID, m3u.tvgNameOzellikliAl(), m3u);
+        if (!grupKanalListesi.contains(ka)) {
+            M3UGrup bulunanGrup = M3UVeri.GrupBul(mainActivity, M3UVeri.GrupDegiskenBul(mainActivity.aktifTur), grupSecKul.getText().toString(), true);
+            if (bulunanGrup != null) {
+                grupKanalListesi.add(ka);
+                bulunanGrup.kanalEkle(ka.kod);
+                grupKanallariAdapter.notifyDataSetChanged();
+            } else
+                Toast.makeText(frgmnt.getContext(), R.string.secilenGrupBulunamadi, Toast.LENGTH_SHORT).show();
+        } else
+            Toast.makeText(frgmnt.getContext(), R.string.zatenListedeVar, Toast.LENGTH_SHORT).show();
+    }
+
     private void ArananKanallariDoldur() {
-        M3UGrup bulunanGrup = M3UVeri.GrupBul(M3UVeri.GrupDegiskenBul(mainActivity.aktifTur), grupSecGel.getText().toString());
+        M3UGrup bulunanGrup = M3UVeri.GrupBul(mainActivity, M3UVeri.GrupDegiskenBul(mainActivity.aktifTur), grupSecGel.getText().toString(), true);
         if (bulunanGrup != null) {
             M3UFiltre f = new M3UFiltre();
             f.isimFiltreStr = filtreAranacak.getText().toString();
             kanalListe.clear();
+            boolean toasted = false;
             for (String kanalId : bulunanGrup.kanallar) {
                 M3UBilgi m3u = M3UVeri.tumM3Ular.get(kanalId);
                 if (m3u.FiltreUygunMu(f)) {
-                    kanalListe.add(new KodAd(m3u.ID, m3u.tvgName, m3u));
+                    kanalListe.add(new KodAd(m3u.ID, m3u.tvgNameOzellikliAl(), m3u));
                     if (kanalListe.size() > 30) {
                         Toast.makeText(frgmnt.getContext(), R.string.aranan30danFazla, Toast.LENGTH_SHORT).show();
+                        toasted = true;
                         break;
                     }
                 }
             }
-
+            if (!toasted)
+                Toast.makeText(frgmnt.getContext(), R.string.bulunanlarEklendi, Toast.LENGTH_SHORT).show();
             grupIcinKanalSec.setAdapter(grupIcinKanalSecAdapter);
             grupIcinKanalSec.clearListSelection();
-            grupIcinKanalSec.setText("");
-        }
+            if (kanalListe.size() > 0) {
+                grupIcinKanalSec.setText(kanalListe.get(0).ad, false);
+                secilenPosition = 0;
+            }
+            else
+                secilenPosition = -1;
+        } else
+            Toast.makeText(frgmnt.getContext(), R.string.secilenGrupBulunamadi, Toast.LENGTH_SHORT).show();
     }
 
     private void GrupIsmiAl(String kulGrupIsmi) {
@@ -186,21 +392,11 @@ public class GrupFragment extends Fragment {
         builder.setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
-                String text = input.getText().toString();
+                String yeniAd = input.getText().toString();
                 int hata;
-                if ((hata = M3UVeri.GrupIsminiYaz(mainActivity.aktifTur, kulGrupIsmi, text)) == 0) {
-                    if (kulGrupIsmi != null) {
-                        grupAdapterKul.remove(kulGrupIsmi);
-                    }
-                    grupAdapterKul.add(text);
-                    grupAdapterKul.sort(new Comparator<String>() {
-                        @Override
-                        public int compare(String o1, String o2) {
-                            return o1.compareToIgnoreCase(o2);
-                        }
-                    });
-                    grupAdapterKul.notifyDataSetChanged();
-                    grupSecKul.setText(text, false);
+                if ((hata = M3UVeri.GrupIsminiYaz(mainActivity.aktifTur, kulGrupIsmi, yeniAd)) == 0) {
+                    kullaniciGruplariOl(yeniAd);
+                    grupKanallariAdapter.notifyDataSetChanged();
                 } else
                     Toast.makeText(frgmnt.getContext(), hata, Toast.LENGTH_SHORT).show();
             }
@@ -215,10 +411,19 @@ public class GrupFragment extends Fragment {
         builder.show();
     }
 
-    private void GrupSecildiGel(int yerIndGel) {
-    }
-
-    private void GrupSecildiKul(int yerInd) {
+    private void GrupSecildiKul(int position) {
+        grupKanalListesi.clear();
+        secIndKul = position;
+        M3UGrup bulunanGrup = M3UVeri.GrupBul(mainActivity, M3UVeri.GrupDegiskenBul(mainActivity.aktifTur), grupSecKul.getText().toString(), true);
+        if (bulunanGrup != null) {
+            for (String m3uId : bulunanGrup.kanallar) {
+                M3UBilgi m3uBilgi = M3UVeri.tumM3Ular.getOrDefault(m3uId, null);
+                if (m3uBilgi != null)
+                    grupKanalListesi.add(new KodAd(m3uBilgi.ID, m3uBilgi.tvgNameOzellikliAl(), m3uBilgi));
+            }
+        } else {
+            Toast.makeText(frgmnt.getContext(), R.string.secilenGrupBulunamadi, Toast.LENGTH_SHORT).show();
+        }
     }
 
     public void YonlendirmeAyarla() {

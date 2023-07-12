@@ -28,6 +28,7 @@ public class AyarlarFragment extends Fragment {
     private EditText txtm3uAdresC;
     private EditText txttmdbErisimAnahtar;
     private CheckBox chksonTvKanalBaslat;
+    private CheckBox chktamEkranBaslat;
     private ConstraintSet landscapeConstraintSet;
     private ConstraintSet portraitConstraintSet;
     private ConstraintLayout ayarlarYerlersim;
@@ -82,12 +83,14 @@ public class AyarlarFragment extends Fragment {
         txtm3uAdresC = currView.findViewById(R.id.m3uAdresC);
         txttmdbErisimAnahtar = currView.findViewById(R.id.tmdbErisimAnahtar);
         chksonTvKanalBaslat = currView.findViewById(R.id.sonTvKanalBaslat);
+        chktamEkranBaslat= currView.findViewById(R.id.tamEkranBaslat);
 
         txtm3uAdresA.setText(ProgSettings.m3u_internet_adresi_1);
         txtm3uAdresB.setText(ProgSettings.m3u_internet_adresi_2);
         txtm3uAdresC.setText(ProgSettings.m3u_internet_adresi_3);
         txttmdbErisimAnahtar.setText(ProgSettings.tmdb_erisim_anahtar);
         chksonTvKanalBaslat.setChecked(ProgSettings.son_tv_kanalini_oynatarak_basla);
+        chktamEkranBaslat.setChecked(ProgSettings.tamEkranBaslat);
 
         kaydetTus = currView.findViewById(R.id.btnKaydet);
         kaydetTus.setOnClickListener(new View.OnClickListener() {
@@ -98,6 +101,7 @@ public class AyarlarFragment extends Fragment {
                 ProgSettings.m3u_internet_adresi_3 = txtm3uAdresC.getText().toString();
                 ProgSettings.tmdb_erisim_anahtar = txttmdbErisimAnahtar.getText().toString();
                 ProgSettings.son_tv_kanalini_oynatarak_basla = chksonTvKanalBaslat.isChecked();
+                ProgSettings.tamEkranBaslat = chktamEkranBaslat.isChecked();
 
                 ProgSettings.AyarlariYaz();
                 mainActivity.AyarlariKapat(false);

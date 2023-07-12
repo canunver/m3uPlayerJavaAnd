@@ -1,6 +1,7 @@
 package org.unver.m3uplayer;
 
 import android.content.ContentValues;
+import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.util.Log;
@@ -15,7 +16,7 @@ public class M3UVeri {
     public static ArrayList<M3UGrup> filmGruplari = new ArrayList<>();
     public static ArrayList<M3UGrup> seriGruplari = new ArrayList<>();
     public static Hashtable<String, String> tumSerilerAd = new Hashtable<>();
-    private static MainActivity mainActivity;
+    public static MainActivity mainActivity;
     public static int minYil = 10000;
     private static M3U_DB dbHelper = null;
     public static SQLiteDatabase db = null;
@@ -39,7 +40,7 @@ public class M3UVeri {
             db = dbHelper.getWritableDatabase();
 
         Log.i("M3UVeri", "GRUP cursor olacak");
-        String query = "SELECT GRUP.type_name, GRUP.gelenGrup, GRUP.gizli, GRUP.yetiskin, GRUPDETAY.ID  FROM GRUP LEFT OUTER JOIN GRUPDETAY ON GRUP.type_name = GRUPDETAY.type_name order by GRUP.gelenGrup, GRUP.type_name";
+        String query = "SELECT GRUP.type_name, GRUP.gelenGrup, GRUP.gizli, GRUP.yetiskin, GRUPDETAY.ID  FROM GRUP LEFT OUTER JOIN GRUPDETAY ON GRUP.type_name = GRUPDETAY.type_name order by GRUP.gelenGrup, GRUP.type_name, GRUPDETAY.sira_No";
         Cursor cursorGrup = db.rawQuery(query, null);
         Log.i("M3UVeri", "GRUP cursor oldu");
 
@@ -161,7 +162,7 @@ public class M3UVeri {
 
     private static void GrubaEkle(ArrayList<M3UGrup> anaGrup, M3UBilgi m3u, boolean gelenGrup) {
         M3UGrup grp = GrupBulYoksaEkle(anaGrup, m3u.groupTitle, gelenGrup, true);
-        if (grp.ProgBul(m3u.ID) == null)
+        if (grp.progBul(m3u.ID) == null)
             grp.kanallar.add(m3u.ID);
     }
 
@@ -266,9 +267,9 @@ public class M3UVeri {
             return tvGruplari;
     }
 
-    public static M3UGrup GrupBul(ArrayList<M3UGrup> grupListesi, String aktifGrupAd) {
+    public static M3UGrup GrupBul(Context c, ArrayList<M3UGrup> grupListesi, String aktifGrupAd, boolean ozelliklerle) {
         for (M3UGrup g : grupListesi) {
-            if (g.grupAdi.equals(aktifGrupAd))
+            if (g.grupAdiBul(c, ozelliklerle).equals(aktifGrupAd))
                 return g;
         }
         return null;
@@ -445,7 +446,7 @@ public class M3UVeri {
     }
 
     public static boolean GrupIsmiVarMi(M3UBilgi.M3UTur aktifTur, String ad) {
-        M3UGrup grup = GrupBul(GrupDegiskenBul(aktifTur), ad);
+        M3UGrup grup = GrupBul(mainActivity, GrupDegiskenBul(aktifTur), ad, false);
         if (grup != null)
             return true;
         return false;
@@ -462,15 +463,16 @@ public class M3UVeri {
             return R.string.ZatenVarOlanBirIsimKullanilamaz;
 
         if (eskiAd != null) {
-            M3UGrup grup = GrupBul(GrupDegiskenBul(aktifTur), eskiAd);
+            M3UGrup grup = GrupBul(mainActivity, GrupDegiskenBul(aktifTur), eskiAd, false);
             if (grup == null)
                 return R.string.EskiGrupBulunamadi;
             if (grup.gelenGrup)
                 return R.string.GelenGrupAdDegismez;
-            grup.AdDegistir(M3UVeri.db, yeniAd);
+            grup.adDegistir(M3UVeri.db, yeniAd);
         } else {
             M3UGrup grup = new M3UGrup(SiraBul(aktifTur), yeniAd, false);
-            grup.Kaydet(db);
+            grup.kaydet(db);
+            GrupDegiskenBul(aktifTur).add(grup);
         }
         return 0;
     }
