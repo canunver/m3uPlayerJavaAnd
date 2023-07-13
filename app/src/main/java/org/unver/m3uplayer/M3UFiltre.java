@@ -29,7 +29,7 @@ public class M3UFiltre {
         Calendar yeniTarihBasla = Calendar.getInstance();
         int gs = values.get(0).intValue();
         yeniTarihBasla.add(Calendar.DAY_OF_MONTH, -1 * gs);
-        this.yeniTarihBaslaStr = ProgSettings.TarihYAGOl(yeniTarihBasla.getTime());
+        this.yeniTarihBaslaStr = OrtakAlan.TarihYAGOl(yeniTarihBasla.getTime());
     }
 
     public void PuanAyarla(List<Float> values) {
@@ -51,7 +51,7 @@ public class M3UFiltre {
     }
 
     public void TurAyarla(String turlerS) {
-        if (ProgSettings.StringIsNUllOrEmpty(turlerS)) {
+        if (OrtakAlan.StringIsNUllOrEmpty(turlerS)) {
             filmTurler = null;
         } else {
             String[] turler = turlerS.split(",");

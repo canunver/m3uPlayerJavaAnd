@@ -1,7 +1,6 @@
 package org.unver.m3uplayer;
 
 import android.content.ContentValues;
-import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 
 import java.util.ArrayList;
@@ -27,11 +26,11 @@ public class M3UGrup {
     }
 
     public M3UGrup(String type_name, boolean gelenGrup, boolean gizli, boolean yetiskin) {
-        if (ProgSettings.StringIsNUllOrEmpty(type_name))
+        if (OrtakAlan.StringIsNUllOrEmpty(type_name))
             this.turSira = -1;
         else {
             String[] parcalar = type_name.split("_");
-            this.turSira = ProgSettings.ConvertToInt32(parcalar[0], -1);
+            this.turSira = OrtakAlan.ConvertToInt32(parcalar[0], -1);
             this.grupAdi = birlestir(parcalar, 1, '_');
             this.gelenGrup = gelenGrup;
             this.gizli = gizli;
@@ -75,7 +74,13 @@ public class M3UGrup {
         return false;
     }
 
-    public boolean gizlilikKontrol() {
+    public boolean gizliYetiskinDegilse(boolean gizlilerOlsun) {
+        if (!gizlilerOlsun && !OrtakAlan.gizlilerVar) {
+            if (gizli) return false;
+        }
+        if (!OrtakAlan.yetiskinlerVar) {
+            if (yetiskin) return false;
+        }
         return true;
     }
 
@@ -122,9 +127,9 @@ public class M3UGrup {
         return turSira + "_" + grupAdi;
     }
 
-    public String grupAdiBul(Context c, boolean ozelliklerOlsun) {
+    public String grupAdiBul(boolean ozelliklerOlsun, String gizliKod, String yetiskinKod) {
         if (ozelliklerOlsun)
-            return ProgSettings.GizliBul(c, gizli) + ProgSettings.YetiskinBul(c, yetiskin) + " " + grupAdi;
+            return OrtakAlan.DogruysaDondur(gizli, gizliKod) + OrtakAlan.DogruysaDondur(yetiskin, yetiskinKod) + " " + grupAdi;
         else
             return grupAdi;
     }

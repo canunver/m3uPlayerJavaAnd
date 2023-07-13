@@ -33,7 +33,7 @@ public class ArkaPlanIslemleri {
     }
 
     private static void performBackgroundTask() {
-        Log.i("M3UVeri", "performBackgroundTask, sonCekilmeZamani: " + ProgSettings.sonCekilmeZamani);
+        Log.i("M3UVeri", "performBackgroundTask, sonCekilmeZamani: " + OrtakAlan.sonCekilmeZamani);
 
         try {
             if(!mainActivity.TVInfoOkundu)
@@ -41,7 +41,7 @@ public class ArkaPlanIslemleri {
                 mainActivity.internettenCekiliyorYap(3);
                 M3UVeri.TMDBOku();
             }
-            if (ProgSettings.sonCekilmeZamani == 0 || GecenSureSaat(Calendar.getInstance().getTimeInMillis(), ProgSettings.sonCekilmeZamani) >= 24) {
+            if (OrtakAlan.sonCekilmeZamani == 0 || GecenSureSaat(Calendar.getInstance().getTimeInMillis(), OrtakAlan.sonCekilmeZamani) >= 24) {
                 mainActivity.internettenCekiliyorYap(1);
                 M3UVeri.CekBakalim();
             } else {

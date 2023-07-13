@@ -70,4 +70,5 @@
     <string name="kanalliGrupSilinemez">Grubu silmek için önce kanallari gruptan çıkartmalısınız!</string>
     <string name="kanali_gizle_ac">Kanalı gizle/aç</string>
     <string name="kanali_yetiskin_yap_yapma">Kanalı yetişkin/normal yap</string>
+    <string name="gelen_gruplar">Gelen Gruplar</string>
 </resources>

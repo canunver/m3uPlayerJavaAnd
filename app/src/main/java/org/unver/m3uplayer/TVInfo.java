@@ -29,7 +29,7 @@ public class TVInfo {
     }
 
     public String yayinTarihiBul() {
-        if (ProgSettings.StringIsNUllOrEmpty(first_air_date))
+        if (OrtakAlan.StringIsNUllOrEmpty(first_air_date))
             return release_date;
         else
             return first_air_date;
@@ -37,8 +37,8 @@ public class TVInfo {
 
     public int FilmYil() {
         String yt = yayinTarihiBul();
-        if (!ProgSettings.StringIsNUllOrEmpty(yt)) {
-            ProgSettings.ConvertToInt32(yt.substring(yt.length() - 4), 0);
+        if (!OrtakAlan.StringIsNUllOrEmpty(yt)) {
+            OrtakAlan.ConvertToInt32(yt.substring(yt.length() - 4), 0);
         }
         return 0;
     }
@@ -54,8 +54,8 @@ public class TVInfo {
                   int vote_count, String origin_country, String genre_ids) {
 
         String[] typeIds = typeId.split("_");
-        this.type = ProgSettings.ConvertToInt32(typeIds[0], 0);
-        this.id = ProgSettings.ConvertToLong(typeIds[1], 0);
+        this.type = OrtakAlan.ConvertToInt32(typeIds[0], 0);
+        this.id = OrtakAlan.ConvertToLong(typeIds[1], 0);
         this.name = name;
         this.title = title;
         this.original_name = original_name;
@@ -70,8 +70,8 @@ public class TVInfo {
         this.release_date = release_date;
         this.original_language = original_language;
         this.vote_count = vote_count;
-        this.origin_country = ProgSettings.ConvertToArrayStr(origin_country);
-        this.genre_ids = ProgSettings.ConvertToArrayInt(genre_ids);
+        this.origin_country = OrtakAlan.ConvertToArrayStr(origin_country);
+        this.genre_ids = OrtakAlan.ConvertToArrayInt(genre_ids);
     }
     public TVInfo(int type, long id, String name, String air_date, String overview, double vote_average) {
         this.type = type;
@@ -91,14 +91,14 @@ public class TVInfo {
 
 
     public String nameTitle() {
-        if (ProgSettings.StringIsNUllOrEmpty(name))
+        if (OrtakAlan.StringIsNUllOrEmpty(name))
             return title;
         else
             return name;
     }
 
     public String Original_name() {
-        if (ProgSettings.StringIsNUllOrEmpty(original_name))
+        if (OrtakAlan.StringIsNUllOrEmpty(original_name))
             return original_title;
         else
             return original_name;
@@ -130,8 +130,8 @@ public class TVInfo {
             values.put("release_date", release_date);                                  //public String
             values.put("original_language", original_language);                        //public String
             values.put("vote_count", vote_count);                                      //public int
-            values.put("origin_country", ProgSettings.ConvertToStr(origin_country));   //public String[]
-            values.put("genre_ids", ProgSettings.ConvertToStr(genre_ids));             //public int[]
+            values.put("origin_country", OrtakAlan.ConvertToStr(origin_country));   //public String[]
+            values.put("genre_ids", OrtakAlan.ConvertToStr(genre_ids));             //public int[]
 
             rowId = db.insertWithOnConflict(M3U_DB.TABLE_TVINFO, null, values, SQLiteDatabase.CONFLICT_REPLACE);
         } catch (Exception ex) {

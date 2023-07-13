@@ -98,11 +98,11 @@
                         android:layout_width="50dp"
                         android:layout_height="50dp"
                         android:layout_alignParentEnd="true"
+                        android:background="@android:color/holo_purple"
                         android:clickable="true"
                         android:scaleType="fitXY"
                         android:src="@android:drawable/ic_menu_search"
-                        android:background="@android:color/holo_purple"
-                        />
+                        tools:ignore="ContentDescription,ImageContrastCheck,KeyboardInaccessibleWidget,SpeakableTextPresentCheck" />
 
                 </RelativeLayout>
 
@@ -231,18 +231,21 @@
                         android:layout_toStartOf="@id/switchHidden"
                         android:text="@string/gizli_icerik" />
 
-                    <Switch
+                    <androidx.appcompat.widget.SwitchCompat
                         android:id="@+id/switchHidden"
                         android:layout_width="48dp"
                         android:layout_height="48dp"
                         android:layout_alignParentEnd="true"
+                        android:checked="false"
                         tools:ignore="UseSwitchCompatOrMaterialXml,DuplicateSpeakableTextCheck" />
                 </RelativeLayout>
 
                 <RelativeLayout
+                    android:id="@+id/switchAdultRL"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="0dp"
+                    android:visibility="gone"
                     android:orientation="horizontal">
 
                     <TextView
@@ -253,11 +256,12 @@
                         android:layout_toStartOf="@id/switchAdult"
                         android:text="@string/yetiskin_goster" />
 
-                    <Switch
+                    <androidx.appcompat.widget.SwitchCompat
                         android:id="@+id/switchAdult"
                         android:layout_width="48dp"
                         android:layout_height="48dp"
                         android:layout_alignParentEnd="true"
+                        android:checked="false"
                         tools:ignore="UseSwitchCompatOrMaterialXml" />
                 </RelativeLayout>
 
@@ -306,7 +310,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginStart="8dp"
-                        android:text="Kullanıcı Grupları"
+                        android:text="@string/kullanici_gruplari"
                         android:textSize="16sp"
                         android:textStyle="bold" />
                 </LinearLayout>

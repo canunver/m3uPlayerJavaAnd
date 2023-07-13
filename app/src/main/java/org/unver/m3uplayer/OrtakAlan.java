@@ -1,12 +1,14 @@
 package org.unver.m3uplayer;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
+import android.view.View;
 
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 
-public class ProgSettings {
+public class OrtakAlan {
     public static boolean son_tv_kanalini_oynatarak_basla;
     public static boolean tamEkranBaslat;
     public static String tmdb_erisim_anahtar;
@@ -15,17 +17,21 @@ public class ProgSettings {
     public static String m3u_internet_adresi_1;
     public static M3UBilgi.M3UTur sonM3UTur;
     public static String sonGrup;
-    public static String sonProgID;
+    public static String sonProgramID;
     public static String sonTVGrup;
-    public static String sonTVProgID;
+    public static String sonTVProgramID;
     public static long sonCekilmeZamani;
     public static String TMDBDil = "tr-TR";
+    public static boolean gizlilerVar = false;
+    public static boolean yetiskinlerVar = false;
+    public static boolean parolaVar = false;
+    private static String parola = "1111";
 
     public static int ConvertToInt32(String strDeger, int varsayilanDeger) {
         if (!StringIsNUllOrEmpty(strDeger)) {
             try {
                 return Integer.parseInt(strDeger);
-            } catch (Exception $) {
+            } catch (Exception ignored) {
             }
         }
         return varsayilanDeger;
@@ -35,14 +41,14 @@ public class ProgSettings {
         if (!StringIsNUllOrEmpty(strDeger)) {
             try {
                 return Long.parseLong(strDeger);
-            } catch (Exception $) {
+            } catch (Exception ignored) {
             }
         }
         return varsayilanDeger;
     }
 
     public static String TarihYAGOl(Date date) {
-        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+        @SuppressLint("SimpleDateFormat") SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
         return dateFormat.format(date);
     }
 
@@ -55,10 +61,10 @@ public class ProgSettings {
         tamEkranBaslat = ConvertToInt32(M3UVeri.AyarOku("tamEkranBaslat"), 0) == 1;
 
         sonTVGrup = M3UVeri.AyarOku("sonTVGrup");
-        sonTVProgID = M3UVeri.AyarOku("sonTVProgID");
+        sonTVProgramID = M3UVeri.AyarOku("sonTVProgramID");
         sonM3UTur = M3UVeri.TurBul(ConvertToInt32(M3UVeri.AyarOku("sonM3UTur"), 0));
         sonGrup = M3UVeri.AyarOku("sonGrup");
-        sonProgID = M3UVeri.AyarOku("sonProgID");
+        sonProgramID = M3UVeri.AyarOku("sonProgramID");
         sonCekilmeZamani = ConvertToLong(M3UVeri.AyarOku("sonCekilmeZamani"), 0);
     }
 
@@ -73,19 +79,19 @@ public class ProgSettings {
 
     public static void TarihceyeEkle(M3UBilgi.M3UTur aktifTur, String aktifGrupAd, String id) {
         if (!StringIsNUllOrEmpty(aktifGrupAd) && !StringIsNUllOrEmpty(id)) {
-            if (aktifTur != sonM3UTur || !aktifGrupAd.equals(sonGrup) || !id.equals(sonProgID)) {
+            if (aktifTur != sonM3UTur || !aktifGrupAd.equals(sonGrup) || !id.equals(sonProgramID)) {
                 sonM3UTur = aktifTur;
                 sonGrup = aktifGrupAd;
-                sonProgID = id;
+                sonProgramID = id;
                 if (sonM3UTur == M3UBilgi.M3UTur.tv) {
                     sonTVGrup = aktifGrupAd;
-                    sonTVProgID = id;
+                    sonTVProgramID = id;
                     M3UVeri.AyarYaz("sonTVGrup", sonTVGrup);
-                    M3UVeri.AyarYaz("sonTVProgID", sonTVProgID);
+                    M3UVeri.AyarYaz("sonTVProgramID", sonTVProgramID);
                 }
                 M3UVeri.AyarYaz("sonM3UTur", Integer.toString(M3UVeri.SiraBul(sonM3UTur)));
                 M3UVeri.AyarYaz("sonGrup", sonGrup);
-                M3UVeri.AyarYaz("sonProgID", sonProgID);
+                M3UVeri.AyarYaz("sonProgramID", sonProgramID);
             }
         }
     }
@@ -106,7 +112,7 @@ public class ProgSettings {
             return null;
         String retVal = "";
         for (String s : strDizi) {
-            if (retVal != "") retVal += ";";
+            if (!OrtakAlan.StringIsNUllOrEmpty(retVal)) retVal += ";";
             retVal += s;
         }
         return retVal;
@@ -117,34 +123,45 @@ public class ProgSettings {
             return null;
         String retVal = "";
         for (int s : intDizi) {
-            if (retVal != "") retVal += ";";
+            if (!OrtakAlan.StringIsNUllOrEmpty(retVal)) retVal += ";";
             retVal += s;
         }
         return retVal;
     }
 
     public static String[] ConvertToArrayStr(String str) {
-        if (ProgSettings.StringIsNUllOrEmpty(str)) return null;
+        if (OrtakAlan.StringIsNUllOrEmpty(str)) return null;
         return str.split(";");
     }
 
     public static int[] ConvertToArrayInt(String str) {
-        if (ProgSettings.StringIsNUllOrEmpty(str)) return null;
-        String[] strs = str.split(";");
-        int[] ints = new int[strs.length];
-        for (int i = 0; i < strs.length; i++) {
-            ints[i] = ProgSettings.ConvertToInt32(strs[i], 0);
+        if (OrtakAlan.StringIsNUllOrEmpty(str)) return null;
+        String[] dizgiler = str.split(";");
+        int[] tamsayilar = new int[dizgiler.length];
+        for (int i = 0; i < dizgiler.length; i++) {
+            tamsayilar[i] = OrtakAlan.ConvertToInt32(dizgiler[i], 0);
         }
-        return ints;
+        return tamsayilar;
     }
 
-    public static String GizliBul(Context c, boolean gizli) {
-        if(gizli) return c.getString(R.string.GizliIlkHarf);
-        else return "_";
+    public static String GizliBul(Context c) {
+        return c.getString(R.string.GizliIlkHarf);
     }
 
-    public static String YetiskinBul(Context c, boolean yetiskin) {
-        if(yetiskin) return c.getString(R.string.YetiskinIlkHarf);
-        else return "_";
+    public static String YetiskinBul(Context c) {
+        return c.getString(R.string.YetiskinIlkHarf);
+    }
+
+    public static String DogruysaDondur(boolean kodMu, String kod) {
+        if(kodMu) return kod;
+        return "_";
+    }
+
+    public static void parolaGirildi(String parola) {
+        if(parola.equals(OrtakAlan.parola))
+        {
+            parolaVar = true;
+            M3UVeri.mainActivity.switchAdultRL.setVisibility(View.VISIBLE);
+        }
     }
 }

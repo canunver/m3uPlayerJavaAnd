@@ -50,7 +50,7 @@ public class InternettenOku {
         executor.execute(() -> {
             try {
                 Log.i("M3UVeri", "Internetten veri alınacak");
-                URL url = new URL(ProgSettings.m3u_internet_adresi_1);
+                URL url = new URL(OrtakAlan.m3u_internet_adresi_1);
                 HttpURLConnection connection = (HttpURLConnection) url.openConnection();
                 connection.setRequestMethod("GET");
 
@@ -64,7 +64,7 @@ public class InternettenOku {
                     try {
                         int say = 0;
                         String ilkSatir = null;
-                        String suAn = ProgSettings.TarihYAGOl(new Date());
+                        String suAn = OrtakAlan.TarihYAGOl(new Date());
 
                         while ((line = reader.readLine()) != null) {
                             if (line.startsWith("#EXTINF:")) {
@@ -86,7 +86,7 @@ public class InternettenOku {
                     reader.close();
                     if (!hataVar) {
                         Log.i("M3UVeri", "Internet verisi işlendi");
-                        ProgSettings.sonCekilmeZamaniYaz();
+                        OrtakAlan.sonCekilmeZamaniYaz();
                     }
                 }
                 connection.disconnect();
@@ -186,13 +186,13 @@ public class InternettenOku {
         HttpURLConnection connection = null;
         try {
             if (!trustInit) doTrustInit();
-            String urlStr = String.format("https://api.themoviedb.org/3/tv/%s/season/%s/episode/%s?language=%s", m3u.tmdbId, sezonAd.substring(1), bolumNo.substring(1), ProgSettings.TMDBDil);
+            String urlStr = String.format("https://api.themoviedb.org/3/tv/%s/season/%s/episode/%s?language=%s", m3u.tmdbId, sezonAd.substring(1), bolumNo.substring(1), OrtakAlan.TMDBDil);
 
-            Log.d("M3UVeri", "TMDB bölüm alınacak:" + urlStr + " " + ProgSettings.tmdb_erisim_anahtar);
+            Log.d("M3UVeri", "TMDB bölüm alınacak:" + urlStr + " " + OrtakAlan.tmdb_erisim_anahtar);
             URL url = new URL(urlStr);
             connection = (HttpURLConnection) url.openConnection();
             connection.setRequestMethod("GET");
-            connection.setRequestProperty("Authorization", "Bearer " + ProgSettings.tmdb_erisim_anahtar);
+            connection.setRequestProperty("Authorization", "Bearer " + OrtakAlan.tmdb_erisim_anahtar);
             connection.setRequestProperty("accept", "application/json");
             int responseCode = connection.getResponseCode();
             if (responseCode == HttpURLConnection.HTTP_OK) {
@@ -229,12 +229,12 @@ public class InternettenOku {
         try {
             if (!trustInit) doTrustInit();
 
-            String urlStr = String.format("https://api.themoviedb.org/3/search/%s?language=%s&query=%s", tmdbTur, ProgSettings.TMDBDil, sorgu);
-            Log.d("M3UVeri", "TMDB veri alınacak:" + urlStr + " " + ProgSettings.tmdb_erisim_anahtar);
+            String urlStr = String.format("https://api.themoviedb.org/3/search/%s?language=%s&query=%s", tmdbTur, OrtakAlan.TMDBDil, sorgu);
+            Log.d("M3UVeri", "TMDB veri alınacak:" + urlStr + " " + OrtakAlan.tmdb_erisim_anahtar);
             URL url = new URL(urlStr);
             connection = (HttpURLConnection) url.openConnection();
             connection.setRequestMethod("GET");
-            connection.setRequestProperty("Authorization", "Bearer " + ProgSettings.tmdb_erisim_anahtar);
+            connection.setRequestProperty("Authorization", "Bearer " + OrtakAlan.tmdb_erisim_anahtar);
             connection.setRequestProperty("accept", "application/json");
             int responseCode = connection.getResponseCode();
             if (responseCode == HttpURLConnection.HTTP_OK) {

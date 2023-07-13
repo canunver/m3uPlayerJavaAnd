@@ -74,7 +74,7 @@ public class AyarlarFragment extends Fragment {
         iptalTus.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                mainActivity.AyarlariKapat(false);
+                mainActivity.AyarlariKapat();
             }
         });
 
@@ -85,26 +85,26 @@ public class AyarlarFragment extends Fragment {
         chksonTvKanalBaslat = currView.findViewById(R.id.sonTvKanalBaslat);
         chktamEkranBaslat= currView.findViewById(R.id.tamEkranBaslat);
 
-        txtm3uAdresA.setText(ProgSettings.m3u_internet_adresi_1);
-        txtm3uAdresB.setText(ProgSettings.m3u_internet_adresi_2);
-        txtm3uAdresC.setText(ProgSettings.m3u_internet_adresi_3);
-        txttmdbErisimAnahtar.setText(ProgSettings.tmdb_erisim_anahtar);
-        chksonTvKanalBaslat.setChecked(ProgSettings.son_tv_kanalini_oynatarak_basla);
-        chktamEkranBaslat.setChecked(ProgSettings.tamEkranBaslat);
+        txtm3uAdresA.setText(OrtakAlan.m3u_internet_adresi_1);
+        txtm3uAdresB.setText(OrtakAlan.m3u_internet_adresi_2);
+        txtm3uAdresC.setText(OrtakAlan.m3u_internet_adresi_3);
+        txttmdbErisimAnahtar.setText(OrtakAlan.tmdb_erisim_anahtar);
+        chksonTvKanalBaslat.setChecked(OrtakAlan.son_tv_kanalini_oynatarak_basla);
+        chktamEkranBaslat.setChecked(OrtakAlan.tamEkranBaslat);
 
         kaydetTus = currView.findViewById(R.id.btnKaydet);
         kaydetTus.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                ProgSettings.m3u_internet_adresi_1 = txtm3uAdresA.getText().toString();
-                ProgSettings.m3u_internet_adresi_2 = txtm3uAdresB.getText().toString();
-                ProgSettings.m3u_internet_adresi_3 = txtm3uAdresC.getText().toString();
-                ProgSettings.tmdb_erisim_anahtar = txttmdbErisimAnahtar.getText().toString();
-                ProgSettings.son_tv_kanalini_oynatarak_basla = chksonTvKanalBaslat.isChecked();
-                ProgSettings.tamEkranBaslat = chktamEkranBaslat.isChecked();
+                OrtakAlan.m3u_internet_adresi_1 = txtm3uAdresA.getText().toString();
+                OrtakAlan.m3u_internet_adresi_2 = txtm3uAdresB.getText().toString();
+                OrtakAlan.m3u_internet_adresi_3 = txtm3uAdresC.getText().toString();
+                OrtakAlan.tmdb_erisim_anahtar = txttmdbErisimAnahtar.getText().toString();
+                OrtakAlan.son_tv_kanalini_oynatarak_basla = chksonTvKanalBaslat.isChecked();
+                OrtakAlan.tamEkranBaslat = chktamEkranBaslat.isChecked();
 
-                ProgSettings.AyarlariYaz();
-                mainActivity.AyarlariKapat(false);
+                OrtakAlan.AyarlariYaz();
+                mainActivity.AyarlariKapat();
             }
         });
 

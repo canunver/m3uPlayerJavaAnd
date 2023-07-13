@@ -37,6 +37,7 @@ public class DialogTanimlar {
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 String password = passwordInput.getText().toString();
+                OrtakAlan.parolaGirildi(password);
                 // Parola girişi tamamlandı, yapılacak işlemleri burada gerçekleştirin
             }
         });
@@ -191,7 +192,7 @@ public class DialogTanimlar {
                                 hata = "Seçilen nesne alınamadı!";
                         } else
                             hata = "Seçilen nesne bulunamadı!";
-                        if (!ProgSettings.StringIsNUllOrEmpty(hata))
+                        if (!OrtakAlan.StringIsNUllOrEmpty(hata))
                             Toast.makeText(mainActivity, hata, Toast.LENGTH_SHORT).show();
                     }
                 })

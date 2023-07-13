@@ -39,8 +39,8 @@ public class M3UBilgi {
         }
     }
 
-    public String tvgNameOzellikliAl() {
-        return ProgSettings.GizliBul(M3UVeri.mainActivity, gizli == 1) + ProgSettings.YetiskinBul(M3UVeri.mainActivity, adult == 1) + " " + tvgName;
+    public String tvgNameOzellikliAl(String gizliKod, String yetiskinKod) {
+        return OrtakAlan.DogruysaDondur(gizli == 1, gizliKod) + OrtakAlan.DogruysaDondur(adult == 1, yetiskinKod) + " " + tvgName;
     }
 
     public enum M3UTur {
@@ -217,7 +217,7 @@ public class M3UBilgi {
     }
 
     public Bolum bolumBul(String sezon, String bolum) {
-        if (!ProgSettings.StringIsNUllOrEmpty(sezon) && !ProgSettings.StringIsNUllOrEmpty(bolum)) {
+        if (!OrtakAlan.StringIsNUllOrEmpty(sezon) && !OrtakAlan.StringIsNUllOrEmpty(bolum)) {
             Sezon aktifSezon = sezonBul(sezon);
             if (aktifSezon != null) {
                 String[] bolumParca = bolum.split("\\s+");
@@ -225,7 +225,7 @@ public class M3UBilgi {
                     Bolum aktifBolum = aktifSezon.BolumBul(bolumParca[0]);
                     if (aktifBolum != null) {
                         if (bolumParca.length == 2) {
-                            aktifBolum.seciliIdIndex = ProgSettings.ConvertToInt32(bolumParca[1].substring(1, bolumParca[1].length() - 1), 0);
+                            aktifBolum.seciliIdIndex = OrtakAlan.ConvertToInt32(bolumParca[1].substring(1, bolumParca[1].length() - 1), 0);
                         } else
                             aktifBolum.seciliIdIndex = 0;
                         return aktifBolum;
@@ -297,7 +297,7 @@ public class M3UBilgi {
                     this.filmAd = this.tvgName;
                     this.filmYil = "";
                 }
-                this.filmYilInt = ProgSettings.ConvertToInt32(this.filmYil, -1);
+                this.filmYilInt = OrtakAlan.ConvertToInt32(this.filmYil, -1);
             }
         }
     }

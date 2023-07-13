@@ -3,12 +3,16 @@ package org.unver.m3uplayer;
 import android.content.DialogInterface;
 import android.os.Bundle;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.widget.PopupMenu;
 import androidx.fragment.app.Fragment;
 
 import android.text.InputType;
+import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
@@ -22,7 +26,6 @@ import android.widget.ListView;
 import android.widget.Toast;
 
 import java.util.ArrayList;
-import java.util.Comparator;
 import java.util.List;
 
 public class GrupFragment extends Fragment {
@@ -54,6 +57,13 @@ public class GrupFragment extends Fragment {
         super.onCreate(savedInstanceState);
     }
 
+    private void MenuGizleAc(PopupMenu menu, int menuItemID) {
+        MenuItem item = menu.getMenu().findItem(menuItemID);
+        if (item != null) {
+            item.setVisible(OrtakAlan.yetiskinlerVar);
+        }
+    }
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -71,7 +81,7 @@ public class GrupFragment extends Fragment {
 
         kullaniciGruplariOl(null);
 
-        Object[] donenlerGel = YayinFragment.GrupListesiOl(mainActivity, false, null, null, 2, false, false, true);
+        Object[] donenlerGel = YayinFragment.GrupListesiOl(mainActivity, false, null, null, 2, false, false, true, true);
         grupAdapterGel = (ArrayAdapter<String>) donenlerGel[0];
         grupAdapterGelArray = (ArrayList<String>) donenlerGel[2];
         grupSecGel = frgmnt.findViewById(R.id.gelGrupSec);
@@ -88,6 +98,10 @@ public class GrupFragment extends Fragment {
         Button gelGrupMenuButton = frgmnt.findViewById(R.id.gelGrupMenu);
         PopupMenu popupMenuKul = new PopupMenu(frgmnt.getContext(), kulGrupMenuButton);
         popupMenuKul.getMenuInflater().inflate(R.menu.menukulgrup, popupMenuKul.getMenu());
+        Log.d("menu", "Heyoooooo OrtakAlan.yetiskinlerVar:" + OrtakAlan.yetiskinlerVar);
+        MenuGizleAc(popupMenuKul, R.id.action_knl_yet_normal);
+        MenuGizleAc(popupMenuKul, R.id.action_kulgrp_yet_normal);
+
         popupMenuKul.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
             @Override
             public boolean onMenuItemClick(MenuItem item) {
@@ -155,6 +169,8 @@ public class GrupFragment extends Fragment {
         });
         PopupMenu popupMenuGel = new PopupMenu(frgmnt.getContext(), gelGrupMenuButton);
         popupMenuGel.getMenuInflater().inflate(R.menu.menugelgrup, popupMenuGel.getMenu());
+        MenuGizleAc(popupMenuGel, R.id.action_gelknl_yet_normal);
+        MenuGizleAc(popupMenuGel, R.id.action_gelgrp_yet_normal);
         popupMenuGel.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
             @Override
             public boolean onMenuItemClick(MenuItem item) {
@@ -221,7 +237,8 @@ public class GrupFragment extends Fragment {
                 grupKanallariAdapter.setSelectedItemPosition(position);
             }
         });
-
+        setHasOptionsMenu(true);
+        requireActivity().invalidateOptionsMenu();
         return frgmnt;
     }
 
@@ -229,7 +246,7 @@ public class GrupFragment extends Fragment {
         M3UGrup bulunanGrup = M3UVeri.GrupBul(mainActivity, M3UVeri.GrupDegiskenBul(mainActivity.aktifTur), grupSecGel.getText().toString(), true);
         if (bulunanGrup != null) {
             if (bulunanGrup.ozellikDegistir(gizliDegistir, yetiskinDegistir)) {
-                String tut = bulunanGrup.grupAdiBul(mainActivity, true);
+                String tut = bulunanGrup.grupAdiBul(true, OrtakAlan.GizliBul(mainActivity), OrtakAlan.YetiskinBul(mainActivity));
                 grupSecGel.setText(tut, false);
                 grupAdapterGelArray.set(secIndGel, tut);
                 grupAdapterGel.notifyDataSetChanged();
@@ -242,7 +259,7 @@ public class GrupFragment extends Fragment {
         M3UGrup bulunanGrup = M3UVeri.GrupBul(mainActivity, M3UVeri.GrupDegiskenBul(mainActivity.aktifTur), grupSecKul.getText().toString(), true);
         if (bulunanGrup != null) {
             if (bulunanGrup.ozellikDegistir(gizliDegistir, yetiskinDegistir)) {
-                String tut = bulunanGrup.grupAdiBul(mainActivity, true);
+                String tut = bulunanGrup.grupAdiBul(true, OrtakAlan.GizliBul(mainActivity), OrtakAlan.YetiskinBul(mainActivity));
                 grupSecKul.setText(tut, false);
                 grupAdapterArray.set(secIndKul, tut);
                 grupAdapterKul.notifyDataSetChanged();
@@ -252,7 +269,7 @@ public class GrupFragment extends Fragment {
     }
 
     private void kullaniciGruplariOl(String simd) {
-        Object[] donenlerKul = YayinFragment.GrupListesiOl(mainActivity, false, null, simd, 1, false, false, true);
+        Object[] donenlerKul = YayinFragment.GrupListesiOl(mainActivity, false, null, simd, 1, false, false, true, true);
         grupAdapterKul = (ArrayAdapter<String>) donenlerKul[0];
         int yerIndKul = (int) donenlerKul[1];
         grupAdapterArray = (ArrayList<String>) donenlerKul[2];
@@ -272,7 +289,7 @@ public class GrupFragment extends Fragment {
                 if (simdiki.secili) {
                     M3UBilgi m = (M3UBilgi) simdiki.o;
                     m.ozellikDegistir(gizliDegistir, yetiskinDegistir);
-                    simdiki.ad = m.tvgNameOzellikliAl();
+                    simdiki.ad = m.tvgNameOzellikliAl(OrtakAlan.GizliBul(mainActivity), OrtakAlan.YetiskinBul(mainActivity));
                     degisti = true;
                 }
             }
@@ -287,7 +304,7 @@ public class GrupFragment extends Fragment {
             KodAd simdiki = kanalListe.get(secilenPosition);
             M3UBilgi m = (M3UBilgi) simdiki.o;
             m.ozellikDegistir(gizliDegistir, yetiskinDegistir);
-            simdiki.ad = m.tvgNameOzellikliAl();
+            simdiki.ad = m.tvgNameOzellikliAl(OrtakAlan.GizliBul(mainActivity), OrtakAlan.YetiskinBul(mainActivity));
             grupIcinKanalSec.setText(simdiki.ad, false);
             kanalListe.set(secilenPosition, simdiki);
             grupIcinKanalSecAdapter.notifyDataSetChanged();
@@ -330,7 +347,7 @@ public class GrupFragment extends Fragment {
 
     private void KanalEkle(KodAd kodAd) {
         M3UBilgi m3u = (M3UBilgi) kodAd.o;
-        KodAd ka = new KodAd(m3u.ID, m3u.tvgNameOzellikliAl(), m3u);
+        KodAd ka = new KodAd(m3u.ID, m3u.tvgNameOzellikliAl(OrtakAlan.GizliBul(mainActivity), OrtakAlan.YetiskinBul(mainActivity)), m3u);
         if (!grupKanalListesi.contains(ka)) {
             M3UGrup bulunanGrup = M3UVeri.GrupBul(mainActivity, M3UVeri.GrupDegiskenBul(mainActivity.aktifTur), grupSecKul.getText().toString(), true);
             if (bulunanGrup != null) {
@@ -353,7 +370,7 @@ public class GrupFragment extends Fragment {
             for (String kanalId : bulunanGrup.kanallar) {
                 M3UBilgi m3u = M3UVeri.tumM3Ular.get(kanalId);
                 if (m3u.FiltreUygunMu(f)) {
-                    kanalListe.add(new KodAd(m3u.ID, m3u.tvgNameOzellikliAl(), m3u));
+                    kanalListe.add(new KodAd(m3u.ID, m3u.tvgNameOzellikliAl(OrtakAlan.GizliBul(mainActivity), OrtakAlan.YetiskinBul(mainActivity)), m3u));
                     if (kanalListe.size() > 30) {
                         Toast.makeText(frgmnt.getContext(), R.string.aranan30danFazla, Toast.LENGTH_SHORT).show();
                         toasted = true;
@@ -368,8 +385,7 @@ public class GrupFragment extends Fragment {
             if (kanalListe.size() > 0) {
                 grupIcinKanalSec.setText(kanalListe.get(0).ad, false);
                 secilenPosition = 0;
-            }
-            else
+            } else
                 secilenPosition = -1;
         } else
             Toast.makeText(frgmnt.getContext(), R.string.secilenGrupBulunamadi, Toast.LENGTH_SHORT).show();
@@ -419,7 +435,7 @@ public class GrupFragment extends Fragment {
             for (String m3uId : bulunanGrup.kanallar) {
                 M3UBilgi m3uBilgi = M3UVeri.tumM3Ular.getOrDefault(m3uId, null);
                 if (m3uBilgi != null)
-                    grupKanalListesi.add(new KodAd(m3uBilgi.ID, m3uBilgi.tvgNameOzellikliAl(), m3uBilgi));
+                    grupKanalListesi.add(new KodAd(m3uBilgi.ID, m3uBilgi.tvgNameOzellikliAl(OrtakAlan.GizliBul(mainActivity), OrtakAlan.YetiskinBul(mainActivity)), m3uBilgi));
             }
         } else {
             Toast.makeText(frgmnt.getContext(), R.string.secilenGrupBulunamadi, Toast.LENGTH_SHORT).show();

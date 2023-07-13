@@ -86,8 +86,8 @@ public class YayinFragment extends Fragment {
     public void onResume() {
         super.onResume();
         createPlayer();
-        if (baslangictan && !ProgSettings.StringIsNUllOrEmpty(otoAc)) {
-            OynatBakalim(M3UVeri.tumM3Ular.getOrDefault(otoAc, null), otoSezon, otoBolum, otoTur != M3UBilgi.M3UTur.tv, ProgSettings.tamEkranBaslat);
+        if (baslangictan && !OrtakAlan.StringIsNUllOrEmpty(otoAc)) {
+            OynatBakalim(M3UVeri.tumM3Ular.getOrDefault(otoAc, null), otoSezon, otoBolum, otoTur != M3UBilgi.M3UTur.tv, OrtakAlan.tamEkranBaslat);
             otoAc = null;
         }
         baslangictan = false;
@@ -201,10 +201,10 @@ public class YayinFragment extends Fragment {
         holder = mVideoView.getHolder();
         YonlendirmeAyarla();
         int aktifTurPos = 0;
-        if (ProgSettings.son_tv_kanalini_oynatarak_basla && ProgSettings.StringIsNUllOrEmpty(ProgSettings.sonTVProgID))
+        if (OrtakAlan.son_tv_kanalini_oynatarak_basla && OrtakAlan.StringIsNUllOrEmpty(OrtakAlan.sonTVProgramID))
             aktifTurPos = 0;
         else
-            aktifTurPos = M3UVeri.SiraBul(ProgSettings.sonM3UTur);
+            aktifTurPos = M3UVeri.SiraBul(OrtakAlan.sonM3UTur);
         if (aktifTurPos != 0)
             mainActivity.setAktifTur(aktifTurPos);
         TurSecildi(aktifTurPos, true);
@@ -252,7 +252,7 @@ public class YayinFragment extends Fragment {
     public void TurSecildi(int position, boolean acilistan) {
         mainActivity.aktifTur = M3UVeri.TurBul(position);
         String simdSecText = grupSec.getText().toString();
-        Object[] donenler = GrupListesiOl(mainActivity, acilistan, filtre, simdSecText, 0, true, true, false);
+        Object[] donenler = GrupListesiOl(mainActivity, acilistan, filtre, simdSecText, 0, true, true, false, false);
         grupAdapter = (ArrayAdapter<String>) donenler[0];
         int yerInd = (int) donenler[1];
         ArrayList<String> strler = (ArrayList<String>) donenler[2];
@@ -267,25 +267,25 @@ public class YayinFragment extends Fragment {
         }
     }
 
-    public static Object[] GrupListesiOl(MainActivity mainActivity, boolean acilistan, M3UFiltre filtre, String simd, int hepsi0Kul1Inen2, boolean sadeceAd, boolean bosKalmasin, boolean ozelliklerOlsun) {
+    public static Object[] GrupListesiOl(MainActivity mainActivity, boolean acilistan, M3UFiltre filtre, String simd, int hepsi0Kul1Inen2, boolean sadeceAd, boolean bosKalmasin, boolean ozelliklerOlsun, boolean gizlilerOlsun) {
         ArrayList<String> s = new ArrayList<String>();
         ArrayList<M3UGrup> grupTutan = M3UVeri.GrupKodBul(M3UVeri.SiraBul(mainActivity.aktifTur));
 
         int yerInd = -1;
         String sondaki = null;
         if (acilistan) {
-            if (ProgSettings.son_tv_kanalini_oynatarak_basla) {
-                if (!ProgSettings.StringIsNUllOrEmpty(ProgSettings.sonTVGrup))
-                    sondaki = ProgSettings.sonTVGrup;
+            if (OrtakAlan.son_tv_kanalini_oynatarak_basla) {
+                if (!OrtakAlan.StringIsNUllOrEmpty(OrtakAlan.sonTVGrup))
+                    sondaki = OrtakAlan.sonTVGrup;
             }
-            if (sondaki == null && !ProgSettings.StringIsNUllOrEmpty(ProgSettings.sonGrup))
-                sondaki = ProgSettings.sonGrup;
+            if (sondaki == null && !OrtakAlan.StringIsNUllOrEmpty(OrtakAlan.sonGrup))
+                sondaki = OrtakAlan.sonGrup;
             if (sondaki != null)
                 simd = sondaki;
         }
         for (M3UGrup item : grupTutan) {
-            if (item.filtreyeUygunMu(M3UVeri.tumM3Ular, filtre) && item.grupTurUygunMu(hepsi0Kul1Inen2) && item.gizlilikKontrol()) {
-                s.add(item.grupAdiBul(mainActivity, ozelliklerOlsun));
+            if (item.filtreyeUygunMu(M3UVeri.tumM3Ular, filtre) && item.grupTurUygunMu(hepsi0Kul1Inen2) && item.gizliYetiskinDegilse(gizlilerOlsun)) {
+                s.add(item.grupAdiBul(ozelliklerOlsun, OrtakAlan.GizliBul(mainActivity), OrtakAlan.YetiskinBul(mainActivity)));
                 if (simd != null && item.grupAdi.equals(simd))
                     yerInd = s.size() - 1;
             }
@@ -313,14 +313,14 @@ public class YayinFragment extends Fragment {
             otoTur = M3UBilgi.M3UTur.tv;
             otoSezon = null;
             otoBolum = null;
-            if (ProgSettings.son_tv_kanalini_oynatarak_basla) {
-                if (!ProgSettings.StringIsNUllOrEmpty(ProgSettings.sonTVProgID)) {
-                    otoAc = ProgSettings.sonTVProgID;
+            if (OrtakAlan.son_tv_kanalini_oynatarak_basla) {
+                if (!OrtakAlan.StringIsNUllOrEmpty(OrtakAlan.sonTVProgramID)) {
+                    otoAc = OrtakAlan.sonTVProgramID;
                     otoTur = M3UBilgi.M3UTur.tv;
                 }
             } else {
-                otoAc = ProgSettings.sonProgID;
-                otoTur = ProgSettings.sonM3UTur;
+                otoAc = OrtakAlan.sonProgramID;
+                otoTur = OrtakAlan.sonM3UTur;
             }
         }
     }
@@ -331,10 +331,10 @@ public class YayinFragment extends Fragment {
             kanalListe.clear();
         String araProg = null;
         if (acilistan) {
-            if (ProgSettings.son_tv_kanalini_oynatarak_basla && !ProgSettings.StringIsNUllOrEmpty(ProgSettings.sonTVProgID))
-                araProg = ProgSettings.sonTVProgID;
+            if (OrtakAlan.son_tv_kanalini_oynatarak_basla && !OrtakAlan.StringIsNUllOrEmpty(OrtakAlan.sonTVProgramID))
+                araProg = OrtakAlan.sonTVProgramID;
             if (araProg == null)
-                araProg = ProgSettings.sonProgID;
+                araProg = OrtakAlan.sonProgramID;
         }
         int basla = kanalListe.size();
         int scrollPos = 0;
@@ -485,7 +485,7 @@ public class YayinFragment extends Fragment {
     }
 
     public void TarihceyeEkle() {
-        ProgSettings.TarihceyeEkle(mainActivity.aktifTur, aktifGrupAd, mediaController.m3uBilgi.ID);
+        OrtakAlan.TarihceyeEkle(mainActivity.aktifTur, aktifGrupAd, mediaController.m3uBilgi.ID);
     }
 
     public void ZamaniYaz(M3UBilgi m3uBilgiOynayan, Bolum aktifBolum, int dakika) {

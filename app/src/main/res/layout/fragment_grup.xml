@@ -9,7 +9,7 @@
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/grupYonetimLayout"
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="wrap_content">
 
         <TextView
             android:id="@+id/lblKulGrup"
@@ -21,7 +21,7 @@
             app:layout_constraintTop_toTopOf="parent" />
 
         <LinearLayout
-            android:id="@+id/GrupSecveKomut"
+            android:id="@+id/GrupSecVeKomut"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
@@ -43,7 +43,7 @@
                     android:id="@+id/kulGrupSec"
                     android:layout_width="match_parent"
 
-                    android:layout_height="55dp"
+                    android:layout_height="wrap_content"
                     android:layout_marginLeft="2dp"
                     android:layout_marginRight="2dp"
 
@@ -58,7 +58,8 @@
                 android:layout_marginLeft="2dp"
                 android:layout_marginRight="2dp"
                 android:text="..."
-                android:textStyle="bold" />
+                android:textStyle="bold"
+                tools:ignore="HardcodedText" />
         </LinearLayout>
 
         <ListView
@@ -70,13 +71,14 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.0"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/GrupSecveKomut" />
+            app:layout_constraintTop_toBottomOf="@id/GrupSecVeKomut"
+            tools:ignore="NestedScrolling" />
 
         <TextView
             android:id="@+id/lblGelGrup"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:text="Gelen Gruplar"
+            android:text="@string/gelen_gruplar"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/grupKanallari" />
@@ -103,7 +105,7 @@
                     android:id="@+id/gelGrupSec"
                     android:layout_width="match_parent"
 
-                    android:layout_height="55dp"
+                    android:layout_height="wrap_content"
                     android:layout_marginLeft="2dp"
                     android:layout_marginRight="2dp"
 
@@ -118,7 +120,8 @@
                 android:layout_marginLeft="2dp"
                 android:layout_marginRight="2dp"
                 android:text="..."
-                android:textStyle="bold" />
+                android:textStyle="bold"
+                tools:ignore="HardcodedText" />
         </LinearLayout>
 
         <LinearLayout
@@ -136,7 +139,6 @@
                 android:layout_width="0dp"
                 android:layout_height="50dp"
                 android:layout_marginStart="6dp"
-                android:layout_toStartOf="@id/btnAra"
                 android:layout_weight="1"
                 android:background="@android:drawable/editbox_background"
                 android:importantForAutofill="no"
@@ -148,15 +150,15 @@
                 android:id="@+id/btnEklenecekAra"
                 android:layout_width="59dp"
                 android:layout_height="50dp"
-                android:layout_alignParentEnd="true"
                 android:layout_marginLeft="5dp"
                 android:layout_marginRight="5dp"
 
                 android:background="@android:color/holo_purple"
                 android:clickable="true"
+                android:focusable="true"
                 android:scaleType="fitCenter"
                 android:src="@android:drawable/ic_menu_search"
-                tools:ignore="SpeakableTextPresentCheck" />
+                tools:ignore="ContentDescription,SpeakableTextPresentCheck" />
         </LinearLayout>
 
         <LinearLayout
@@ -195,8 +197,9 @@
                 android:layout_marginLeft="2dp"
                 android:layout_marginRight="2dp"
                 android:text="+"
-                android:textSize="23dp"
-                android:textStyle="bold" />
+                android:textSize="23sp"
+                android:textStyle="bold"
+                tools:ignore="HardcodedText" />
         </LinearLayout>
 
     </androidx.constraintlayout.widget.ConstraintLayout>

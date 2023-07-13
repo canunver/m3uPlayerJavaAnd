@@ -3,6 +3,7 @@ package org.unver.m3uplayer;
 import androidx.activity.OnBackPressedCallback;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.SwitchCompat;
 import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 
@@ -15,7 +16,6 @@ import android.os.Handler;
 import android.view.View;
 import android.view.Window;
 import android.view.inputmethod.InputMethodManager;
-import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.CheckBox;
@@ -23,7 +23,6 @@ import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.TextView;
 
-import com.google.android.material.navigation.NavigationView;
 import com.google.android.material.slider.RangeSlider;
 
 import java.util.Calendar;
@@ -31,7 +30,6 @@ import java.util.Calendar;
 
 public class MainActivity extends AppCompatActivity {
     public boolean TVInfoOkundu = false;
-    private NavigationView navigationView;
     public DrawerLayout drawerLayout;
     private YayinFragment anaFragment = null;
     private AyarlarFragment ayarlarFragment = null;
@@ -39,18 +37,16 @@ public class MainActivity extends AppCompatActivity {
     public M3UBilgi.M3UTur aktifTur = M3UBilgi.M3UTur.tv;
     AutoCompleteTextView turSecDDL;
     private EditText filtreAlan;
-    private View menParolaGir;
-    private View menAyarlar;
-    private View menkullaniciGruplari;
-    private AlertDialog parolaAldialog;
+    private AlertDialog parolaAlDialog;
     private TextView msTur;
-    private AlertDialog turAldialog;
+    private AlertDialog turAlDialog;
     private RangeSlider rangeSliderPuan;
     private RangeSlider rangeSliderYil;
     private ArrayAdapter<String> aaTur;
     private int internettenCekiliyor;
     public Handler handler;
     public InputMethodManager imm;
+    public View switchAdultRL;
 
     @SuppressLint("MissingInflatedId")
     @Override
@@ -58,69 +54,48 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         handler = new Handler();
 
-        requestWindowFeature(Window.FEATURE_NO_TITLE);
+        supportRequestWindowFeature(Window.FEATURE_NO_TITLE);
         setContentView(R.layout.activity_main);
         drawerLayout = findViewById(R.id.drawerLayout);
-        navigationView = findViewById(R.id.navigationView);
+        //NavigationView navigationView = findViewById(R.id.navigationView);
         M3UVeri.OkuBakayim(this);
-        ProgSettings.AyarlariOku();
+        OrtakAlan.AyarlariOku();
 
-        anaFragment = new YayinFragment(this);
-        AyarlariKapat(true);
+        AyarlariKapat();
 
         String[] turListesi = getResources().getStringArray(R.array.turListesi);
-        aaTur = new ArrayAdapter<String>(this, com.google.android.material.R.layout.support_simple_spinner_dropdown_item, turListesi);
+        aaTur = new ArrayAdapter<>(this, com.google.android.material.R.layout.support_simple_spinner_dropdown_item, turListesi);
         turSecDDL = findViewById(R.id.turSec);
         turSecDDL.setAdapter(aaTur);
         turSecDDL.setText(aaTur.getItem(0), false);
 
         filtreAlan = (EditText) findViewById(R.id.filtreAd);
         msTur = findViewById(R.id.msTur);
-        turAldialog = DialogTanimlar.TurAl(this, FilmTurYonetim.TurIsimler(1), msTur);
+        turAlDialog = DialogTanimlar.TurAl(this, FilmTurYonetim.TurIsimler(1), msTur);
         DialogTanimlar.TMDBDialogOl(this);
-        msTur.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                turAldialog.show();
-            }
-        });
+        msTur.setOnClickListener(v -> turAlDialog.show());
 
-        turSecDDL.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                anaFragment.TurSecildi(position, false);
-            }
-        });
+        turSecDDL.setOnItemClickListener((parent, view, position, id) -> anaFragment.TurSecildi(position, false));
 
-        parolaAldialog = DialogTanimlar.ParolaAl(this);
-        menParolaGir = findViewById(R.id.parolaGir);
-        menParolaGir.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                parolaAldialog.show();
-            }
-        });
+        parolaAlDialog = DialogTanimlar.ParolaAl(this);
+        View parolaGir = findViewById(R.id.parolaGir);
+        parolaGir.setOnClickListener(v -> parolaAlDialog.show());
 
         MainActivity that = this;
-        menAyarlar = findViewById(R.id.ayarlar);
-        menAyarlar.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                drawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED);
-                ayarlarFragment = new AyarlarFragment(that);
-                getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, ayarlarFragment).commit();
-            }
+        View menAyarlar = findViewById(R.id.ayarlar);
+        menAyarlar.setOnClickListener(v -> {
+            drawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED);
+            ayarlarFragment = new AyarlarFragment(that);
+            anaFragment = null;
+            getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, ayarlarFragment).commit();
         });
 
-        menkullaniciGruplari = findViewById(R.id.kullaniciGruplari);
-        menkullaniciGruplari.setOnClickListener(new View.OnClickListener() {
-
-            @Override
-            public void onClick(View v) {
-                drawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED);
-                grupFragment = new GrupFragment(that);
-                getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, grupFragment).commit();
-            }
+        View kullaniciGruplari = findViewById(R.id.kullaniciGruplari);
+        kullaniciGruplari.setOnClickListener(v -> {
+            drawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED);
+            grupFragment = new GrupFragment(that);
+            anaFragment = null;
+            getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, grupFragment).commit();
         });
 
         RangeSlider rsGunSay = findViewById(R.id.rsGunSay);
@@ -132,10 +107,10 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void handleOnBackPressed() {
                 if (grupFragment != null) {
-                    AyarlariKapat(false);
+                    AyarlariKapat();
                 } else if (ayarlarFragment != null) {
-                    AyarlariKapat(false);
-                } else if (anaFragment.TamEkranMi()) {
+                    AyarlariKapat();
+                } else if (anaFragment != null && anaFragment.TamEkranMi()) {
                     anaFragment.TamEkrandanCik();
                 } else {
                     finish();
@@ -156,27 +131,37 @@ public class MainActivity extends AppCompatActivity {
         rangeSliderYil.setValueFrom(M3UVeri.minYil);
         rangeSliderYil.setStepSize(1);
 
-        imm = (InputMethodManager) getSystemService(this.INPUT_METHOD_SERVICE);
-        btnAra.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                imm.hideSoftInputFromWindow(filtreAlan.getWindowToken(), 0);
-                anaFragment.filtre.SadeceYeniAyarla(cbSadeceYeni.isChecked(), rsGunSay.getValues());
-                anaFragment.filtre.isimFiltreStr = filtreAlan.getText().toString();
-                anaFragment.filtre.PuanAyarla(rangeSliderPuan.getValues());
-                anaFragment.filtre.YilAyarla(rangeSliderYil.getValues(), M3UVeri.minYil, yil);
-                anaFragment.filtre.TurAyarla(msTur.getText().toString());
-                anaFragment.TurSecildi(M3UVeri.SiraBul(aktifTur),false);
-            }
+        imm = (InputMethodManager) getSystemService(MainActivity.INPUT_METHOD_SERVICE);
+        btnAra.setOnClickListener(v -> {
+            imm.hideSoftInputFromWindow(filtreAlan.getWindowToken(), 0);
+            anaFragment.filtre.SadeceYeniAyarla(cbSadeceYeni.isChecked(), rsGunSay.getValues());
+            anaFragment.filtre.isimFiltreStr = filtreAlan.getText().toString();
+            anaFragment.filtre.PuanAyarla(rangeSliderPuan.getValues());
+            anaFragment.filtre.YilAyarla(rangeSliderYil.getValues(), M3UVeri.minYil, yil);
+            anaFragment.filtre.TurAyarla(msTur.getText().toString());
+            anaFragment.TurSecildi(M3UVeri.SiraBul(aktifTur), false);
+        });
+
+        SwitchCompat switchHidden = findViewById(R.id.switchHidden);
+        switchHidden.setOnCheckedChangeListener((buttonView, isChecked) -> {
+            OrtakAlan.gizlilerVar = isChecked;
+            anaFragment.TurSecildi(M3UVeri.SiraBul(aktifTur), false);
+        });
+        switchAdultRL = findViewById(R.id.switchAdultRL);
+
+        SwitchCompat switchAdult = findViewById(R.id.switchAdult);
+        switchAdult.setOnCheckedChangeListener((buttonView, isChecked) -> {
+            OrtakAlan.yetiskinlerVar = isChecked;
+            anaFragment.TurSecildi(M3UVeri.SiraBul(aktifTur), false);
         });
     }
 
-    public void AyarlariKapat(boolean baslangictan) {
+    public void AyarlariKapat() {
         if (grupFragment != null)
             grupFragment = null;
         if (ayarlarFragment != null)
             ayarlarFragment = null;
-
+        anaFragment = new YayinFragment(this);
         getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, anaFragment).commit();
         drawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_UNLOCKED);
     }
@@ -194,7 +179,7 @@ public class MainActivity extends AppCompatActivity {
             grupFragment.YonlendirmeAyarla();
         else if (ayarlarFragment != null)
             ayarlarFragment.YonlendirmeAyarla();
-        else
+        else if (anaFragment != null)
             anaFragment.YonlendirmeAyarla();
     }
 
@@ -208,7 +193,8 @@ public class MainActivity extends AppCompatActivity {
 
     public void Cekildi() {
         internettenCekiliyor = 0;
-        anaFragment.InternettenCekmeIkon(internettenCekiliyor);
+        if (anaFragment != null)
+            anaFragment.InternettenCekmeIkon(internettenCekiliyor);
     }
 
     public void btnAcClicked(View view) {
@@ -221,18 +207,18 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void internettenCekiliyorYap(int state) {
-        handler.postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                internettenCekiliyor = state;
+        handler.postDelayed(() -> {
+            internettenCekiliyor = state;
+            if (anaFragment != null)
                 anaFragment.InternettenCekmeIkon(internettenCekiliyor);
-            }
         }, 50);
     }
 
+    @SuppressWarnings("unused")
     public boolean M3UCekiliyorMu() {
         return this.internettenCekiliyor == 1;
     }
+
     public boolean VeriCekiliyorMu() {
         return this.internettenCekiliyor != 0;
     }
