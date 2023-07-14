@@ -38,4 +38,13 @@ public class Bolum {
             aciklama = m3uId;
         return aciklama;
     }
+
+    public long seyredilenSureBul() {
+        String m3uId = this.idler.get(0);
+        M3UBilgi bolumM3U = M3UVeri.tumM3Ular.getOrDefault(m3uId, null);
+        if (bolumM3U != null)
+            return bolumM3U.seyredilenSure;
+        else
+            return 0;
+    }
 }

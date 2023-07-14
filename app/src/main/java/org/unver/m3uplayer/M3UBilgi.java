@@ -26,21 +26,21 @@ public class M3UBilgi {
     public void ozellikDegistir(boolean gizliDegistir, boolean yetiskinDegistir) {
         if (gizliDegistir || yetiskinDegistir) {
             if (gizliDegistir)
-                this.gizli = this.gizli == 0 ? 1 : 0;
+                this.gizli = !this.gizli;
 
             if (yetiskinDegistir)
-                this.adult = this.adult == 0 ? 1 : 0;
+                this.yetiskin = !this.yetiskin;
 
             ContentValues values = new ContentValues();
-            values.put("gizli", gizli);
-            values.put("adult", adult);
+            values.put("gizli", gizli ? 1 : 0);
+            values.put("adult", yetiskin ? 1 : 0);
 
             M3UVeri.db.update(M3U_DB.TABLE_M3U, values, "ID=?", new String[]{String.valueOf(ID)});
         }
     }
 
     public String tvgNameOzellikliAl(String gizliKod, String yetiskinKod) {
-        return OrtakAlan.DogruysaDondur(gizli == 1, gizliKod) + OrtakAlan.DogruysaDondur(adult == 1, yetiskinKod) + " " + tvgName;
+        return OrtakAlan.DogruysaDondur(gizli, gizliKod) + OrtakAlan.DogruysaDondur(yetiskin, yetiskinKod) + " " + tvgName;
     }
 
     public enum M3UTur {
@@ -56,10 +56,10 @@ public class M3UBilgi {
     public String urlAdres;
     public String eklemeTarih;
     public String guncellemeTarih;
-    public int gizli = 0;
-    public int adult = 0;
-    public long tmdbId = 0;
-    public long seyredilenSure = 0;
+    public boolean gizli;
+    public boolean yetiskin;
+    public long tmdbId;
+    public long seyredilenSure;
     public String uzanti;
     public M3UTur Tur;
     public String sezon = "";
@@ -111,13 +111,13 @@ public class M3UBilgi {
         this.groupTitle = groupTitle;
         this.urlAdres = urlAdres;
         this.tmdbId = 0;
-        this.adult = 0;
-        this.gizli = 0;
+        this.yetiskin = false;
+        this.gizli = false;
         this.seyredilenSure = 0;
         DegerleriOlustur(m3uDosyaKod);
     }
 
-    public M3UBilgi(String ID, String tvgId, String tvgName, String tvgLogo, String groupTitle, String urlAdres, String tar, int gizli, int adult, int tmdbId, String guncellemeTarih, long seyredilenSure) {
+    public M3UBilgi(String ID, String tvgId, String tvgName, String tvgLogo, String groupTitle, String urlAdres, String tar, boolean gizli, boolean yetiskin, int tmdbId, String guncellemeTarih, long seyredilenSure) {
         this.ID = ID;
         this.eklemeTarih = tar;
         this.tvgId = tvgId;
@@ -126,7 +126,7 @@ public class M3UBilgi {
         this.groupTitle = groupTitle;
         this.urlAdres = urlAdres;
         this.tmdbId = tmdbId;
-        this.adult = adult;
+        this.yetiskin = yetiskin;
         this.gizli = gizli;
         this.guncellemeTarih = guncellemeTarih;
         this.seyredilenSure = seyredilenSure;
@@ -142,7 +142,7 @@ public class M3UBilgi {
         this.groupTitle = m3u.groupTitle;
         this.urlAdres = m3u.urlAdres;
         this.tmdbId = m3u.tmdbId;
-        this.adult = m3u.adult;
+        this.yetiskin = m3u.yetiskin;
         this.gizli = m3u.gizli;
         this.guncellemeTarih = m3u.guncellemeTarih;
         this.seyredilenSure = m3u.seyredilenSure;
@@ -151,12 +151,25 @@ public class M3UBilgi {
 
     public ArrayList<Sezon> seriSezonlari = new ArrayList<>();
 
-    public boolean FiltreUygunMu(M3UFiltre filtre) {
-        if (Tur == M3UTur.tv) {
-            return AdUygunMu(filtre) && YeniUygunMu(filtre);
-        } else {
-            return AdUygunMu(filtre) && YilUygunMu(filtre) && PuanUygunMu(filtre) && TurUygunMu(filtre) && YeniUygunMu(filtre);
+    public boolean gizliYetiskinDegilse(boolean gizlilerOlsun) {
+        if (!gizlilerOlsun && !OrtakAlan.gizlilerVar) {
+            if (gizli) return false;
         }
+        if (!OrtakAlan.yetiskinlerVar) {
+            if (yetiskin) return false;
+        }
+        return true;
+    }
+
+    public boolean FiltreUygunMu(M3UFiltre filtre, boolean gizlilerOlsun) {
+
+        if (gizliYetiskinDegilse(gizlilerOlsun)) {
+            if (Tur == M3UTur.tv) {
+                return AdUygunMu(filtre) && YeniUygunMu(filtre);
+            } else {
+                return AdUygunMu(filtre) && YilUygunMu(filtre) && PuanUygunMu(filtre) && TurUygunMu(filtre) && YeniUygunMu(filtre);
+            }
+        } else return false;
     }
 
     private boolean AdUygunMu(M3UFiltre filtre) {
@@ -258,13 +271,13 @@ public class M3UBilgi {
 
         if (fileNameParcalar.length == 2) this.uzanti = fileNameParcalar[1];
         else this.uzanti = "";
-        if (this.uzanti == "" || this.uzanti == null) {
+        if (OrtakAlan.StringIsNUllOrEmpty(this.uzanti)) {
             this.Tur = M3UTur.tv;
         } else {
             String[] isimParcalar = this.tvgName.split(" ");
             this.sezon = "";
             this.bolum = "";
-            Boolean seri = false;
+            boolean seri = false;
             if (isimParcalar.length > 2) {
                 this.sezon = isimParcalar[isimParcalar.length - 2];
                 this.bolum = isimParcalar[isimParcalar.length - 1];
@@ -315,7 +328,7 @@ public class M3UBilgi {
             values.put("urlAdres", urlAdres);
             values.put("eklemeTarih", eklemeTarih);
             values.put("gizli", gizli);
-            values.put("adult", adult);
+            values.put("adult", yetiskin);
             values.put("tmdbId", tmdbId);
             values.put("guncellemeTarih", guncellemeTarih);
             values.put("seyredilenSure", seyredilenSure);

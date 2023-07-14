@@ -98,7 +98,6 @@ public class GrupFragment extends Fragment {
         Button gelGrupMenuButton = frgmnt.findViewById(R.id.gelGrupMenu);
         PopupMenu popupMenuKul = new PopupMenu(frgmnt.getContext(), kulGrupMenuButton);
         popupMenuKul.getMenuInflater().inflate(R.menu.menukulgrup, popupMenuKul.getMenu());
-        Log.d("menu", "Heyoooooo OrtakAlan.yetiskinlerVar:" + OrtakAlan.yetiskinlerVar);
         MenuGizleAc(popupMenuKul, R.id.action_knl_yet_normal);
         MenuGizleAc(popupMenuKul, R.id.action_kulgrp_yet_normal);
 
@@ -369,7 +368,7 @@ public class GrupFragment extends Fragment {
             boolean toasted = false;
             for (String kanalId : bulunanGrup.kanallar) {
                 M3UBilgi m3u = M3UVeri.tumM3Ular.get(kanalId);
-                if (m3u.FiltreUygunMu(f)) {
+                if (m3u.FiltreUygunMu(f, true)) {
                     kanalListe.add(new KodAd(m3u.ID, m3u.tvgNameOzellikliAl(OrtakAlan.GizliBul(mainActivity), OrtakAlan.YetiskinBul(mainActivity)), m3u));
                     if (kanalListe.size() > 30) {
                         Toast.makeText(frgmnt.getContext(), R.string.aranan30danFazla, Toast.LENGTH_SHORT).show();

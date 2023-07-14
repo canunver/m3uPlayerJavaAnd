@@ -1,20 +1,24 @@
 == YAPILACAK GELİŞTİRMELER
-- TODO: 9.07.2023 internetten kanal çekmeyi 3 M3U adresi için de yap
-- TODO: 8.07.2023 grup yönetimi eklenemeli, seçili türe gruplar ve kanallar gelmeli
-        1. Yeni kullanıcı grubu ekleme, Grup seçilince, gruptaki kanalları, sıra numarası ile gösterme
-        2. Seçilen grubu, yetişkin ya da gizli yapma
-        3. Seçilen kanalları, silme, aşağı ya da yukarı taşıma
-        4. M3u'dan gelen grupları seçebilme
-        5. Seçilen indirilen grubu, yetişkin ya da gizli yapma
-        6. Verilen kriterlere göre seçilen türde, kanalları bir combobox'a ekleme
-        7. Comboboxtan seçilen kanalı, kullanıcı grubuna ekleme
-        8. Her işlemde veri tabanını güncelleme, bunun için tabloları oluşturma
+- TODO: Puan, Türler,  Yayın Tarihi bilgileri gelecek
+- TODO: Parola değiştirme
 - TODO: Program listelerinde, grup yönetimi tuşu ekleme, bu tuşa basılınca, grup ekranı açıp kanalı bir grubu ekleme ya da çıkarma, kanalı yetişkin veya gizli yapma
-- TODO: Yetişkin ya da gizli kanalları göstermeme gösterme
-- TODO: Parola girilmişmi bilgisi saklanmalı
-- TODO: Yetişkin bir kanal, yetişkin değil yapılıyorsa, parola girilmiş olmalı.
 
-== YAPILACAK İYİLEŞTİRMLER
-- TODO: 8.07.2023 tmdb çekme işlemi yapılınca, ekrandai görüntü refresh edilmeli.
-- TODO: 8.07.2023 tmdb bölüm çekme işlemi yapılınca ekrandaki görüntü refresh edilmeli
+== YAPILACAK İYİLEŞTİRMELER
 
+== YAPILANLAR
++ DONE: 8.07.2023 grup yönetimi eklenemeli, seçili türe gruplar ve kanallar gelmeli
+        1+. Yeni kullanıcı grubu ekleme, Grup seçilince, gruptaki kanalları, sıra numarası ile gösterme
+        2+. Seçilen grubu, yetişkin ya da gizli yapma
+        3+. Seçilen kanalları, silme, aşağı ya da yukarı taşıma
+        4+. M3u'dan gelen grupları seçebilme
+        5+. Seçilen indirilen grubu, yetişkin ya da gizli yapma
+        6+. Verilen kriterlere göre seçilen türde, kanalları bir combobox'a ekleme
+        7+. Comboboxtan seçilen kanalı, kullanıcı grubuna ekleme
+        8+. Her işlemde veri tabanını güncelleme, bunun için tabloları oluşturma
++ DONE: Yetişkin ya da gizli kanalları göstermeme gösterme
++ DONE: Parola girilmiş mi bilgisi saklanmalı
++ DONE: Yetişkin bir kanal, yetişkin değil yapılıyorsa, parola girilmiş olmalı.
++ DONE: 8.07.2023 tmdb çekme işlemi yapılınca, ekrandaki görüntü refresh edilmeli.
++ DONE: 8.07.2023 tmdb bölüm çekme işlemi yapılınca ekrandaki görüntü refresh edilmeli
++ DONE: 9.07.2023 internetten kanal çekmeyi 3 M3U adresi için de yap
++ DONE: Diziler geldiğinde, son seyredilen otomatik seçili gelsin.

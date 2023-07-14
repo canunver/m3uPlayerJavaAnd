@@ -50,7 +50,7 @@ public class YayinFragment extends Fragment {
     Media mediaItem;
     public M3UFiltre filtre = new M3UFiltre();
     private RecyclerView recyclerView;
-    private YayinListesiAdapter kanalAdapter;
+    public YayinListesiAdapter kanalAdapter;
     public String aktifGrupAd = "-";
     ArrayList<M3UBilgi> kanalListe = new ArrayList<>();
     AutoCompleteTextView grupSec;
@@ -284,7 +284,7 @@ public class YayinFragment extends Fragment {
                 simd = sondaki;
         }
         for (M3UGrup item : grupTutan) {
-            if (item.filtreyeUygunMu(M3UVeri.tumM3Ular, filtre) && item.grupTurUygunMu(hepsi0Kul1Inen2) && item.gizliYetiskinDegilse(gizlilerOlsun)) {
+            if (item.filtreyeUygunMu(filtre) && item.grupTurUygunMu(hepsi0Kul1Inen2) && item.gizliYetiskinDegilse(gizlilerOlsun)) {
                 s.add(item.grupAdiBul(ozelliklerOlsun, OrtakAlan.GizliBul(mainActivity), OrtakAlan.YetiskinBul(mainActivity)));
                 if (simd != null && item.grupAdi.equals(simd))
                     yerInd = s.size() - 1;
@@ -343,7 +343,7 @@ public class YayinFragment extends Fragment {
             int eklenenSay = 0;
             for (String kanalId : bulunanGrup.kanallar) {
                 M3UBilgi m3u = M3UVeri.tumM3Ular.get(kanalId);
-                if (m3u.FiltreUygunMu(filtre)) {
+                if (m3u.FiltreUygunMu(filtre, false)) {
                     kanalSay++;
                     if (kanalSay <= basla) continue;
                     if (eklenenSay++ > 20) break;
@@ -358,15 +358,15 @@ public class YayinFragment extends Fragment {
         kanalAdapter.veriDegisti();
     }
 
-    public void NesneSecildi(int islem, int pos, String sezon, String bolum) {
+    public void nesneSecildi(YayinListesiAdapter yayinListesiAdapter, int islem, int pos, String sezon, String bolum) {
         M3UBilgi item = kanalListe.get(pos);
         if (islem == 1)
             OynatBakalim(item, sezon, bolum, false, false);
         else if (islem == 2) {
-            DialogTanimlar.tmdbDialogGoster(item);
+            DialogTanimlar.tmdbDialogGoster(item, yayinListesiAdapter, pos);
         } else if (islem == 3) {
             if (item.tmdbId > 0) {
-                new InternettenOku().performNetworkOperationTMDBSeri(mainActivity, M3UVeri.db, item);
+                new InternettenOku().performNetworkOperationTMDBSeri(mainActivity, M3UVeri.db, item, yayinListesiAdapter, pos);
                 Toast.makeText(mainActivity, R.string.bolum_cekme_basladi, Toast.LENGTH_SHORT).show();
             } else
                 Toast.makeText(mainActivity, R.string.once_dizi_cek, Toast.LENGTH_SHORT).show();

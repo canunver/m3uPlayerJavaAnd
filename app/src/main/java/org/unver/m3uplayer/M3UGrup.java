@@ -49,11 +49,11 @@ public class M3UGrup {
         return donDeger;
     }
 
-    public boolean filtreyeUygunMu(Hashtable<String, M3UBilgi> tumM3Ular, M3UFiltre filtre) {
+    public boolean filtreyeUygunMu(M3UFiltre filtre) {
         if (filtre == null) return true;
         for (String m3uId : kanallar) {
-            M3UBilgi item = tumM3Ular.get(m3uId);
-            if (item.FiltreUygunMu(filtre)) return true;
+            M3UBilgi item = M3UVeri.tumM3Ular.get(m3uId);
+            if (item.FiltreUygunMu(filtre, false)) return true;
         }
         return false;
     }

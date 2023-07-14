@@ -9,7 +9,6 @@ import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
@@ -110,7 +109,7 @@ public class YayinListesiAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
                     sezon = null;
                     bolum = null;
                 }
-                yayinFragment.NesneSecildi(islem, holder.getAdapterPosition(), sezon, bolum);
+                yayinFragment.nesneSecildi(yayinFragment.kanalAdapter, islem, holder.getAdapterPosition(), sezon, bolum);
             }
         }
     }
@@ -192,7 +191,7 @@ public class YayinListesiAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
             Button bolumTmdb = itemView.findViewById(R.id.seriTmdbDetay);
             bolumTmdb.setOnClickListener(new MyOnClickListener(this));
 
-            sezonSec.setOnItemClickListener((parent, view, position, id) -> SezonSecildi(position));
+            sezonSec.setOnItemClickListener((parent, view, position, id) -> SezonSecildi(position, -1));
             bolumSec.setOnItemClickListener((parent, view, position, id) -> BolumSecildi(position));
             itemView.setOnClickListener(new MyOnClickListener(this));
         }
@@ -205,26 +204,39 @@ public class YayinListesiAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
             seriAciklama.setText(blg.aciklamaBul());
 
             ArrayList<String> al = new ArrayList<>();
-            for (Sezon s : blg.seriSezonlari) {
+            int secSezon = 0;
+            int secBolum = 0;
+            for (int si = 0; si < blg.seriSezonlari.size(); si++) {
+                Sezon s = blg.seriSezonlari.get(si);
                 al.add(s.sezonAd);
+                int yer = s.seyredilenSonBul();
+                if (yer > -1) {
+                    secSezon = si;
+                    secBolum = yer;
+                }
             }
 
             sezonAdapter = new ArrayAdapter<>(yayinFragment.mainActivity, com.google.android.material.R.layout.support_simple_spinner_dropdown_item, al);
             sezonSec.setAdapter(sezonAdapter);
             if (sezonAdapter != null && !sezonAdapter.isEmpty()) {
-                sezonSec.setText(sezonAdapter.getItem(0), false);
-                SezonSecildi(0);
+                sezonSec.setText(sezonAdapter.getItem(secSezon), false);
+                SezonSecildi(secSezon, secBolum);
             }
         }
 
-        public void SezonSecildi(int position) {
+        public void SezonSecildi(int position, int bolumPosition) {
             aktifSezonAd = sezonAdapter.getItem(position);
             aktifSezon = blg.SezonBul(aktifSezonAd);
-
+            int secPosition = 0;
             ArrayList<String> al = new ArrayList<>();
             if (aktifSezon != null) {
-                for (Bolum b : aktifSezon.bolumler) {
+                if (bolumPosition == -1)
+                    bolumPosition = aktifSezon.seyredilenSonBul();
+                for (int bi = 0; bi < aktifSezon.bolumler.size(); bi++) {
+                    Bolum b = aktifSezon.bolumler.get(bi);
                     al.add(b.bolum);
+                    if (bi == bolumPosition)
+                        secPosition = al.size() - 1;
                     for (int i = 1; i < b.idler.size(); i++) {
                         al.add(b.bolum + " (" + (i + 1) + ")");
                     }
@@ -232,22 +244,25 @@ public class YayinListesiAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
             }
             if (al.size() == 0)
                 al.add("-");
-
+            if (secPosition == -1 || secPosition >= al.size())
+                secPosition = 0;
             bolumAdapter = new ArrayAdapter<>(yayinFragment.mainActivity, com.google.android.material.R.layout.support_simple_spinner_dropdown_item, al);
             bolumSec.setAdapter(bolumAdapter);
-            bolumSec.setText(bolumAdapter.getItem(0), false);
-            BolumSecildi(0);
+            bolumSec.setText(bolumAdapter.getItem(secPosition), false);
+            BolumSecildi(secPosition);
         }
 
         public void BolumSecildi(int position) {
             aktifBolumAd = bolumAdapter.getItem(position);
-            String aciklama;
-            if (aktifSezon != null) {
-                Bolum b = aktifSezon.bolumler.get(position);
-                aciklama = b.tmdbAciklamaBul();
-            } else
-                aciklama = aktifSezonAd + aktifBolumAd;
-            bolumAciklama.setText(aciklama);
+            if (aktifSezon != null && !OrtakAlan.StringIsNUllOrEmpty(aktifBolumAd)) {
+                String[] bolumParca = aktifBolumAd.split("\\s+");
+                Bolum b = aktifSezon.BolumBul(bolumParca[0]);
+                if (b != null) {
+                    bolumAciklama.setText(b.tmdbAciklamaBul());
+                    return;
+                }
+            }
+            bolumAciklama.setText(aktifSezonAd + aktifBolumAd);
         }
     }
 }

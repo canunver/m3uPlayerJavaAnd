@@ -36,7 +36,7 @@ public class InternettenOku {
 
         if (m3uEski != null) {
             m3u.eklemeTarih = m3uEski.eklemeTarih;
-            m3u.adult = m3uEski.adult;
+            m3u.yetiskin = m3uEski.yetiskin;
             m3u.gizli = m3uEski.gizli;
             m3u.seyredilenSure = m3uEski.seyredilenSure;
             m3u.tmdbId = m3uEski.tmdbId;
@@ -45,54 +45,69 @@ public class InternettenOku {
         M3UVeri.GruplaraIsle(m3u, true, false);
     }
 
-    public void performNetworkOperation(MainActivity mainActivity, SQLiteDatabase db, String kod) {
+    public void performNetworkOperation(MainActivity mainActivity, SQLiteDatabase db) {
         ExecutorService executor = Executors.newSingleThreadExecutor();
         executor.execute(() -> {
-            try {
-                Log.i("M3UVeri", "Internetten veri alınacak");
-                URL url = new URL(OrtakAlan.m3u_internet_adresi_1);
-                HttpURLConnection connection = (HttpURLConnection) url.openConnection();
-                connection.setRequestMethod("GET");
+            for (int addr = 1; addr <= 3; addr++) {
+                try {
+                    String kod;
+                    String urlAddress;
+                    if (addr == 1) {
+                        kod = "A";
+                        urlAddress = OrtakAlan.m3u_internet_adresi_1;
+                    } else if (addr == 2) {
+                        kod = "B";
+                        urlAddress = OrtakAlan.m3u_internet_adresi_2;
+                    } else {//if (addr == 3) {
+                        kod = "C";
+                        urlAddress = OrtakAlan.m3u_internet_adresi_3;
+                    }
+                    if (OrtakAlan.StringIsNUllOrEmpty(urlAddress)) continue;
+                    Log.i("M3UVeri", "Internetten veri alınacak");
+                    URL url = new URL(urlAddress);
+                    HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+                    connection.setRequestMethod("GET");
 
-                int responseCode = connection.getResponseCode();
-                if (responseCode == HttpURLConnection.HTTP_OK) {
-                    Log.i("M3UVeri", "Internetten veri alındı");
-                    BufferedReader reader = new BufferedReader(new InputStreamReader(connection.getInputStream()));
-                    boolean hataVar;
-                    String line;
-                    db.beginTransaction();
-                    try {
-                        int say = 0;
-                        String ilkSatir = null;
-                        String suAn = OrtakAlan.TarihYAGOl(new Date());
+                    int responseCode = connection.getResponseCode();
+                    if (responseCode == HttpURLConnection.HTTP_OK) {
+                        Log.i("M3UVeri", "Internetten veri alındı");
+                        BufferedReader reader = new BufferedReader(new InputStreamReader(connection.getInputStream()));
+                        boolean hataVar;
+                        String line;
+                        db.beginTransaction();
+                        try {
+                            int say = 0;
+                            String ilkSatir = null;
+                            String suAn = OrtakAlan.TarihYAGOl(new Date());
 
-                        while ((line = reader.readLine()) != null) {
-                            if (line.startsWith("#EXTINF:")) {
-                                ilkSatir = line;
-                            } else if (ilkSatir != null) {
-                                Ekle(mainActivity, db, kod, ilkSatir, line, suAn);
-                                say++;
-                                if (say % 1000 == 1)
-                                    Log.i("M3UVeri", "Internet verisi işleniyor:" + say);
+                            while ((line = reader.readLine()) != null) {
+                                if (line.startsWith("#EXTINF:")) {
+                                    ilkSatir = line;
+                                } else if (ilkSatir != null) {
+                                    Ekle(mainActivity, db, kod, ilkSatir, line, suAn);
+                                    say++;
+                                    if (say % 1000 == 1)
+                                        Log.i("M3UVeri", "Internet verisi işleniyor:" + say);
+                                }
                             }
+                            hataVar = false;
+                        } catch (Exception ex) {
+                            hataVar = true;
+                            Log.i("M3UVeri", "Internet verisi işlenemedi:" + ex.getMessage());
                         }
-                        hataVar = false;
-                    } catch (Exception ex) {
-                        hataVar = true;
-                        Log.i("M3UVeri", "Internet verisi işlenemedi:" + ex.getMessage());
+                        db.setTransactionSuccessful();
+                        db.endTransaction();
+                        reader.close();
+                        if (!hataVar) {
+                            Log.i("M3UVeri", "Internet verisi işlendi");
+                            OrtakAlan.sonCekilmeZamaniYaz();
+                        }
                     }
-                    db.setTransactionSuccessful();
-                    db.endTransaction();
-                    reader.close();
-                    if (!hataVar) {
-                        Log.i("M3UVeri", "Internet verisi işlendi");
-                        OrtakAlan.sonCekilmeZamaniYaz();
-                    }
+                    connection.disconnect();
+                    mainActivity.Cekildi();
+                } catch (IOException e) {
+                    e.printStackTrace();
                 }
-                connection.disconnect();
-                mainActivity.Cekildi();
-            } catch (IOException e) {
-                e.printStackTrace();
             }
         });
 
@@ -287,7 +302,7 @@ public class InternettenOku {
         }
     }
 
-    public void performNetworkOperationTMDBSeri(MainActivity mainActivity, SQLiteDatabase db, M3UBilgi m3u) {
+    public void performNetworkOperationTMDBSeri(MainActivity mainActivity, SQLiteDatabase db, M3UBilgi m3u, YayinListesiAdapter yayinListesiAdapter, int pos) {
         ExecutorService executor = Executors.newSingleThreadExecutor();
         executor.execute(() -> {
             boolean globHata = false;
@@ -337,6 +352,9 @@ public class InternettenOku {
                 }
                 db.setTransactionSuccessful();
                 db.endTransaction();
+                mainActivity.handler.postDelayed(() -> {
+                    yayinListesiAdapter.notifyItemChanged(pos);
+                }, 50);
             }
             mainActivity.Cekildi();
         });

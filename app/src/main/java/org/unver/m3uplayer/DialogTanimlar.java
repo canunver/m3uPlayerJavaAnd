@@ -187,6 +187,7 @@ public class DialogTanimlar {
                                 Log.d("Cek", "arananM3U.tmdbId: " + arananM3U.tmdbId + ", " + "ti.tostr:" + ti.toString());
                                 M3UVeri.tumTMDBler.put(ti.anahtarBul(), ti);
                                 ti.Yaz(M3UVeri.db);
+                                aktifAdapter.notifyItemChanged(seciliItemPos);
                                 hata = "";
                             } else
                                 hata = "Seçilen nesne alınamadı!";
@@ -206,7 +207,11 @@ public class DialogTanimlar {
         tmdbAldialog = builder.create();
     }
 
-    public static void tmdbDialogGoster(M3UBilgi m3u) {
+    private static int seciliItemPos;
+    private static YayinListesiAdapter aktifAdapter;
+    public static void tmdbDialogGoster(M3UBilgi m3u, YayinListesiAdapter kanalAdapter,  int pos) {
+        aktifAdapter = kanalAdapter;
+        seciliItemPos = pos;
         arananM3U = m3u;
         tvInfoArrayAdapter.setSelectedItemPosition(-1);
         if (m3u.Tur == M3UBilgi.M3UTur.seri)
