@@ -84,7 +84,7 @@ public class YayinFragment extends Fragment {
         super.onResume();
         createPlayer();
         if (baslangictan && !OrtakAlan.StringIsNUllOrEmpty(otoAc)) {
-            OynatBakalim(M3UVeri.tumM3UListesi.getOrDefault(otoAc, null), otoSezon, otoBolum, otoTur != M3UBilgi.M3UTur.tv, OrtakAlan.tamEkranBaslat);
+            OynatBakalim(M3UVeri.tumM3UListesi.getOrDefault(otoAc, null), OrtakAlan.sonSezon, OrtakAlan.sonBolum, otoTur != M3UBilgi.M3UTur.tv, OrtakAlan.tamEkranBaslat);
             otoAc = null;
         }
         baslangictan = false;
@@ -388,7 +388,8 @@ public class YayinFragment extends Fragment {
                     tamEkranBaslat = false;
                     ilkPlay = false;
                 }
-                //Log.d("PlayerFragment", m3uBilgi.tvgName + "Playing:" + ":"+mMediaPlayer.getTime() + "/" + mMediaPlayer.getLength());
+            } else if (event.type == MediaPlayer.Event.TimeChanged) {
+                mediaController.ZamanAyarla(mMediaPlayer.getTime());
             }
 ///                else if (event.type == MediaPlayer.Event.ESAdded) {//Dördüncü oluşan event 276
 ///                    //Log.d("PlayerFragment", m3uBilgi.tvgName + "TimeChanged");
@@ -396,10 +397,8 @@ public class YayinFragment extends Fragment {
 ///                    //Log.d("PlayerFragment", m3uBilgi.tvgName + "TimeChanged");
 ///                } else if (event.type == MediaPlayer.Event.Vout) {//Altıncı oluşan event 274
 ///                    //Log.d("PlayerFragment", m3uBilgi.tvgName + "TimeChanged");
-///                } else if (event.type == MediaPlayer.Event.TimeChanged) {
-///                    //Log.d("PlayerFragment", m3uBilgi.tvgName + "TimeChanged:" + event.getTimeChanged() + ":"+mMediaPlayer.getTime() + "/" + mMediaPlayer.getLength());
-///                    mediaController.ZamanAyarla(mMediaPlayer.getTime());
-///                } else if (event.type == MediaPlayer.Event.PositionChanged) {
+///                }
+/// else if (event.type == MediaPlayer.Event.PositionChanged) {
 ///
 ///                } else if (event.type == MediaPlayer.Event.Buffering) {
 ///
@@ -456,8 +455,8 @@ public class YayinFragment extends Fragment {
         mediaController.TamEkrandanCik();
     }
 
-    public void TarihceyeEkle() {
-        OrtakAlan.TarihceyeEkle(mainActivity.aktifTur, aktifGrupAd, mediaController.m3uBilgi.ID);
+    public void TarihceyeEkle(String sezon, String bolum) {
+        OrtakAlan.TarihceyeEkle(mainActivity.aktifTur, aktifGrupAd, mediaController.m3uBilgi.ID, sezon, bolum);
     }
 
     public void ZamaniYaz(M3UBilgi m3uBilgiOynayan, Bolum aktifBolum, int dakika) {

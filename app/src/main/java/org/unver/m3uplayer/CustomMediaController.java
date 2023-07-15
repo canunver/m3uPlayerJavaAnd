@@ -70,7 +70,6 @@ public class CustomMediaController implements View.OnClickListener {
         if (w > 0) {
             birimW = w / 60;
             if (birimW > 24) birimW = 24;
-            Log.d("M3UVeri", "birimW:" + birimW);
             if (birimW != birimH) {
                 birimH = birimW;
                 return true;
@@ -390,7 +389,7 @@ public class CustomMediaController implements View.OnClickListener {
         this.pauseBaslat = pauseBaslat;
         baslamaZamani = new Date();
         yeterinceSeyrettik = false;
-        Log.d("PlayerFragment", m3uBilgi.tvgName + "Playing:" + ":" + totalMs + "/" + aranaBilir + BolumSezonAd());
+        //Log.d("PlayerFragment", m3uBilgi.tvgName + "Playing:" + ":" + totalMs + "/" + aranaBilir + BolumSezonAd());
         oynuyor = true;
         if (totalMs > 0) {
             zamanCubugu.setVisibility(View.VISIBLE);
@@ -418,7 +417,7 @@ public class CustomMediaController implements View.OnClickListener {
                 long farkZaman = (simdZaman.getTime() - baslamaZamani.getTime()) / 6000;
                 if (farkZaman >= 5) {
                     yeterinceSeyrettik = true;
-                    this.yayinFragment.TarihceyeEkle();
+                    this.yayinFragment.TarihceyeEkle(sezon, bolum);
                 }
             }
             int lCurrentMin = currentSec / 60;

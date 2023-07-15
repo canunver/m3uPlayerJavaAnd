@@ -3,4 +3,8 @@
         <item>0</item>
         <item>0</item>
     </array>
+    <string-array name="languages">
+        <item>English</item>
+        <item>Turkish</item>
+    </string-array>
 </resources>

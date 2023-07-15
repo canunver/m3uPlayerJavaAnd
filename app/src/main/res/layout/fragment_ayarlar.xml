@@ -83,6 +83,28 @@
         app:layout_constraintTop_toBottomOf="@id/lbltmdbErisimAnahtar"
         tools:ignore="LabelFor,SpeakableTextPresentCheck,VisualLintTextFieldSize" />
 
+
+    <TextView android:id="@+id/lbltmdbErisimDil"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:text="@string/tmdb_erisim_dil"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/tmdbErisimAnahtar" />
+
+    <Spinner android:id="@+id/tmdbErisimDil"
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:layout_marginStart="6dp"
+        android:background="@android:drawable/editbox_background"
+        android:importantForAutofill="no"
+        android:inputType="text"
+        android:entries="@array/languages"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/lbltmdbErisimDil"
+        tools:ignore="LabelFor,SpeakableTextPresentCheck,VisualLintTextFieldSize" />
+
+
     <LinearLayout
         android:id="@+id/cbLayout"
         android:layout_width="match_parent"
@@ -90,7 +112,7 @@
         android:orientation="horizontal"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/tmdbErisimAnahtar">
+        app:layout_constraintTop_toBottomOf="@id/tmdbErisimDil">
 
         <CheckBox
             android:id="@+id/sonTvKanalBaslat"

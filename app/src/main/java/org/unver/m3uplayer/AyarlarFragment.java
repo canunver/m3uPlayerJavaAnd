@@ -13,6 +13,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.CheckBox;
 import android.widget.EditText;
+import android.widget.Spinner;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -32,6 +33,7 @@ public class AyarlarFragment extends Fragment {
     private ConstraintSet landscapeConstraintSet;
     private ConstraintSet portraitConstraintSet;
     private ConstraintLayout ayarlarYerlersim;
+    private Spinner spntmdbErisimDil;
 
     public AyarlarFragment(MainActivity mainActivity) {
         this.mainActivity = mainActivity;
@@ -82,6 +84,7 @@ public class AyarlarFragment extends Fragment {
         txtm3uAdresB = currView.findViewById(R.id.m3uAdresB);
         txtm3uAdresC = currView.findViewById(R.id.m3uAdresC);
         txttmdbErisimAnahtar = currView.findViewById(R.id.tmdbErisimAnahtar);
+        spntmdbErisimDil = currView.findViewById(R.id.tmdbErisimDil);
         chksonTvKanalBaslat = currView.findViewById(R.id.sonTvKanalBaslat);
         chktamEkranBaslat= currView.findViewById(R.id.tamEkranBaslat);
 
@@ -89,6 +92,7 @@ public class AyarlarFragment extends Fragment {
         txtm3uAdresB.setText(OrtakAlan.m3u_internet_adresi_2);
         txtm3uAdresC.setText(OrtakAlan.m3u_internet_adresi_3);
         txttmdbErisimAnahtar.setText(OrtakAlan.tmdb_erisim_anahtar);
+        spntmdbErisimDil.setSelection(OrtakAlan.tmdb_erisim_dil);
         chksonTvKanalBaslat.setChecked(OrtakAlan.son_tv_kanalini_oynatarak_basla);
         chktamEkranBaslat.setChecked(OrtakAlan.tamEkranBaslat);
 
@@ -100,6 +104,7 @@ public class AyarlarFragment extends Fragment {
                 OrtakAlan.m3u_internet_adresi_2 = txtm3uAdresB.getText().toString();
                 OrtakAlan.m3u_internet_adresi_3 = txtm3uAdresC.getText().toString();
                 OrtakAlan.tmdb_erisim_anahtar = txttmdbErisimAnahtar.getText().toString();
+                OrtakAlan.tmdb_erisim_dil = spntmdbErisimDil.getSelectedItemPosition();
                 OrtakAlan.son_tv_kanalini_oynatarak_basla = chksonTvKanalBaslat.isChecked();
                 OrtakAlan.tamEkranBaslat = chktamEkranBaslat.isChecked();
 

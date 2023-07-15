@@ -28,12 +28,15 @@ public class OrtakAlan {
     public static String sonTVGrup;
     public static String sonTVProgramID;
     public static long sonCekilmeZamani;
-    public static String TMDBDil = "tr-TR";
+    public static String TMDBDil = "";
     public static boolean gizlilerVar = false;
     public static boolean yetiskinlerVar = false;
     public static boolean parolaVar = false;
     public static int TMDBTurDil = 1;
+    public static int tmdb_erisim_dil = 0;
     private static String parola = "";
+    public static String sonSezon = "";
+    public static String sonBolum = "";
 
     public static int ConvertToInt32(String strDeger, int varsayilanDeger) {
         if (!StringIsNUllOrEmpty(strDeger)) {
@@ -60,14 +63,18 @@ public class OrtakAlan {
         return dateFormat.format(date);
     }
 
-    public static void AyarlariOku() {
+    public static void AyarlariOku(String languageCode) {
         m3u_internet_adresi_1 = M3UVeri.AyarOku("m3u_internet_adresi_1");
         m3u_internet_adresi_2 = M3UVeri.AyarOku("m3u_internet_adresi_2");
         m3u_internet_adresi_3 = M3UVeri.AyarOku("m3u_internet_adresi_3");
         tmdb_erisim_anahtar = M3UVeri.AyarOku("tmdb_erisim_anahtar");
         son_tv_kanalini_oynatarak_basla = ConvertToInt32(M3UVeri.AyarOku("son_tv_kanalini_oynatarak_basla"), 0) == 1;
         tamEkranBaslat = ConvertToInt32(M3UVeri.AyarOku("tamEkranBaslat"), 0) == 1;
-
+        tmdb_erisim_dil = ConvertToInt32(M3UVeri.AyarOku("tmdb_erisim_dil"), 0);
+        if(tmdb_erisim_dil == 1) {
+            TMDBDil = "tr-TR";
+        }
+        Log.d("M3UVeri", "TMDBDil:" + TMDBDil);
         sonTVGrup = M3UVeri.AyarOku("sonTVGrup");
         sonTVProgramID = M3UVeri.AyarOku("sonTVProgramID");
         sonM3UTur = M3UVeri.TurBul(ConvertToInt32(M3UVeri.AyarOku("sonM3UTur"), 0));
@@ -75,6 +82,13 @@ public class OrtakAlan {
         sonProgramID = M3UVeri.AyarOku("sonProgramID");
         sonCekilmeZamani = ConvertToLong(M3UVeri.AyarOku("sonCekilmeZamani"), 0);
         parola = M3UVeri.AyarOku("parola");
+        sonSezon = M3UVeri.AyarOku("sonSezon");
+        sonBolum = M3UVeri.AyarOku("sonBolum");
+
+        if (languageCode.startsWith("tr"))
+            TMDBTurDil = 2;
+        else
+            TMDBTurDil = 1;
     }
 
     public static void AyarlariYaz() {
@@ -84,9 +98,11 @@ public class OrtakAlan {
         M3UVeri.AyarYaz("tmdb_erisim_anahtar", tmdb_erisim_anahtar);
         M3UVeri.AyarYaz("son_tv_kanalini_oynatarak_basla", son_tv_kanalini_oynatarak_basla ? "1" : "0");
         M3UVeri.AyarYaz("tamEkranBaslat", tamEkranBaslat ? "1" : "0");
+        M3UVeri.AyarYaz("tmdb_erisim_dil", String.valueOf(tmdb_erisim_dil));
     }
 
-    public static void TarihceyeEkle(M3UBilgi.M3UTur aktifTur, String aktifGrupAd, String id) {
+    public static void TarihceyeEkle(M3UBilgi.M3UTur aktifTur, String aktifGrupAd, String id, String sezon, String bolum) {
+        Log.d("M3UVeri", "sezon: " + sezon + ", bolum: " + bolum);
         if (!StringIsNUllOrEmpty(aktifGrupAd) && !StringIsNUllOrEmpty(id)) {
             if (aktifTur != sonM3UTur || !aktifGrupAd.equals(sonGrup) || !id.equals(sonProgramID)) {
                 sonM3UTur = aktifTur;
@@ -101,6 +117,15 @@ public class OrtakAlan {
                 M3UVeri.AyarYaz("sonM3UTur", Integer.toString(M3UVeri.SiraBul(sonM3UTur)));
                 M3UVeri.AyarYaz("sonGrup", sonGrup);
                 M3UVeri.AyarYaz("sonProgramID", sonProgramID);
+            }
+            Log.d("M3UVeri", "sezon: " + sezon + ", bolum: " + bolum);
+            if (!OrtakAlan.StringIsNUllOrEmpty(sezon) && !sezon.equals(sonSezon)) {
+                sonSezon = sezon;
+                M3UVeri.AyarYaz("sonSezon", sezon);
+            }
+            if (!OrtakAlan.StringIsNUllOrEmpty(bolum) && !bolum.equals(sonBolum)) {
+                sonBolum = bolum;
+                M3UVeri.AyarYaz("sonBolum", bolum);
             }
         }
     }
@@ -209,9 +234,7 @@ public class OrtakAlan {
                 StyleSpan boldSpan = new StyleSpan(Typeface.BOLD);
                 spannableString.setSpan(boldSpan, yerler[0], yerler[0] + yerler[1], Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
             }
-        }
-        catch (Exception ex)
-        {
+        } catch (Exception ex) {
             spannableString = new SpannableString(s);
         }
         return spannableString;

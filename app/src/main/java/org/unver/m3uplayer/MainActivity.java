@@ -11,6 +11,7 @@ import android.annotation.SuppressLint;
 import android.app.AlertDialog;
 import android.content.pm.ActivityInfo;
 import android.content.res.Configuration;
+import android.content.res.Resources;
 import android.os.Bundle;
 import android.os.Handler;
 import android.view.View;
@@ -59,7 +60,7 @@ public class MainActivity extends AppCompatActivity {
         drawerLayout = findViewById(R.id.drawerLayout);
         //NavigationView navigationView = findViewById(R.id.navigationView);
         M3UVeri.OkuBakayim(this);
-        OrtakAlan.AyarlariOku();
+        OrtakAlan.AyarlariOku(Resources.getSystem().getConfiguration().locale.getLanguage());
 
         AyarlariKapat();
 

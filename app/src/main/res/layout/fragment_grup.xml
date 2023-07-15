@@ -7,7 +7,6 @@
     tools:context=".GrupFragment">
 
     <androidx.constraintlayout.widget.ConstraintLayout
-        android:id="@+id/grupYonetimLayout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
 
@@ -29,7 +28,6 @@
             app:layout_constraintTop_toBottomOf="@+id/lblKulGrup">
 
             <com.google.android.material.textfield.TextInputLayout
-                android:id="@+id/kulGrupSecCont"
                 style="@style/Widget.Material3.TextInputLayout.OutlinedBox.ExposedDropdownMenu"
 
                 android:layout_width="0dp"
@@ -94,7 +92,6 @@
             app:layout_constraintTop_toBottomOf="@+id/lblGelGrup">
 
             <com.google.android.material.textfield.TextInputLayout
-                android:id="@+id/gelGrupSecCont"
                 style="@style/Widget.Material3.TextInputLayout.OutlinedBox.ExposedDropdownMenu"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
@@ -162,7 +159,6 @@
         </LinearLayout>
 
         <LinearLayout
-            android:id="@+id/kanalVeEkleCont"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
@@ -170,7 +166,6 @@
             app:layout_constraintTop_toBottomOf="@+id/araGrupCont">
 
             <com.google.android.material.textfield.TextInputLayout
-                android:id="@+id/grupIcinKanalSecCont"
                 style="@style/Widget.Material3.TextInputLayout.OutlinedBox.ExposedDropdownMenu"
 
                 android:layout_width="0dp"

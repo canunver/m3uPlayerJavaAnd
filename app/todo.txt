@@ -1,9 +1,5 @@
 == YAPILACAK GELİŞTİRMELER
-- TODO: Hata düzelt: Başlangıçta, seri otomatik oynuyor ve ilk bölüm oynuyor
-- TODO: TMDBDil, değişkenlerden okunacak
-- TODO: TMDB Türleri dil dosyasından oku
 - TODO: Parola değiştirme
-- TODO: Program listelerinde, grup yönetimi tuşu ekleme, bu tuşa basılınca, grup ekranı açıp kanalı bir grubu ekleme ya da çıkarma, kanalı yetişkin veya gizli yapma
 == YAPILACAK İYİLEŞTİRMELER
 
 == YAPILANLAR
@@ -24,3 +20,12 @@
 + DONE: 9.07.2023 internetten kanal çekmeyi 3 M3U adresi için de yap
 + DONE: Diziler geldiğinde, son seyredilen otomatik seçili gelsin.
 + DONE: Puan, Türler,  Yayın Tarihi bilgileri gelecek
++ DONE: Hata düzelt: Başlangıçta, seri otomatik oynuyor ve ilk bölüm oynuyor
++ DONE: TMDB Türleri dil dosyasından oku
++ DONE: TMDBDil, değişkenlerden okunacak
+
+
+Sonraki Sürümler:
+=================
+- TODO: Program listelerinde, grup yönetimi tuşu ekleme, bu tuşa basılınca, grup ekranı açıp kanalı bir grubu ekleme ya da çıkarma, kanalı yetişkin veya gizli yapma
+- TODO: Dizilerde, bölüm bitince sonraki bölüme otomatik geçme

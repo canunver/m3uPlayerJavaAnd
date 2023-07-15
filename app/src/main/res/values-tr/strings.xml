@@ -1,10 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="NoEPG">"EPG Desteği Henüz Eklenmedi"</string>
-    <string name="tam_ekran">Tam Ekran</string>
-    <string name="yeniden_yukle">Yeniden Yükle</string>
-    <string name="navigation_drawer_open">Aç</string>
-    <string name="navigation_drawer_close">Kapat</string>
     <string-array name="turListesi">
         <item>Kanal</item>
         <item>Film</item>
@@ -29,7 +25,6 @@
     <string name="iptal">İptal</string>
     <string name="kaydet">Kaydet</string>
     <string name="son_tv_kanalini_oynatarak_basla">Son TV Kanalı ile Başla</string>
-    <string name="search">Search</string>
     <string name="TurSec">Select Genre</string>
     <string name="tmdb_aramasi_icin_kriter_giriniz">TMDB araması için kriter giriniz.</string>
     <string name="bolum_cekme_basladi">Tüm bölümlerin çekimi için işlem başlatıldı</string>
@@ -71,4 +66,5 @@
     <string name="filmOzellik">Puan:%s, Tür:%s,  Yayın Tarihi:%s</string>
     <string name="tmdbBagYok">TMDB ile bağlantı kurarak, film özelliklerini görebilirsiniz!</string>
     <string name="aramaKayitYok">Arama sonucunda kayıt bulunamadı!</string>
+    <string name="tmdb_erisim_dil">TMDB Veri Çekme Dili</string>
 </resources>
