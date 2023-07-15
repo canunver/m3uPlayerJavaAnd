@@ -47,11 +47,11 @@
     <string name="grubu_yetiskin_yap_yapma">Grubu Yetişkin Yap</string>
 
     <string name="arama_metni_giriniz">Arama metni giriniz…</string>
-    <string name="yeni_grup_ismi_gir">" Yeni Grup İsmini Giriniz"</string>
+    <string name="yeni_grup_ismi_gir">Yeni Grup İsmini Giriniz</string>
     <string name="yeni_grup_ismi_degistir">Grubun İsmini Değiştiriniz</string>
-    <string name="AdBosOlamaz">Ad boş olamaz</string>
-    <string name="AdBosluklaBaslamaz">Ad boşluk karakteri ile başlayamaz!</string>
-    <string name="AdRakamlaBaslamaz">Ad rakamla başlayamaz!</string>
+    <string name="AdBosOlamaz">Ad, boş olamaz</string>
+    <string name="AdBosluklaBaslamaz">Ad, boşluk karakteri ile başlayamaz!</string>
+    <string name="AdRakamlaBaslamaz">Ad, rakamla başlayamaz!</string>
     <string name="ZatenVarOlanBirIsimKullanilamaz">Zaten var olan bir isim kullanılamaz!</string>
     <string name="EskiGrupBulunamadi">Eski grup bulunamadi</string>
     <string name="GelenGrupAdDegismez">M3U dosyasından bulunan grubun adı değiştirilemez!</string>
@@ -68,4 +68,7 @@
     <string name="kanali_gizle_ac">Kanalı gizle/aç</string>
     <string name="kanali_yetiskin_yap_yapma">Kanalı yetişkin/normal yap</string>
     <string name="gelen_gruplar">Gelen Gruplar</string>
+    <string name="filmOzellik">Puan:%s, Tür:%s,  Yayın Tarihi:%s</string>
+    <string name="tmdbBagYok">TMDB ile bağlantı kurarak, film özelliklerini görebilirsiniz!</string>
+    <string name="aramaKayitYok">Arama sonucunda kayıt bulunamadı!</string>
 </resources>

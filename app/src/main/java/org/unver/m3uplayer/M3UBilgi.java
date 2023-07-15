@@ -2,6 +2,9 @@ package org.unver.m3uplayer;
 
 import android.content.ContentValues;
 import android.database.sqlite.SQLiteDatabase;
+import android.text.SpannableString;
+
+import androidx.annotation.NonNull;
 
 import java.util.ArrayList;
 
@@ -43,6 +46,35 @@ public class M3UBilgi {
         return OrtakAlan.DogruysaDondur(gizli, gizliKod) + OrtakAlan.DogruysaDondur(yetiskin, yetiskinKod) + " " + tvgName;
     }
 
+    public int puanBul() {
+        tmdbBul();
+        if (tmdbBag == null)
+            return -1;
+        else
+            return tmdbBag.voteAverage();
+    }
+
+    public String turBul() {
+        tmdbBul();
+        if (tmdbBag == null)
+            return "-";
+        else
+            return FilmTurYonetim.FilmDiziTurAd(tmdbBag.genre_ids);
+    }
+
+    public String yayinTarihiBul() {
+
+        if (tmdbBag == null)
+            return this.filmYil;
+        else
+            return tmdbBag.yayinTarihiBul();
+    }
+
+    public SpannableString ozellikBul(String filmOzellikFmt) {
+        String s = String.format(filmOzellikFmt, "<b>"+puanBul()+"</b>", "<b>"+turBul()+"</b>", "<b>"+yayinTarihiBul()+"</b>");
+        return OrtakAlan.SpanYap(s);
+    }
+
     public enum M3UTur {
         seri, film, tv
     }
@@ -72,9 +104,17 @@ public class M3UBilgi {
 
     public void tmdbBul() {
         if (tmdbBag == null && tmdbId > 0) {
-            tmdbBag = M3UVeri.tumTMDBler.getOrDefault(TVInfo.anahtarBul(M3UVeri.SiraBul(Tur), tmdbId), null);
+            tmdbBag = M3UVeri.tumTMDBListesi.getOrDefault(TVInfo.anahtarBul(M3UVeri.SiraBul(Tur), tmdbId), null);
         }
     }
+
+    public TVInfo tmdbBagBul() {
+        if (tmdbBag == null && tmdbId > 0) {
+            tmdbBag = M3UVeri.tumTMDBListesi.getOrDefault(TVInfo.anahtarBul(M3UVeri.SiraBul(Tur), tmdbId), null);
+        }
+        return tmdbBag;
+    }
+
 
     private int tmdbPuan() {
         tmdbBul();
@@ -133,6 +173,7 @@ public class M3UBilgi {
         DegerleriOlustur(null);
     }
 
+    @SuppressWarnings("CopyConstructorMissesField")
     public M3UBilgi(M3UBilgi m3u) {
         this.ID = m3u.seriAd;
         this.eklemeTarih = m3u.eklemeTarih;
@@ -156,14 +197,14 @@ public class M3UBilgi {
             if (gizli) return false;
         }
         if (!OrtakAlan.yetiskinlerVar) {
-            if (yetiskin) return false;
+            return !yetiskin;
         }
         return true;
     }
 
     public boolean FiltreUygunMu(M3UFiltre filtre, boolean gizlilerOlsun) {
-
         if (gizliYetiskinDegilse(gizlilerOlsun)) {
+            if(filtre == null) return true;
             if (Tur == M3UTur.tv) {
                 return AdUygunMu(filtre) && YeniUygunMu(filtre);
             } else {
@@ -172,18 +213,18 @@ public class M3UBilgi {
         } else return false;
     }
 
-    private boolean AdUygunMu(M3UFiltre filtre) {
+    private boolean AdUygunMu(@NonNull M3UFiltre filtre) {
         if (M3UListeArac.IsNullOrWhiteSpace(filtre.isimFiltreStr)) return true;
         if (tvgName.toLowerCase().contains(filtre.isimFiltreStr.toLowerCase())) return true;
         if (tmdbName().toLowerCase().contains(filtre.isimFiltreStr.toLowerCase())) return true;
         return false;
     }
 
-    private boolean YeniUygunMu(M3UFiltre filtre) {
-        return !filtre.sadeceYeni || (this.eklemeTarih.compareTo(filtre.yeniTarihBaslaStr) == 1);
+    private boolean YeniUygunMu(@NonNull M3UFiltre filtre) {
+        return !filtre.sadeceYeni || (this.eklemeTarih.compareTo(filtre.yeniTarihBaslaStr) > 0);
     }
 
-    private boolean TurUygunMu(M3UFiltre filtre) {
+    private boolean TurUygunMu(@NonNull M3UFiltre filtre) {
         if (filtre.filmTurler == null || filtre.filmTurler.length == 0) return true;
 
         int[] tmdbTurler = tmdbGenres();
@@ -196,14 +237,14 @@ public class M3UBilgi {
         return false;
     }
 
-    private boolean PuanUygunMu(M3UFiltre filtre) {
+    private boolean PuanUygunMu(@NonNull M3UFiltre filtre) {
         if (filtre.maxPuan <= 0 || filtre.maxPuan < filtre.minPuan) return true;
         if (Math.round(tmdbPuan()) <= filtre.maxPuan && Math.round(tmdbPuan()) >= filtre.minPuan)
             return true;
         return false;
     }
 
-    private boolean YilUygunMu(M3UFiltre filtre) {
+    private boolean YilUygunMu(@NonNull M3UFiltre filtre) {
 
         if (filtre.maxYil <= 0 || filtre.maxYil < filtre.minYil) return true;
         int yil = tmdbYil();
@@ -315,6 +356,7 @@ public class M3UBilgi {
         }
     }
 
+    @SuppressWarnings("all")
     public long Yaz(SQLiteDatabase db) {
         long rowId;
 

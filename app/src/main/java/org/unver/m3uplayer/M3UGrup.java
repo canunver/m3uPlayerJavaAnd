@@ -4,7 +4,6 @@ import android.content.ContentValues;
 import android.database.sqlite.SQLiteDatabase;
 
 import java.util.ArrayList;
-import java.util.Hashtable;
 import java.util.List;
 
 public class M3UGrup {
@@ -52,7 +51,7 @@ public class M3UGrup {
     public boolean filtreyeUygunMu(M3UFiltre filtre) {
         if (filtre == null) return true;
         for (String m3uId : kanallar) {
-            M3UBilgi item = M3UVeri.tumM3Ular.get(m3uId);
+            M3UBilgi item = M3UVeri.tumM3UListesi.get(m3uId);
             if (item.FiltreUygunMu(filtre, false)) return true;
         }
         return false;

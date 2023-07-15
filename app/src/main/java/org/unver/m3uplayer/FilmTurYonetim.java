@@ -1,7 +1,7 @@
 package org.unver.m3uplayer;
 
 import java.util.ArrayList;
-import java.util.List;
+
 
 public class FilmTurYonetim {
     public static FilmDiziTur[] filmDiziTurler = {
@@ -36,7 +36,7 @@ public class FilmTurYonetim {
 
     public static int TurKodBul(String ad) {
         for (FilmDiziTur item : filmDiziTurler) {
-            if (item.adTr == ad || item.adEn == ad)
+            if (item.adTr.equals(ad) || item.adEn.equals(ad))
                 return item.kod;
         }
         return -1;
@@ -53,23 +53,23 @@ public class FilmTurYonetim {
         return l;
     }
 
-    public static String FilmDiziTurAd(int kod, int dilKod) //1 tr, diğer en;
+    public static String FilmDiziTurAd(int kod) //1 tr, diğer en;
     {
         for (FilmDiziTur item : filmDiziTurler) {
             if (item.kod == kod) {
-                if (dilKod == 1) return item.adTr;
+                if (OrtakAlan.TMDBTurDil == 2) return item.adTr;
                 else return item.adEn;
             }
         }
         return String.valueOf(kod);
     }
 
-    public static String FilmDiziTurAd(int[] kodlar, int dilKod) //1 tr, diğer en;
+    public static String FilmDiziTurAd(int[] kodlar) //1 tr, diğer en;
     {
         String adlar = "";
         for (int item : kodlar) {
-            if (adlar != "") adlar += ", ";
-            adlar += FilmDiziTurAd(item, dilKod);
+            if (!OrtakAlan.StringIsNUllOrEmpty(adlar)) adlar += ", ";
+            adlar += FilmDiziTurAd(item);
         }
 
         return adlar;

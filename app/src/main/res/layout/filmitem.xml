@@ -23,6 +23,7 @@
 
     <TextView
         android:id="@+id/filmAd"
+        android:textStyle="bold"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginStart="6dp"
@@ -76,6 +77,7 @@
             android:id="@+id/filmOzellikler"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:visibility="gone"
             android:layout_marginLeft="7dp"
             android:text="Özellikler" />
     </LinearLayout>

@@ -1,6 +1,11 @@
 package org.unver.m3uplayer;
 
 import android.annotation.SuppressLint;
+import android.graphics.Typeface;
+import android.text.Spannable;
+import android.text.SpannableString;
+import android.text.style.StyleSpan;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -153,7 +158,10 @@ public class YayinListesiAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
 
         public void bind(M3UBilgi blg, int ignoredPosition) {
             filmAd.setText(blg.tvgName);
-            filmOzellik.setText("Puan, Türler,  Yayın Tarihi ");
+            if (blg.tmdbBagBul() != null) {
+                filmOzellik.setText(blg.ozellikBul(yayinFragment.getString(R.string.filmOzellik)));
+            } else
+                filmOzellik.setText(R.string.tmdbBagYok);
             filmAciklama.setText(blg.aciklamaBul());
             M3UListeArac.ImageYukle(filmAfis, blg.afisBul(500));
         }
@@ -199,7 +207,11 @@ public class YayinListesiAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
         public void bind(M3UBilgi blg, int ignoredPosition) {
             this.blg = blg;
             seriAd.setText(blg.seriAd);
-            seriOzellik.setText(blg.filmYil);
+            if (blg.tmdbBagBul() != null) {
+                seriOzellik.setText(blg.ozellikBul(yayinFragment.getString(R.string.filmOzellik)));
+            } else
+                seriOzellik.setText(R.string.tmdbBagYok);
+
             M3UListeArac.ImageYukle(seriAfis, blg.tvgLogo);
             seriAciklama.setText(blg.aciklamaBul());
 
@@ -237,7 +249,7 @@ public class YayinListesiAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
                     al.add(b.bolum);
                     if (bi == bolumPosition)
                         secPosition = al.size() - 1;
-                    for (int i = 1; i < b.idler.size(); i++) {
+                    for (int i = 1; i < b.ids.size(); i++) {
                         al.add(b.bolum + " (" + (i + 1) + ")");
                     }
                 }
@@ -262,7 +274,7 @@ public class YayinListesiAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
                     return;
                 }
             }
-            bolumAciklama.setText(aktifSezonAd + aktifBolumAd);
+            bolumAciklama.setText(String.format("%s%s", aktifSezonAd, aktifBolumAd));
         }
     }
 }

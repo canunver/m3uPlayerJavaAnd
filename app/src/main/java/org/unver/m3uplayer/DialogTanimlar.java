@@ -185,7 +185,7 @@ public class DialogTanimlar {
                                 arananM3U.tmdbId = ti.id;
                                 arananM3U.Yaz(M3UVeri.db);
                                 Log.d("Cek", "arananM3U.tmdbId: " + arananM3U.tmdbId + ", " + "ti.tostr:" + ti.toString());
-                                M3UVeri.tumTMDBler.put(ti.anahtarBul(), ti);
+                                M3UVeri.tumTMDBListesi.put(ti.anahtarBul(), ti);
                                 ti.Yaz(M3UVeri.db);
                                 aktifAdapter.notifyItemChanged(seciliItemPos);
                                 hata = "";

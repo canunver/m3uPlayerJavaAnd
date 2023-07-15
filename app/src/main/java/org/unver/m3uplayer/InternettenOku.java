@@ -1,5 +1,6 @@
 package org.unver.m3uplayer;
 
+import android.annotation.SuppressLint;
 import android.database.sqlite.SQLiteDatabase;
 import android.util.Log;
 
@@ -24,7 +25,7 @@ import javax.net.ssl.X509TrustManager;
 
 public class InternettenOku {
 
-    private void Ekle(MainActivity mainActivity, SQLiteDatabase db, String kod, String ilkSatir, String ikinciSatir, String suAn) {
+    private void Ekle( SQLiteDatabase db, String kod, String ilkSatir, String ikinciSatir, String suAn) {
         M3UBilgi m3u = new M3UBilgi(kod,
                 M3UListeArac.DegerBul(ilkSatir, "tvg-id"),
                 M3UListeArac.DegerBul(ilkSatir, "tvg-name"),
@@ -32,7 +33,7 @@ public class InternettenOku {
                 M3UListeArac.DegerBul(ilkSatir, "group-title"),
                 ikinciSatir,
                 suAn);
-        M3UBilgi m3uEski = M3UVeri.tumM3Ular.getOrDefault(m3u.ID, null);
+        M3UBilgi m3uEski = M3UVeri.tumM3UListesi.getOrDefault(m3u.ID, null);
 
         if (m3uEski != null) {
             m3u.eklemeTarih = m3uEski.eklemeTarih;
@@ -42,41 +43,41 @@ public class InternettenOku {
             m3u.tmdbId = m3uEski.tmdbId;
         }
         m3u.Yaz(db);
-        M3UVeri.GruplaraIsle(m3u, true, false);
+        M3UVeri.GruplaraIsle(m3u, true);
     }
 
     public void performNetworkOperation(MainActivity mainActivity, SQLiteDatabase db) {
         ExecutorService executor = Executors.newSingleThreadExecutor();
         executor.execute(() -> {
-            for (int addr = 1; addr <= 3; addr++) {
+            for (int i = 1; i <= 3; i++) {
                 try {
                     String kod;
                     String urlAddress;
-                    if (addr == 1) {
+                    if (i == 1) {
                         kod = "A";
                         urlAddress = OrtakAlan.m3u_internet_adresi_1;
-                    } else if (addr == 2) {
+                    } else if (i == 2) {
                         kod = "B";
                         urlAddress = OrtakAlan.m3u_internet_adresi_2;
-                    } else {//if (addr == 3) {
+                    } else { //3
                         kod = "C";
                         urlAddress = OrtakAlan.m3u_internet_adresi_3;
                     }
                     if (OrtakAlan.StringIsNUllOrEmpty(urlAddress)) continue;
-                    Log.i("M3UVeri", "Internetten veri alınacak");
+                    //Log.i("M3UVeri", "Internetten veri alınacak");
                     URL url = new URL(urlAddress);
                     HttpURLConnection connection = (HttpURLConnection) url.openConnection();
                     connection.setRequestMethod("GET");
 
                     int responseCode = connection.getResponseCode();
                     if (responseCode == HttpURLConnection.HTTP_OK) {
-                        Log.i("M3UVeri", "Internetten veri alındı");
+                        //Log.i("M3UVeri", "Internetten veri alındı");
                         BufferedReader reader = new BufferedReader(new InputStreamReader(connection.getInputStream()));
                         boolean hataVar;
                         String line;
                         db.beginTransaction();
                         try {
-                            int say = 0;
+///                            int say = 0;
                             String ilkSatir = null;
                             String suAn = OrtakAlan.TarihYAGOl(new Date());
 
@@ -84,22 +85,22 @@ public class InternettenOku {
                                 if (line.startsWith("#EXTINF:")) {
                                     ilkSatir = line;
                                 } else if (ilkSatir != null) {
-                                    Ekle(mainActivity, db, kod, ilkSatir, line, suAn);
-                                    say++;
-                                    if (say % 1000 == 1)
-                                        Log.i("M3UVeri", "Internet verisi işleniyor:" + say);
+                                    Ekle(db, kod, ilkSatir, line, suAn);
+///                                    say++;
+///                                    if (say % 1000 == 1)
+///                                        Log.i("M3UVeri", "Internet verisi işleniyor:" + say);
                                 }
                             }
                             hataVar = false;
                         } catch (Exception ex) {
                             hataVar = true;
-                            Log.i("M3UVeri", "Internet verisi işlenemedi:" + ex.getMessage());
+                            Log.e("M3UVeri", "Internet verisi işlenemedi:" + ex.getMessage());
                         }
                         db.setTransactionSuccessful();
                         db.endTransaction();
                         reader.close();
                         if (!hataVar) {
-                            Log.i("M3UVeri", "Internet verisi işlendi");
+                            //Log.i("M3UVeri", "Internet verisi işlendi");
                             OrtakAlan.sonCekilmeZamaniYaz();
                         }
                     }
@@ -170,11 +171,14 @@ public class InternettenOku {
 
     public static void doTrustInit() throws Exception {
 
+        @SuppressLint("CustomX509TrustManager")
         TrustManager[] trustAllCerts = new TrustManager[]{
                 new X509TrustManager() {
+                    @SuppressLint("TrustAllX509TrustManager")
                     public void checkClientTrusted(X509Certificate[] chain, String authType) {
                     }
 
+                    @SuppressLint("TrustAllX509TrustManager")
                     public void checkServerTrusted(X509Certificate[] chain, String authType) {
                     }
 
@@ -192,7 +196,7 @@ public class InternettenOku {
         trustInit = true;
     }
 
-    public TVResponse TMDBInfoBul(M3UBilgi m3u) throws Exception {
+    public TVResponse TMDBInfoBul(M3UBilgi m3u) {
         return getTmdbInfo(m3u.TMDBTur(), m3u.SorguYap());
     }
 
@@ -224,16 +228,13 @@ public class InternettenOku {
         }
         if (connection != null)
             connection.disconnect();
-        if (response == null) return null;
         if (response.length() == 0) return null;
 
         Gson gson = new Gson();
 
         TMDBBolum gelenObj = gson.fromJson(response.toString(), TMDBBolum.class);
-        if (gelenObj != null) {
-            Log.d("M3UVeri", "TMDB, Gelen nesne:" + gelenObj.ToListStr());
-        } else
-            Log.d("M3UVeri", "TMDB, Gelen nesne çevrilemedi" + response.toString());
+        if (gelenObj == null)
+            Log.d("M3UVeri", "TMDB, Gelen nesne çevrilemedi" + response);
         return gelenObj;
     }
 
@@ -265,19 +266,17 @@ public class InternettenOku {
         }
         if (connection != null)
             connection.disconnect();
-        if (response == null) return null;
         if (response.length() == 0) return null;
 
         Gson gson = new Gson();
 
         TVResponse gelenObj = gson.fromJson(response.toString(), TVResponse.class);
-        if (gelenObj != null) {
-            Log.d("M3UVeri", "TMDB, Gelen nesne:" + gelenObj.ToListStr());
-        } else
-            Log.d("M3UVeri", "TMDB, Gelen nesne çevrilemedi" + response.toString());
+        if (gelenObj == null)
+            Log.d("M3UVeri", "TMDB, Gelen nesne çevrilemedi" + response);
         return gelenObj;
     }
 
+    @SuppressWarnings("all")
     class TMDBBolum {
         public String air_date;
         public int episode_number;
@@ -332,29 +331,27 @@ public class InternettenOku {
                     TVInfo tvInfo;
                     long yazId = -1;
                     if (bb.ti == null) {
-                        yazId = -1;
-                        Log.d("M3UVeri", "-1 olarak yazılacak");
+                        //Log.d("M3UVeri", "-1 olarak yazılacak");
                         tvInfo = null;
                     } else {
                         tvInfo = new TVInfo(9, bb.ti.id, bb.ti.name, bb.ti.air_date, bb.ti.overview, bb.ti.vote_average);
                         yazId = tvInfo.id;
-                        Log.d("M3UVeri", tvInfo.anahtarBul() + " olarak yazılacak");
+                        //Log.d("M3UVeri", tvInfo.anahtarBul() + " olarak yazılacak");
                     }
                     if (tvInfo != null) {
                         tvInfo.Yaz(M3UVeri.db);
-                        //M3UVeri.TMDByeIsle(tvInfo);
                     }
-                    for (String bolumM3UId : bb.blm.idler) {
-                        M3UBilgi bolM3u = M3UVeri.tumM3Ular.getOrDefault(bolumM3UId, null);
-                        bolM3u.tmdbId = yazId;
-                        bolM3u.Yaz(M3UVeri.db);
+                    for (String bolumM3UId : bb.blm.ids) {
+                        M3UBilgi bolM3u = M3UVeri.tumM3UListesi.getOrDefault(bolumM3UId, null);
+                        if(bolM3u != null) {
+                            bolM3u.tmdbId = yazId;
+                            bolM3u.Yaz(M3UVeri.db);
+                        }
                     }
                 }
                 db.setTransactionSuccessful();
                 db.endTransaction();
-                mainActivity.handler.postDelayed(() -> {
-                    yayinListesiAdapter.notifyItemChanged(pos);
-                }, 50);
+                mainActivity.handler.postDelayed(() -> yayinListesiAdapter.notifyItemChanged(pos), 50);
             }
             mainActivity.Cekildi();
         });

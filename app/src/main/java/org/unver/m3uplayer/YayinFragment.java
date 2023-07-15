@@ -22,9 +22,7 @@ import android.view.LayoutInflater;
 import android.view.SurfaceHolder;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.ViewTreeObserver;
 import android.view.WindowManager;
-import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.ImageView;
@@ -54,10 +52,9 @@ public class YayinFragment extends Fragment {
     public String aktifGrupAd = "-";
     ArrayList<M3UBilgi> kanalListe = new ArrayList<>();
     AutoCompleteTextView grupSec;
-    private View currView;
     private LibVLC libVLC;
     private boolean buyuklukAyarlandi = false;
-    private IVLCVout vout = null;
+    private IVLCVout vOut = null;
     private CustomMediaController mediaController;
     private SurfaceHolder holder;
     MainActivity mainActivity;
@@ -87,14 +84,14 @@ public class YayinFragment extends Fragment {
         super.onResume();
         createPlayer();
         if (baslangictan && !OrtakAlan.StringIsNUllOrEmpty(otoAc)) {
-            OynatBakalim(M3UVeri.tumM3Ular.getOrDefault(otoAc, null), otoSezon, otoBolum, otoTur != M3UBilgi.M3UTur.tv, OrtakAlan.tamEkranBaslat);
+            OynatBakalim(M3UVeri.tumM3UListesi.getOrDefault(otoAc, null), otoSezon, otoBolum, otoTur != M3UBilgi.M3UTur.tv, OrtakAlan.tamEkranBaslat);
             otoAc = null;
         }
         baslangictan = false;
     }
 
     private void createPlayer() {
-        ArrayList<String> options = new ArrayList<String>();
+        ArrayList<String> options = new ArrayList<>();
         options.add("--no-drop-late-frames");
         options.add("--no-skip-frames");
         options.add("--rtsp-tcp");
@@ -105,9 +102,9 @@ public class YayinFragment extends Fragment {
         libVLC = new LibVLC(mainActivity, options);
         holder.setKeepScreenOn(true);
         mMediaPlayer = new MediaPlayer(libVLC);
-        vout = mMediaPlayer.getVLCVout();
-        vout.setVideoView(mVideoView);
-        vout.attachViews();
+        vOut = mMediaPlayer.getVLCVout();
+        vOut.setVideoView(mVideoView);
+        vOut.attachViews();
 
         mediaController = new CustomMediaController(this, oynatmaBolmesi, mMediaPlayer);
         buyuklukAyarlandi = false;
@@ -128,22 +125,12 @@ public class YayinFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        currView = inflater.inflate(R.layout.fragment_player, container, false);
+        View currView = inflater.inflate(R.layout.fragment_player, container, false);
 
         anaYerlesim = currView.findViewById(R.id.anaYerlesim);
-        anaYerlesim.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
-            @Override
-            public void onGlobalLayout() {
-                OynatmaBolgesiBuyuklukAyarla();
-            }
-        });
+        anaYerlesim.getViewTreeObserver().addOnGlobalLayoutListener(this::OynatmaBolgesiBuyuklukAyarla);
         mVideoView = currView.findViewById(R.id.playerView);
-        mVideoView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                mediaController.GorunumDegistir();
-            }
-        });
+        mVideoView.setOnClickListener(v -> mediaController.GorunumDegistir());
         aramaBolmesi = currView.findViewById(R.id.aramaBolmesi);
         oynatmaBolmesi = currView.findViewById(R.id.oynatmaBolmesi);
         landscapeConstraintSet = new ConstraintSet();
@@ -178,7 +165,7 @@ public class YayinFragment extends Fragment {
             Log.d("Exc", ex.getMessage());
         }
 
-        recyclerView = (RecyclerView) currView.findViewById(R.id.recyclerView);
+        recyclerView = currView.findViewById(R.id.recyclerView);
         kanalAdapter = new YayinListesiAdapter(this, kanalListe);
         LinearLayoutManager mLayoutManager = new LinearLayoutManager(this.getContext());
         recyclerView.setLayoutManager(mLayoutManager);
@@ -191,16 +178,11 @@ public class YayinFragment extends Fragment {
 
         setupPagination();
 
-        grupSec.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                GrupSecildi(position, false);
-            }
-        });
+        grupSec.setOnItemClickListener((parent, view, position, id) -> GrupSecildi(position, false));
         mVideoView = currView.findViewById(R.id.playerView);
         holder = mVideoView.getHolder();
         YonlendirmeAyarla();
-        int aktifTurPos = 0;
+        int aktifTurPos;
         if (OrtakAlan.son_tv_kanalini_oynatarak_basla && OrtakAlan.StringIsNUllOrEmpty(OrtakAlan.sonTVProgramID))
             aktifTurPos = 0;
         else
@@ -235,12 +217,9 @@ public class YayinFragment extends Fragment {
                             if (!isLoading) {
                                 isLoading = true;
                                 Handler handler = new Handler();
-                                handler.postDelayed(new Runnable() {
-                                    @Override
-                                    public void run() {
-                                        Yukle(false, false);
-                                        isLoading = false;
-                                    }
+                                handler.postDelayed(() -> {
+                                    Yukle(false, false);
+                                    isLoading = false;
                                 }, 50);
                             }
                         }
@@ -252,23 +231,19 @@ public class YayinFragment extends Fragment {
     public void TurSecildi(int position, boolean acilistan) {
         mainActivity.aktifTur = M3UVeri.TurBul(position);
         String simdSecText = grupSec.getText().toString();
-        Object[] donenler = GrupListesiOl(mainActivity, acilistan, filtre, simdSecText, 0, true, true, false, false);
+        Object[] donenler = GrupListesiOl(mainActivity, acilistan, filtre, simdSecText, 0, true, false, false);
         grupAdapter = (ArrayAdapter<String>) donenler[0];
         int yerInd = (int) donenler[1];
-        ArrayList<String> strler = (ArrayList<String>) donenler[2];
+        ArrayList<String> strList = (ArrayList<String>) donenler[2];
         grupSec.setAdapter(grupAdapter);
         if (yerInd > -1) {
-            //grupSec.clearListSelection();
-            //Log.d("basla", "Tur seçildi grup say:" + grupAdapter.getCount() + " fil:" + grupAdapter.getFilter().toString());
-            grupSec.setText(strler.get(yerInd), false);
-            //grupSec.setSelection(0, 1);
-            //grupAdapter.notifyDataSetChanged();
+            grupSec.setText(strList.get(yerInd), false);
             GrupSecildi(yerInd, acilistan);
         }
     }
 
-    public static Object[] GrupListesiOl(MainActivity mainActivity, boolean acilistan, M3UFiltre filtre, String simd, int hepsi0Kul1Inen2, boolean sadeceAd, boolean bosKalmasin, boolean ozelliklerOlsun, boolean gizlilerOlsun) {
-        ArrayList<String> s = new ArrayList<String>();
+    public static Object[] GrupListesiOl(MainActivity mainActivity, boolean acilistan, M3UFiltre filtre, String simd, int hepsi0Kul1Inen2, boolean bosKalmasin, boolean ozelliklerOlsun, boolean gizlilerOlsun) {
+        ArrayList<String> s = new ArrayList<>();
         ArrayList<M3UGrup> grupTutan = M3UVeri.GrupKodBul(M3UVeri.SiraBul(mainActivity.aktifTur));
 
         int yerInd = -1;
@@ -286,7 +261,7 @@ public class YayinFragment extends Fragment {
         for (M3UGrup item : grupTutan) {
             if (item.filtreyeUygunMu(filtre) && item.grupTurUygunMu(hepsi0Kul1Inen2) && item.gizliYetiskinDegilse(gizlilerOlsun)) {
                 s.add(item.grupAdiBul(ozelliklerOlsun, OrtakAlan.GizliBul(mainActivity), OrtakAlan.YetiskinBul(mainActivity)));
-                if (simd != null && item.grupAdi.equals(simd))
+                if (item.grupAdi != null && item.grupAdi.equals(simd))
                     yerInd = s.size() - 1;
             }
         }
@@ -297,11 +272,9 @@ public class YayinFragment extends Fragment {
             yerInd = 0;
 
         Object[] donenler = new Object[3];
-        donenler[0] = new ArrayAdapter<String>(mainActivity, com.google.android.material.R.layout.support_simple_spinner_dropdown_item, s);
+        donenler[0] = new ArrayAdapter<>(mainActivity, com.google.android.material.R.layout.support_simple_spinner_dropdown_item, s);
         donenler[1] = yerInd;
         donenler[2] = s;
-        //Log.d("basla", "Tur seçildi gruplar bulundu:" + s.size());
-
         return donenler;
     }
 
@@ -316,7 +289,6 @@ public class YayinFragment extends Fragment {
             if (OrtakAlan.son_tv_kanalini_oynatarak_basla) {
                 if (!OrtakAlan.StringIsNUllOrEmpty(OrtakAlan.sonTVProgramID)) {
                     otoAc = OrtakAlan.sonTVProgramID;
-                    otoTur = M3UBilgi.M3UTur.tv;
                 }
             } else {
                 otoAc = OrtakAlan.sonProgramID;
@@ -326,15 +298,15 @@ public class YayinFragment extends Fragment {
     }
 
     private void Yukle(boolean ilk, boolean acilistan) {
-        M3UGrup bulunanGrup = M3UVeri.GrupBul(mainActivity, M3UVeri.GrupDegiskenBul(mainActivity.aktifTur), aktifGrupAd, false);
+        M3UGrup bulunanGrup = M3UVeri.GrupBul(M3UVeri.GrupDegiskenBul(mainActivity.aktifTur), aktifGrupAd, false);
         if (ilk)
             kanalListe.clear();
-        String araProg = null;
+        String aranacakProgram = null;
         if (acilistan) {
             if (OrtakAlan.son_tv_kanalini_oynatarak_basla && !OrtakAlan.StringIsNUllOrEmpty(OrtakAlan.sonTVProgramID))
-                araProg = OrtakAlan.sonTVProgramID;
-            if (araProg == null)
-                araProg = OrtakAlan.sonProgramID;
+                aranacakProgram = OrtakAlan.sonTVProgramID;
+            if (aranacakProgram == null)
+                aranacakProgram = OrtakAlan.sonProgramID;
         }
         int basla = kanalListe.size();
         int scrollPos = 0;
@@ -342,13 +314,13 @@ public class YayinFragment extends Fragment {
             int kanalSay = 0;
             int eklenenSay = 0;
             for (String kanalId : bulunanGrup.kanallar) {
-                M3UBilgi m3u = M3UVeri.tumM3Ular.get(kanalId);
-                if (m3u.FiltreUygunMu(filtre, false)) {
+                M3UBilgi m3u = M3UVeri.tumM3UListesi.get(kanalId);
+                if (m3u != null && m3u.FiltreUygunMu(filtre, false)) {
                     kanalSay++;
                     if (kanalSay <= basla) continue;
                     if (eklenenSay++ > 20) break;
                     kanalListe.add(m3u);
-                    if (araProg != null && araProg.equals(m3u.ID))
+                    if (aranacakProgram != null && aranacakProgram.equals(m3u.ID))
                         scrollPos = eklenenSay - 1;
                 }
             }
@@ -374,11 +346,11 @@ public class YayinFragment extends Fragment {
     }
 
     public void OynatmaBolgesiBuyuklukAyarla() {
-        if (vout != null) {
+        if (vOut != null) {
             buyuklukAyarlandi = true;
             int width = oynatmaBolmesi.getWidth();
             int height = oynatmaBolmesi.getHeight();
-            vout.setWindowSize(width, height);
+            vOut.setWindowSize(width, height);
             mediaController.BuyuklukAyarla();
         }
     }
@@ -397,53 +369,53 @@ public class YayinFragment extends Fragment {
         mMediaPlayer.play();
         pauseBaslat = paused;
         tamEkranBaslat = tamEkran;
-        mMediaPlayer.setEventListener(new MediaPlayer.EventListener() {
-            @Override
-            public void onEvent(MediaPlayer.Event event) {
-                if (event.type == MediaPlayer.Event.Opening) { //İlk oluşan event 258
-                } else if (event.type == MediaPlayer.Event.PausableChanged) {//İkinci oluşan event 270
-                    //Log.d("PlayerFragment", m3uBilgi.tvgName + "TimeChanged");
-                } else if (event.type == MediaPlayer.Event.Playing) {//Üçüncü oluşan event 260
-                    if (ilkPlay) {
-                        mediaController.SesleriAyarla(mMediaPlayer.getTracks(Media.Track.Type.Audio));
-                        //Media.Track[] subtitleTracks =
-                        mediaController.AltyazilariAyarla(mMediaPlayer.getTracks(Media.Track.Type.Text));
+        mMediaPlayer.setEventListener(event -> {
+///                if (event.type == MediaPlayer.Event.Opening) { //İlk oluşan event 258
+///                    //Log.d("PlayerFragment", m3uBilgi.tvgName + "TimeChanged");
+///                } else if (event.type == MediaPlayer.Event.PausableChanged) {//İkinci oluşan event 270
+///                    //Log.d("PlayerFragment", m3uBilgi.tvgName + "TimeChanged");
+///                } else
+            if (event.type == MediaPlayer.Event.Playing) {//Üçüncü oluşan event 260
+                if (ilkPlay) {
+                    mediaController.SesleriAyarla(mMediaPlayer.getTracks(Media.Track.Type.Audio));
+                    //Media.Track[] subtitleTracks =
+                    mediaController.AltyazilariAyarla(mMediaPlayer.getTracks(Media.Track.Type.Text));
 
-                        mediaController.BilgiAyarla(pauseBaslat);
-                        if (tamEkranBaslat)
-                            mediaController.TamEkrandanYap();
-                        pauseBaslat = false;
-                        tamEkranBaslat = false;
-                        ilkPlay = false;
-                    }
-                    //Log.d("PlayerFragment", m3uBilgi.tvgName + "Playing:" + ":"+mMediaPlayer.getTime() + "/" + mMediaPlayer.getLength());
-                } else if (event.type == MediaPlayer.Event.ESAdded) {//Dördüncü oluşan event 276
-                    //Log.d("PlayerFragment", m3uBilgi.tvgName + "TimeChanged");
-                } else if (event.type == MediaPlayer.Event.ESSelected) {//Beşinci oluşan event 278
-                    //Log.d("PlayerFragment", m3uBilgi.tvgName + "TimeChanged");
-                } else if (event.type == MediaPlayer.Event.Vout) {//Altıncı oluşan event 274
-                    //Log.d("PlayerFragment", m3uBilgi.tvgName + "TimeChanged");
-                } else if (event.type == MediaPlayer.Event.TimeChanged) {
-                    //Log.d("PlayerFragment", m3uBilgi.tvgName + "TimeChanged:" + event.getTimeChanged() + ":"+mMediaPlayer.getTime() + "/" + mMediaPlayer.getLength());
-                    mediaController.ZamanAyarla(mMediaPlayer.getTime());
-                } else if (event.type == MediaPlayer.Event.PositionChanged) {
-
-                } else if (event.type == MediaPlayer.Event.Buffering) {
-
-                } else if (event.type == MediaPlayer.Event.SeekableChanged) { //269
-                    Log.d("PlayerFragment", mediaController.m3uBilgi.tvgName + "SeekableChanged:" + event.getSeekable());
-                } else if (event.type == MediaPlayer.Event.LengthChanged) { //273
-
-                } else if (event.type == MediaPlayer.Event.EndReached) { //269
-
-                } else if (event.type == MediaPlayer.Event.ESDeleted) { //277
-
-                } else if (event.type == MediaPlayer.Event.Stopped) { //262
-
-                } else {
-                    Log.d("PlayerFragment", mediaController.m3uBilgi.tvgName + "MediaPlayer.Event.type:" + event.type);
+                    mediaController.BilgiAyarla(pauseBaslat);
+                    if (tamEkranBaslat)
+                        mediaController.TamEkrandanYap();
+                    pauseBaslat = false;
+                    tamEkranBaslat = false;
+                    ilkPlay = false;
                 }
+                //Log.d("PlayerFragment", m3uBilgi.tvgName + "Playing:" + ":"+mMediaPlayer.getTime() + "/" + mMediaPlayer.getLength());
             }
+///                else if (event.type == MediaPlayer.Event.ESAdded) {//Dördüncü oluşan event 276
+///                    //Log.d("PlayerFragment", m3uBilgi.tvgName + "TimeChanged");
+///                } else if (event.type == MediaPlayer.Event.ESSelected) {//Beşinci oluşan event 278
+///                    //Log.d("PlayerFragment", m3uBilgi.tvgName + "TimeChanged");
+///                } else if (event.type == MediaPlayer.Event.Vout) {//Altıncı oluşan event 274
+///                    //Log.d("PlayerFragment", m3uBilgi.tvgName + "TimeChanged");
+///                } else if (event.type == MediaPlayer.Event.TimeChanged) {
+///                    //Log.d("PlayerFragment", m3uBilgi.tvgName + "TimeChanged:" + event.getTimeChanged() + ":"+mMediaPlayer.getTime() + "/" + mMediaPlayer.getLength());
+///                    mediaController.ZamanAyarla(mMediaPlayer.getTime());
+///                } else if (event.type == MediaPlayer.Event.PositionChanged) {
+///
+///                } else if (event.type == MediaPlayer.Event.Buffering) {
+///
+///                } else if (event.type == MediaPlayer.Event.SeekableChanged) { //269
+///                    Log.d("PlayerFragment", mediaController.m3uBilgi.tvgName + "SeekableChanged:" + event.getSeekable());
+///                } else if (event.type == MediaPlayer.Event.LengthChanged) { //273
+///
+///                } else if (event.type == MediaPlayer.Event.EndReached) { //269
+///
+///                } else if (event.type == MediaPlayer.Event.ESDeleted) { //277
+///
+///                } else if (event.type == MediaPlayer.Event.Stopped) { //262
+///
+///                } else {
+///                    Log.d("PlayerFragment", mediaController.m3uBilgi.tvgName + "MediaPlayer.Event.type:" + event.type);
+///                }
         });
 
         mediaController.show(8000);
@@ -453,8 +425,8 @@ public class YayinFragment extends Fragment {
         if (libVLC == null)
             return;
         mMediaPlayer.stop();
-        final IVLCVout vout = mMediaPlayer.getVLCVout();
-        vout.detachViews();
+        final IVLCVout vOut = mMediaPlayer.getVLCVout();
+        vOut.detachViews();
         libVLC.release();
         libVLC = null;
     }
@@ -490,8 +462,8 @@ public class YayinFragment extends Fragment {
 
     public void ZamaniYaz(M3UBilgi m3uBilgiOynayan, Bolum aktifBolum, int dakika) {
         if (aktifBolum != null) {
-            for (String id : aktifBolum.idler) {
-                M3UBilgi akt = M3UVeri.tumM3Ular.getOrDefault(id, null);
+            for (String id : aktifBolum.ids) {
+                M3UBilgi akt = M3UVeri.tumM3UListesi.getOrDefault(id, null);
                 if (akt != null) {
                     akt.seyredilenSure = dakika;
                     akt.Yaz(M3UVeri.db);

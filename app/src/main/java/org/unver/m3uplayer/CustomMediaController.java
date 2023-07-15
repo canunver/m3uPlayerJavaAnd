@@ -441,7 +441,7 @@ public class CustomMediaController implements View.OnClickListener {
         if (aktifBolum == null) {
             this.m3uBilgiOynayan = m3uBilgi;
         } else {
-            this.m3uBilgiOynayan = M3UVeri.tumM3Ular.getOrDefault(aktifBolum.IDBul(), null);
+            this.m3uBilgiOynayan = M3UVeri.tumM3UListesi.getOrDefault(aktifBolum.IDBul(), null);
             if (this.m3uBilgiOynayan == null) {
                 this.m3uBilgiOynayan = m3uBilgi;
                 aktifBolum = null;

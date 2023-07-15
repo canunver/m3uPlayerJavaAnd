@@ -3,6 +3,8 @@ package org.unver.m3uplayer;
 import android.content.ContentValues;
 import android.database.sqlite.SQLiteDatabase;
 
+import androidx.annotation.NonNull;
+
 public class TVInfo {
     public int type;
     public long id;
@@ -23,9 +25,10 @@ public class TVInfo {
     public String[] origin_country;
     public int[] genre_ids;
 
-    public String toString()
-    {
-        return nameTitle() + "("+ yayinTarihiBul()  + ")";
+    @NonNull
+    @Override
+    public String toString() {
+        return nameTitle() + "(" + yayinTarihiBul() + ")";
     }
 
     public String yayinTarihiBul() {
@@ -43,6 +46,7 @@ public class TVInfo {
         return 0;
     }
 
+    @SuppressWarnings("all")
     public TVInfo() {
 
     }
@@ -73,6 +77,7 @@ public class TVInfo {
         this.origin_country = OrtakAlan.ConvertToArrayStr(origin_country);
         this.genre_ids = OrtakAlan.ConvertToArrayInt(genre_ids);
     }
+
     public TVInfo(int type, long id, String name, String air_date, String overview, double vote_average) {
         this.type = type;
         this.id = id;
@@ -108,6 +113,7 @@ public class TVInfo {
         return String.format("%s (%s) - %s, %s - %s", nameTitle(), yayinTarihiBul(), Original_name(), popularity, vote_average);
     }
 
+    @SuppressWarnings("all")
     public long Yaz(SQLiteDatabase db) {
         long rowId;
 
@@ -149,6 +155,6 @@ public class TVInfo {
     }
 
     public int voteAverage() {
-        return (int)vote_average*10;
+        return (int) vote_average * 10;
     }
 }
