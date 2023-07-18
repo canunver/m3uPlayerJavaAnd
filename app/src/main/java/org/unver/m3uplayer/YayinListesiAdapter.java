@@ -1,10 +1,6 @@
 package org.unver.m3uplayer;
 
 import android.annotation.SuppressLint;
-import android.graphics.Typeface;
-import android.text.Spannable;
-import android.text.SpannableString;
-import android.text.style.StyleSpan;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -16,12 +12,22 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.recyclerview.widget.RecyclerView;
+
+
+import com.adcolony.sdk.AdColony;
+import com.adcolony.sdk.AdColonyAdSize;
+import com.adcolony.sdk.AdColonyAdView;
+import com.adcolony.sdk.AdColonyAdViewListener;
+import com.adcolony.sdk.AdColonyZone;
 
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Comparator;
 
 public class YayinListesiAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
+    private static final int VIEW_TYPE_REKLAM = 99;
     private static final int VIEW_TYPE_FILM = 1;
     private static final int VIEW_TYPE_SERI = 2;
     private static final int VIEW_TYPE_TV = 0;
@@ -37,7 +43,9 @@ public class YayinListesiAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
     public int getItemViewType(int position) {
         // Determine the view type based on the position or data at that position
         M3UBilgi blg = data.get(position);
-        if (blg.Tur == M3UBilgi.M3UTur.film)
+        if (blg.ID.startsWith("Z_"))
+            return VIEW_TYPE_REKLAM;
+        else if (blg.Tur == M3UBilgi.M3UTur.film)
             return VIEW_TYPE_FILM;
         else if (blg.Tur == M3UBilgi.M3UTur.seri)
             return VIEW_TYPE_SERI;
@@ -48,7 +56,9 @@ public class YayinListesiAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
     @NonNull
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        if (viewType == VIEW_TYPE_FILM)
+        if (viewType == VIEW_TYPE_REKLAM)
+            return new ReklamViewHolder(LayoutInflater.from(parent.getContext()).inflate(R.layout.reklambanner, parent, false));
+        else if (viewType == VIEW_TYPE_FILM)
             return new FilmViewHolder(LayoutInflater.from(parent.getContext()).inflate(R.layout.filmitem, parent, false));
         else if (viewType == VIEW_TYPE_SERI)
             return new SeriViewHolder(LayoutInflater.from(parent.getContext()).inflate(R.layout.seriitem, parent, false));
@@ -59,13 +69,17 @@ public class YayinListesiAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
     @Override
     public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, int position) {
         M3UBilgi blg = data.get(position);
-        if (blg.Tur == M3UBilgi.M3UTur.tv)
-            ((KanalViewHolder) holder).bind(blg, position);
-        {
-            if (blg.Tur == M3UBilgi.M3UTur.film)
-                ((FilmViewHolder) holder).bind(blg, position);
-            else if (blg.Tur == M3UBilgi.M3UTur.seri)
-                ((SeriViewHolder) holder).bind(blg, position);
+        if (blg.ID.startsWith("Z_")) {
+            ((ReklamViewHolder) holder).bind(blg, position);
+        } else {
+            if (blg.Tur == M3UBilgi.M3UTur.tv)
+                ((KanalViewHolder) holder).bind(blg, position);
+            {
+                if (blg.Tur == M3UBilgi.M3UTur.film)
+                    ((FilmViewHolder) holder).bind(blg, position);
+                else if (blg.Tur == M3UBilgi.M3UTur.seri)
+                    ((SeriViewHolder) holder).bind(blg, position);
+            }
         }
     }
 
@@ -116,6 +130,55 @@ public class YayinListesiAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
                 }
                 yayinFragment.nesneSecildi(yayinFragment.kanalAdapter, islem, holder.getAdapterPosition(), sezon, bolum);
             }
+        }
+    }
+
+    public class ReklamViewHolder extends RecyclerView.ViewHolder {
+        private final ConstraintLayout blgReklam;
+        private AdColonyAdView reklam;
+
+        public ReklamViewHolder(@NonNull View itemView) {
+            super(itemView);
+            this.blgReklam = itemView.findViewById(R.id.blgReklam);
+        }
+
+        public void bind(M3UBilgi blg, int ignoredPosition) {
+            AdColonyAdViewListener listener = new AdColonyAdViewListener() {
+                @Override
+                public void onRequestFilled(AdColonyAdView adColonyAdView) {
+                    Log.d("REKLAM", "onRequestFilled");
+                    reklam = adColonyAdView;
+                    blgReklam.removeAllViews();
+                    blgReklam.addView(adColonyAdView);
+                }
+
+                @Override
+                public void onRequestNotFilled(AdColonyZone zone) {
+                    super.onRequestNotFilled(zone);
+                    Log.d("REKLAM", "onRequestNotFilled");
+                }
+
+                @Override
+                public void onOpened(AdColonyAdView ad) {
+                    super.onOpened(ad);
+                }
+
+                @Override
+                public void onClosed(AdColonyAdView ad) {
+                    super.onClosed(ad);
+                }
+
+                @Override
+                public void onClicked(AdColonyAdView ad) {
+                    super.onClicked(ad);
+                }
+
+                @Override
+                public void onLeftApplication(AdColonyAdView ad) {
+                    super.onLeftApplication(ad);
+                }
+            };
+            AdColony.requestAdView(MainActivity.ZONE_ID, listener, M3UVeri.mainActivity.aktifTur == M3UBilgi.M3UTur.tv ? AdColonyAdSize.BANNER : AdColonyAdSize.MEDIUM_RECTANGLE);
         }
     }
 
@@ -218,6 +281,12 @@ public class YayinListesiAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
             ArrayList<String> al = new ArrayList<>();
             int secSezon = 0;
             int secBolum = 0;
+            if (!blg.sirali) {
+                blg.seriSezonlari.sort((o1, o2) -> o1.sezonAd.compareTo(o2.sezonAd));
+                for (Sezon s : blg.seriSezonlari) {
+                    s.bolumler.sort((o1, o2) -> o1.bolum.compareTo(o2.bolum));
+                }
+            }
             for (int si = 0; si < blg.seriSezonlari.size(); si++) {
                 Sezon s = blg.seriSezonlari.get(si);
                 al.add(s.sezonAd);

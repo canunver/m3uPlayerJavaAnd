@@ -10,6 +10,8 @@ import java.util.ArrayList;
 
 public class M3UBilgi {
 
+    public boolean sirali = false;
+
     public String afisBul(int size) {
         tmdbBul();
         if (tmdbBag == null)
@@ -156,6 +158,21 @@ public class M3UBilgi {
         this.seyredilenSure = 0;
         DegerleriOlustur(m3uDosyaKod);
     }
+    public M3UBilgi() {
+        this.ID="Z_R";
+        this.eklemeTarih = null;
+        this.guncellemeTarih = null;
+        this.tvgId = null;
+        this.tvgName = null;
+        this.tvgLogo = null;
+        this.groupTitle = null;
+        this.urlAdres = null;
+        this.tmdbId = -1;
+        this.yetiskin = false;
+        this.gizli = false;
+        this.seyredilenSure = 0;
+    }
+
 
     public M3UBilgi(String ID, String tvgId, String tvgName, String tvgLogo, String groupTitle, String urlAdres, String tar, boolean gizli, boolean yetiskin, int tmdbId, String guncellemeTarih, long seyredilenSure) {
         this.ID = ID;

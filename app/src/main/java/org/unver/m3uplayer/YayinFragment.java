@@ -51,6 +51,8 @@ public class YayinFragment extends Fragment {
     public YayinListesiAdapter kanalAdapter;
     public String aktifGrupAd = "-";
     ArrayList<M3UBilgi> kanalListe = new ArrayList<>();
+    private int reklamSay = 0;
+
     AutoCompleteTextView grupSec;
     private LibVLC libVLC;
     private boolean buyuklukAyarlandi = false;
@@ -167,6 +169,7 @@ public class YayinFragment extends Fragment {
 
         recyclerView = currView.findViewById(R.id.recyclerView);
         kanalAdapter = new YayinListesiAdapter(this, kanalListe);
+        reklamSay = 0;
         LinearLayoutManager mLayoutManager = new LinearLayoutManager(this.getContext());
         recyclerView.setLayoutManager(mLayoutManager);
         recyclerView.setItemAnimator(new DefaultItemAnimator());
@@ -299,8 +302,10 @@ public class YayinFragment extends Fragment {
 
     private void Yukle(boolean ilk, boolean acilistan) {
         M3UGrup bulunanGrup = M3UVeri.GrupBul(M3UVeri.GrupDegiskenBul(mainActivity.aktifTur), aktifGrupAd, false);
-        if (ilk)
+        if (ilk) {
             kanalListe.clear();
+            reklamSay = 0;
+        }
         String aranacakProgram = null;
         if (acilistan) {
             if (OrtakAlan.son_tv_kanalini_oynatarak_basla && !OrtakAlan.StringIsNUllOrEmpty(OrtakAlan.sonTVProgramID))
@@ -308,7 +313,7 @@ public class YayinFragment extends Fragment {
             if (aranacakProgram == null)
                 aranacakProgram = OrtakAlan.sonProgramID;
         }
-        int basla = kanalListe.size();
+        int basla = kanalListe.size() - reklamSay;
         int scrollPos = 0;
         if (bulunanGrup != null) {
             int kanalSay = 0;
@@ -322,7 +327,15 @@ public class YayinFragment extends Fragment {
                     kanalListe.add(m3u);
                     if (aranacakProgram != null && aranacakProgram.equals(m3u.ID))
                         scrollPos = eklenenSay - 1;
+                    if (eklenenSay % 10 == 4) {
+                        kanalListe.add(new M3UBilgi());
+                        reklamSay++;
+                    }
                 }
+            }
+            if (reklamSay == 0) {
+                kanalListe.add(new M3UBilgi());
+                reklamSay++;
             }
         }
         if (ilk)

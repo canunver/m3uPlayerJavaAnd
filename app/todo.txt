@@ -1,5 +1,5 @@
 == YAPILACAK GELİŞTİRMELER
-- TODO: Parola değiştirme
+- TODO: Reklamlar
 == YAPILACAK İYİLEŞTİRMELER
 
 == YAPILANLAR
@@ -23,6 +23,7 @@
 + DONE: Hata düzelt: Başlangıçta, seri otomatik oynuyor ve ilk bölüm oynuyor
 + DONE: TMDB Türleri dil dosyasından oku
 + DONE: TMDBDil, değişkenlerden okunacak
++ DONE: Parola değiştirme
 
 
 Sonraki Sürümler:

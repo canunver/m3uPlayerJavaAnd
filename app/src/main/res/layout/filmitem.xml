@@ -18,7 +18,7 @@
         app:layout_constraintEnd_toEndOf="parent"
 
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"></ImageView>
+        app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
         android:id="@+id/filmAd"
@@ -69,14 +69,14 @@
             android:id="@+id/filmTmdb"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginLeft="7dp"
-            android:text="TMDB Bağla" />
+            android:layout_marginStart="7dp"
+            android:text="@string/tmdb_bagla" />
 
         <Button
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:visibility="gone"
-            android:layout_marginLeft="7dp"
-            android:text="Özellikler" />
+            android:layout_marginStart="7dp"
+            android:text="@string/uc_nokta" />
     </LinearLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>

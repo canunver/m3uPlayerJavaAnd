@@ -67,4 +67,17 @@
     <string name="tmdbBagYok">TMDB ile bağlantı kurarak, film özelliklerini görebilirsiniz!</string>
     <string name="aramaKayitYok">Arama sonucunda kayıt bulunamadı!</string>
     <string name="tmdb_erisim_dil">TMDB Veri Çekme Dili</string>
+    <string name="parola_giriniz">Parola Giriniz</string>
+    <string name="yeni_parola_giriniz1">Yeni Parola (1)</string>
+    <string name="yeni_parola_giriniz2">Yeni Parola (2)</string>
+    <string name="tmdb_bagla">TMDB Bağla</string>
+    <string name="bolum_cek">Bölüm Çek</string>
+    <string name="uc_nokta">...</string>
+    <string name="degistir">Değiştir</string>
+    <string name="hatali_parola">Girilen parola hatalı</string>
+    <string name="hata_parola_kisa">Parola en az 4 karakter olmalı</string>
+    <string name="hata_parola_bosluk">Parola boşluk karakteri içeremez</string>
+    <string name="hata_parola_ayni_degil">İki parola aynı değil</string>
+    <string name="kapat">Kapat</string>
+    <string name="parola_degisti">Parola değiştirildi</string>
 </resources>

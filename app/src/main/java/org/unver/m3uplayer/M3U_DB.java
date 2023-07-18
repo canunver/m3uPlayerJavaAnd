@@ -72,6 +72,8 @@ public class M3U_DB extends SQLiteOpenHelper {
                 + "ID TEXT,"
                 + "sira_No TEXT)"
         );
+
+        //CREATE INDEX M3U_tvgName ON M3U (tvgName)
     }
 
     @Override

@@ -14,6 +14,7 @@ import android.content.res.Configuration;
 import android.content.res.Resources;
 import android.os.Bundle;
 import android.os.Handler;
+import android.util.Log;
 import android.view.View;
 import android.view.Window;
 import android.view.inputmethod.InputMethodManager;
@@ -24,6 +25,8 @@ import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.TextView;
 
+import com.adcolony.sdk.AdColony;
+import com.adcolony.sdk.AdColonyAppOptions;
 import com.google.android.material.slider.RangeSlider;
 
 import java.util.Calendar;
@@ -52,6 +55,7 @@ public class MainActivity extends AppCompatActivity {
     @SuppressLint("MissingInflatedId")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        InitAd();
         super.onCreate(savedInstanceState);
         handler = new Handler();
 
@@ -157,14 +161,46 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
+
+    public static final String APP_ID = "app2b8ae3a5c3b8457283";
+    public static final String ZONE_ID = "vz1cc03d2d9b2a46fcab";
+    public static final String ZONE_ID_TAM = "vzd72f3e456e404d4f93";
+
+    //    public static final  String TAG = "AdColony Banner";
+    private void InitAd() {
+        AdColonyAppOptions appOptions = new AdColonyAppOptions()
+                .setKeepScreenOn(true)
+                .setTestModeEnabled(true); // Test modunu etkinleştirin
+
+        AdColony.configure(this, appOptions, APP_ID);
+
+        //AdColony.configure(this, APP_ID); //, ZONE_ID
+    }
+
     public void AyarlariKapat() {
-        if (grupFragment != null)
-            grupFragment = null;
-        if (ayarlarFragment != null)
+        boolean reklamGoster;
+        if (ayarlarFragment != null || grupFragment != null) {
             ayarlarFragment = null;
-        anaFragment = new YayinFragment(this);
-        getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, anaFragment).commit();
-        drawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_UNLOCKED);
+            grupFragment = null;
+            reklamGoster = true;
+        } else {
+            reklamGoster = false;
+        }
+        anaFragmentBaslat();
+        if(reklamGoster)
+            AdColony.requestInterstitial(ZONE_ID_TAM, new MyAdColonyInterstitialListener(this));
+    }
+
+    public void anaFragmentBaslat() {
+        Log.d("REKLAM", "anaFragmentBaslat1 ");
+
+        if(anaFragment == null) {
+            Log.d("REKLAM", "anaFragmentBaslat2");
+            anaFragment = new YayinFragment(this);
+            getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, anaFragment).commit();
+            drawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_UNLOCKED);
+            Log.d("REKLAM", "anaFragmentBaslat3");
+        }
     }
 
     @Override

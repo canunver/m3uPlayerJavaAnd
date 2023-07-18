@@ -30,6 +30,8 @@ public class M3UVeri {
     }
 
     public static void OkuBakayim(MainActivity mainActivity) {
+
+        Log.i("M3UVeri", "Oku bakayım");
         M3UVeri.mainActivity = mainActivity;
         tvGruplari.clear();
         seriGruplari.clear();
@@ -43,11 +45,11 @@ public class M3UVeri {
 
         String query = "SELECT GRUP.type_name, GRUP.gelenGrup, GRUP.gizli, GRUP.yetiskin, GRUPDETAY.ID  FROM GRUP LEFT OUTER JOIN GRUPDETAY ON GRUP.type_name = GRUPDETAY.type_name order by GRUP.gelenGrup, GRUP.type_name, GRUPDETAY.sira_No";
         Cursor cursorGrup = db.rawQuery(query, null);
+        Log.i("M3UVeri", "Raw query bitti");
 
         if (cursorGrup != null) {
             try {
                 if (cursorGrup.moveToFirst()) {
-                    Log.i("M3UVeriG", "İlk kayıt");
                     int type_nameIndex = cursorGrup.getColumnIndex("type_name");
                     int gelenGrupIndex = cursorGrup.getColumnIndex("gelenGrup");
                     int gizliIndex = cursorGrup.getColumnIndex("gizli");
@@ -73,14 +75,16 @@ public class M3UVeri {
                     } while (cursorGrup.moveToNext());
                 }
             } catch (Exception ex) {
-                Log.e("M3UVeriG", "Grup okunurken hata oldu:" + ex.getMessage());
+                Log.e("M3UVeri", "Grup okunurken hata oldu:" + ex.getMessage());
             } finally {
                 cursorGrup.close();
             }
         } else
-            Log.e("M3UVeriG", "Cursor null oldu...");
+            Log.e("M3UVeri", "Cursor null oldu...");
+        Log.i("M3UVeri", "Kullanıcı grupları bitti");
 
-        Cursor cursor = db.query(M3U_DB.TABLE_M3U, null, null, null, null, null, "groupTitle, tvgName");
+        Cursor cursor = db.query(M3U_DB.TABLE_M3U, null, null, null, null, null, null);
+        Log.i("M3UVeri", "M3U Table query bitti");
         if (cursor != null) {
             try {
                 if (cursor.moveToFirst()) {
@@ -126,17 +130,20 @@ public class M3UVeri {
             } finally {
                 cursor.close();
             }
-            Comparator<? super M3UGrup> grupKiyasla = (Comparator<M3UGrup>) (o1, o2) -> {
-                int result = (o1.gelenGrup == o2.gelenGrup) ? 0 : (o1.gelenGrup ? 1 : -1);
-                if (result == 0) {
-                    result = o1.grupAdi.compareTo(o2.grupAdi);
-                }
-                return result;
-            };
-            tvGruplari.sort(grupKiyasla);
-            filmGruplari.sort(grupKiyasla);
-            seriGruplari.sort(grupKiyasla);
         }
+        Log.i("M3UVeri", "Gruplar sıralanacak");
+
+        Comparator<? super M3UGrup> grupKiyasla = (Comparator<M3UGrup>) (o1, o2) -> {
+            int result = (o1.gelenGrup == o2.gelenGrup) ? 0 : (o1.gelenGrup ? 1 : -1);
+            if (result == 0) {
+                result = o1.grupAdi.compareTo(o2.grupAdi);
+            }
+            return result;
+        };
+        tvGruplari.sort(grupKiyasla);
+        filmGruplari.sort(grupKiyasla);
+        seriGruplari.sort(grupKiyasla);
+        Log.i("M3UVeri", "Okuma bitti");
     }
 
     public static void TMDByeIsle(TVInfo tvInfo) {

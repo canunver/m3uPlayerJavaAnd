@@ -34,7 +34,7 @@ public class OrtakAlan {
     public static boolean parolaVar = false;
     public static int TMDBTurDil = 1;
     public static int tmdb_erisim_dil = 0;
-    private static String parola = "";
+    public static String parola = "";
     public static String sonSezon = "";
     public static String sonBolum = "";
 
@@ -191,11 +191,20 @@ public class OrtakAlan {
         return "_";
     }
 
+
+    public static boolean parolaDogruMu(String parola) {
+        return parola.equals(OrtakAlan.parolaBul());
+    }
     public static void parolaGirildi(String parola) {
         if (parola.equals(OrtakAlan.parolaBul())) {
             parolaVar = true;
             M3UVeri.mainActivity.switchAdultRL.setVisibility(View.VISIBLE);
         }
+    }
+
+    public static void ParolaAta(String parolaYeni) {
+        parola = parolaYeni;
+        M3UVeri.AyarYaz("parola", parola);
     }
 
     private static String parolaBul() {
@@ -258,6 +267,5 @@ public class OrtakAlan {
 
         return result;
     }
-
 
 }
