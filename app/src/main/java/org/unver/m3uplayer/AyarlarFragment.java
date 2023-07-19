@@ -64,11 +64,12 @@ public class AyarlarFragment extends Fragment {
         yw = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, yw, getResources().getDisplayMetrics());
 
         int ow = (int) (yw * 0.75f);
-        int lw = yw - ow;
+        int lw = yw - ow - 20;
         YonelimAyarla(R.id.lblm3uAdresA, lw, R.id.m3uAdresA, ow, ConstraintSet.PARENT_ID);
         YonelimAyarla(R.id.lblm3uAdresB, lw, R.id.m3uAdresB, ow, R.id.m3uAdresA);
         YonelimAyarla(R.id.lblm3uAdresC, lw, R.id.m3uAdresC, ow, R.id.m3uAdresB);
         YonelimAyarla(R.id.lbltmdbErisimAnahtar, lw, R.id.tmdbErisimAnahtar, ow, R.id.m3uAdresC);
+        YonelimAyarla(R.id.lbltmdbErisimDil, lw, R.id.tmdbErisimDil, ow, R.id.tmdbErisimAnahtar);
 
         YonlendirmeAyarla();
 

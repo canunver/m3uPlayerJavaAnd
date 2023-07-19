@@ -1,5 +1,6 @@
 == YAPILACAK GELİŞTİRMELER
-- TODO: Reklamlar
+- TODO: Reklamlardan sonra ekran hatalı hesaplanıyor
+
 == YAPILACAK İYİLEŞTİRMELER
 
 == YAPILANLAR

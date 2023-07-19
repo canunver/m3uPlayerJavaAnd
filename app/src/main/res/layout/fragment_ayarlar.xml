@@ -9,7 +9,7 @@
 
     <TextView android:id="@+id/lblm3uAdresA"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="wrap_content"
         android:text="@string/m3u_internet_adresi_1"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
@@ -28,7 +28,7 @@
 
     <TextView android:id="@+id/lblm3uAdresB"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="wrap_content"
         android:text="@string/m3u_internet_adresi_2"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/m3uAdresA" />
@@ -47,7 +47,7 @@
 
     <TextView android:id="@+id/lblm3uAdresC"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="wrap_content"
         android:text="@string/m3u_internet_adresi_3"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/m3uAdresB" />
@@ -66,7 +66,7 @@
 
     <TextView android:id="@+id/lbltmdbErisimAnahtar"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="wrap_content"
         android:text="@string/tmdb_erisim_anahtar"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/m3uAdresC" />
@@ -83,10 +83,9 @@
         app:layout_constraintTop_toBottomOf="@id/lbltmdbErisimAnahtar"
         tools:ignore="LabelFor,SpeakableTextPresentCheck,VisualLintTextFieldSize" />
 
-
     <TextView android:id="@+id/lbltmdbErisimDil"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="wrap_content"
         android:text="@string/tmdb_erisim_dil"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/tmdbErisimAnahtar" />
@@ -103,7 +102,6 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/lbltmdbErisimDil"
         tools:ignore="LabelFor,SpeakableTextPresentCheck,VisualLintTextFieldSize" />
-
 
     <LinearLayout
         android:id="@+id/cbLayout"

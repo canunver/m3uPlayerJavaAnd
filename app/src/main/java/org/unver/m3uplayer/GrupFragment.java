@@ -70,7 +70,7 @@ public class GrupFragment extends Fragment {
 
         kullaniciGruplariOl(null);
 
-        Object[] donenlerGel = YayinFragment.GrupListesiOl(mainActivity, false, null, null, 2, false, true, true);
+        Object[] donenlerGel = YayinFragment.GrupListesiOl(mainActivity, false, null, null, 2, false, true, true, false);
         grupAdapterGel = (ArrayAdapter<String>) donenlerGel[0];
         grupAdapterGelArray = (ArrayList<String>) donenlerGel[2];
         grupSecGel = aktifFragment.findViewById(R.id.gelGrupSec);
@@ -215,8 +215,8 @@ public class GrupFragment extends Fragment {
             Toast.makeText(aktifFragment.getContext(), R.string.secilenGrupBulunamadi, Toast.LENGTH_SHORT).show();
     }
 
-    private void kullaniciGruplariOl(String simd) {
-        Object[] donenlerKul = YayinFragment.GrupListesiOl(mainActivity, false, null, simd, 1, false, true, true);
+    private void kullaniciGruplariOl(String simdikiSecili) {
+        Object[] donenlerKul = YayinFragment.GrupListesiOl(mainActivity, false, null, simdikiSecili, 1, false, true, true, true);
         grupAdapterKul = (ArrayAdapter<String>) donenlerKul[0];
         int yerIndKul = (int) donenlerKul[1];
         grupAdapterArray = (ArrayList<String>) donenlerKul[2];

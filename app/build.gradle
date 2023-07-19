@@ -40,7 +40,6 @@ dependencies {
     implementation 'org.videolan.android:libvlc-all:4.0.0-eap11'
 
     implementation 'com.adcolony:sdk:4.8.0'
-    implementation 'com.google.android.gms:play-services-ads-identifier:18.0.1'
 
     testImplementation 'junit:junit:4.13.2'
     androidTestImplementation 'androidx.test.ext:junit:1.1.5'

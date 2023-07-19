@@ -51,6 +51,7 @@ public class MainActivity extends AppCompatActivity {
     public Handler handler;
     public InputMethodManager imm;
     public View switchAdultRL;
+    private int reklamSay = 0;
 
     @SuppressLint("MissingInflatedId")
     @Override
@@ -182,24 +183,21 @@ public class MainActivity extends AppCompatActivity {
         if (ayarlarFragment != null || grupFragment != null) {
             ayarlarFragment = null;
             grupFragment = null;
-            reklamGoster = true;
+            reklamSay++;
+            reklamGoster = (reklamSay % 6 == 2);
         } else {
             reklamGoster = false;
         }
         anaFragmentBaslat();
-        if(reklamGoster)
-            AdColony.requestInterstitial(ZONE_ID_TAM, new MyAdColonyInterstitialListener(this));
+        if (reklamGoster)
+            AdColony.requestInterstitial(ZONE_ID_TAM, new MyAdColonyInterstitialListener());
     }
 
     public void anaFragmentBaslat() {
-        Log.d("REKLAM", "anaFragmentBaslat1 ");
-
-        if(anaFragment == null) {
-            Log.d("REKLAM", "anaFragmentBaslat2");
+        if (anaFragment == null) {
             anaFragment = new YayinFragment(this);
             getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, anaFragment).commit();
             drawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_UNLOCKED);
-            Log.d("REKLAM", "anaFragmentBaslat3");
         }
     }
 

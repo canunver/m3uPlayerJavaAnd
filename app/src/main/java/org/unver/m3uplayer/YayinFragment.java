@@ -234,7 +234,7 @@ public class YayinFragment extends Fragment {
     public void TurSecildi(int position, boolean acilistan) {
         mainActivity.aktifTur = M3UVeri.TurBul(position);
         String simdSecText = grupSec.getText().toString();
-        Object[] donenler = GrupListesiOl(mainActivity, acilistan, filtre, simdSecText, 0, true, false, false);
+        Object[] donenler = GrupListesiOl(mainActivity, acilistan, filtre, simdSecText, 0, true, false, false, false);
         grupAdapter = (ArrayAdapter<String>) donenler[0];
         int yerInd = (int) donenler[1];
         ArrayList<String> strList = (ArrayList<String>) donenler[2];
@@ -245,7 +245,7 @@ public class YayinFragment extends Fragment {
         }
     }
 
-    public static Object[] GrupListesiOl(MainActivity mainActivity, boolean acilistan, M3UFiltre filtre, String simd, int hepsi0Kul1Inen2, boolean bosKalmasin, boolean ozelliklerOlsun, boolean gizlilerOlsun) {
+    public static Object[] GrupListesiOl(MainActivity mainActivity, boolean acilistan, M3UFiltre filtre, String simd, int hepsi0Kul1Inen2, boolean bosKalmasin, boolean ozelliklerOlsun, boolean gizlilerOlsun, boolean detayYetiskinKontrol) {
         ArrayList<String> s = new ArrayList<>();
         ArrayList<M3UGrup> grupTutan = M3UVeri.GrupKodBul(M3UVeri.SiraBul(mainActivity.aktifTur));
 
@@ -263,9 +263,18 @@ public class YayinFragment extends Fragment {
         }
         for (M3UGrup item : grupTutan) {
             if (item.filtreyeUygunMu(filtre) && item.grupTurUygunMu(hepsi0Kul1Inen2) && item.gizliYetiskinDegilse(gizlilerOlsun)) {
-                s.add(item.grupAdiBul(ozelliklerOlsun, OrtakAlan.GizliBul(mainActivity), OrtakAlan.YetiskinBul(mainActivity)));
-                if (item.grupAdi != null && item.grupAdi.equals(simd))
-                    yerInd = s.size() - 1;
+                boolean ekle;
+                if(detayYetiskinKontrol && !OrtakAlan.yetiskinlerVar)
+                {
+                    ekle = !item.detaydaYetiskinVarMi();
+                }
+                else
+                    ekle = true;
+                if(ekle) {
+                    s.add(item.grupAdiBul(ozelliklerOlsun, OrtakAlan.GizliBul(mainActivity), OrtakAlan.YetiskinBul(mainActivity)));
+                    if (item.grupAdi != null && item.grupAdi.equals(simd))
+                        yerInd = s.size() - 1;
+                }
             }
         }
         if (bosKalmasin && s.isEmpty()) {

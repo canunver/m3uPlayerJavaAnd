@@ -193,4 +193,13 @@ public class M3UGrup {
         } else
             return false;
     }
+
+    public boolean detaydaYetiskinVarMi() {
+        if (kanallar == null) return false;
+        for (String m3uId : kanallar) {
+            M3UBilgi item = M3UVeri.tumM3UListesi.get(m3uId);
+            if (item.yetiskin) return true;
+        }
+        return false;
+    }
 }
