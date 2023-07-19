@@ -123,13 +123,12 @@ public class CustomMediaController implements View.OnClickListener {
                 layP.bottomMargin = ekranYerler[i].altMargin * birimH;
                 ekranYerler[i].button.requestLayout();
             }
-//            FrameLayout.LayoutParams laySes = (FrameLayout.LayoutParams) sesCubugu.getLayoutParams();
-//            laySes.width = birimW * 12;
-//            laySes.height = birimW * 3;
-//
-//            laySes.topMargin = SesUstBul();
-//            laySes.rightMargin = SesSagBul();
-//            sesCubugu.requestLayout();
+
+            FrameLayout.LayoutParams zamanCubuguLayoutParams = (FrameLayout.LayoutParams) zamanCubugu.getLayoutParams();
+            zamanCubuguLayoutParams.rightMargin = (int) (anchorView.getWidth() * 0.01); // Ayarlamak istediğiniz oranı belirleyin
+            zamanCubuguLayoutParams.leftMargin = (int) (anchorView.getWidth() * 0.01); // Ayarlamak istediğiniz oranı belirleyin
+            zamanCubuguLayoutParams.bottomMargin = (int) (anchorView.getHeight() * 0.005); // Ayarlamak istediğiniz oranı belirleyin
+
             return true;
         }
         return false;
@@ -451,7 +450,6 @@ public class CustomMediaController implements View.OnClickListener {
     public void BuyuklukAyarla() {
         if (TuslariAyarla()) {
             this.anchorView.requestLayout();
-            Log.d("CustomMediaController", "BuyuklukAyarla");
         }
     }
 

@@ -264,13 +264,11 @@ public class YayinFragment extends Fragment {
         for (M3UGrup item : grupTutan) {
             if (item.filtreyeUygunMu(filtre) && item.grupTurUygunMu(hepsi0Kul1Inen2) && item.gizliYetiskinDegilse(gizlilerOlsun)) {
                 boolean ekle;
-                if(detayYetiskinKontrol && !OrtakAlan.yetiskinlerVar)
-                {
+                if (detayYetiskinKontrol && !OrtakAlan.yetiskinlerVar) {
                     ekle = !item.detaydaYetiskinVarMi();
-                }
-                else
+                } else
                     ekle = true;
-                if(ekle) {
+                if (ekle) {
                     s.add(item.grupAdiBul(ozelliklerOlsun, OrtakAlan.GizliBul(mainActivity), OrtakAlan.YetiskinBul(mainActivity)));
                     if (item.grupAdi != null && item.grupAdi.equals(simd))
                         yerInd = s.size() - 1;
