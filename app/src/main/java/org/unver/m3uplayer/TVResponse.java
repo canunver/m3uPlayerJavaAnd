@@ -9,11 +9,9 @@ public class TVResponse {
         return results[i];
     }
 
-    public int page;
-    public int total_results;
-    public int total_pages;
     public TVInfo[] results;
 
+    @SuppressWarnings("all")
     public String ToListStr() {
         if (results == null)
             return "Not Found";

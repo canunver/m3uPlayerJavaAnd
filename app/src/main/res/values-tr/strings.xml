@@ -72,7 +72,7 @@
     <string name="yeni_parola_giriniz2">Yeni Parola (2)</string>
     <string name="tmdb_bagla">TMDB Bağla</string>
     <string name="bolum_cek">Bölüm Çek</string>
-    <string name="uc_nokta">...</string>
+    <string name="uc_nokta">…</string>
     <string name="degistir">Değiştir</string>
     <string name="hatali_parola">Girilen parola hatalı</string>
     <string name="hata_parola_kisa">Parola en az 4 karakter olmalı</string>
@@ -80,4 +80,5 @@
     <string name="hata_parola_ayni_degil">İki parola aynı değil</string>
     <string name="kapat">Kapat</string>
     <string name="parola_degisti">Parola değiştirildi</string>
+    <string name="ara">Ara</string>
 </resources>

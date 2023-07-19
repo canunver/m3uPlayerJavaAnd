@@ -57,7 +57,7 @@
                 android:layout_marginRight="2dp"
                 android:text="..."
                 android:textStyle="bold"
-                tools:ignore="HardcodedText" />
+                tools:ignore="HardcodedText,DuplicateSpeakableTextCheck" />
         </LinearLayout>
 
         <ListView
@@ -138,9 +138,10 @@
                 android:layout_marginStart="6dp"
                 android:layout_weight="1"
                 android:background="@android:drawable/editbox_background"
+                android:hint="@string/arama_metni_giriniz"
                 android:importantForAutofill="no"
                 android:inputType="text"
-                android:hint="@string/arama_metni_giriniz"
+                android:textColorHint="#757575"
                 tools:ignore="LabelFor,SpeakableTextPresentCheck,VisualLintTextFieldSize" />
 
             <ImageButton
@@ -155,7 +156,7 @@
                 android:focusable="true"
                 android:scaleType="fitCenter"
                 android:src="@android:drawable/ic_menu_search"
-                tools:ignore="ContentDescription,SpeakableTextPresentCheck" />
+                tools:ignore="ContentDescription,SpeakableTextPresentCheck,ImageContrastCheck" />
         </LinearLayout>
 
         <LinearLayout

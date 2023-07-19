@@ -60,19 +60,4 @@ public class M3UFiltre {
                 filmTurler[i] = FilmTurYonetim.TurKodBul(turler[i]);
         }
     }
-
-//    public M3UFiltre(M3UBilgi.M3UTur tur, String grupAd, String filtre, boolean pkulAra, boolean pdosAra, String pfilmTurler, String pnumMinPuan, String pnumMaxPuan, String pnumMinYil, String pnumMaxYil, boolean sadeceYeni, boolean detayli, int yeniGun) {
-//        this(tur, grupAd, filtre, detayli);
-//        this.kulAra = pkulAra;
-//        this.dosAra = pdosAra;
-//        if (!M3UListeArac.IsNullOrWhiteSpace(pfilmTurler))
-//            this.filmTurler = pfilmTurler.split(";");
-//        else
-//            this.filmTurler = null;
-//        this.numMinPuan = ProgSettings.ConvertToInt32(pnumMinPuan, -1);
-//        this.numMaxPuan = ProgSettings.ConvertToInt32(pnumMaxPuan, -1);
-//        this.numMinYil = ProgSettings.ConvertToInt32(pnumMinYil, -1);
-//        this.numMaxYil = ProgSettings.ConvertToInt32(pnumMaxYil, -1);
-//        this.sadeceYeni = sadeceYeni;
-//    }
 }

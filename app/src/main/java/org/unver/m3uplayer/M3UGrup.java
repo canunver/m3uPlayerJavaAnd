@@ -38,6 +38,7 @@ public class M3UGrup {
         }
     }
 
+    @SuppressWarnings("all")
     private String birlestir(String[] parcalar, int basla, char ulamaKar) {
         String donDeger = "";
         for (int i = basla; i < parcalar.length; i++) {
@@ -52,7 +53,8 @@ public class M3UGrup {
         if (filtre == null) return true;
         for (String m3uId : kanallar) {
             M3UBilgi item = M3UVeri.tumM3UListesi.get(m3uId);
-            if (item.FiltreUygunMu(filtre, false)) return true;
+            if (item != null)
+                if (item.FiltreUygunMu(filtre, false)) return true;
         }
         return false;
     }
@@ -78,11 +80,12 @@ public class M3UGrup {
             if (gizli) return false;
         }
         if (!OrtakAlan.yetiskinlerVar) {
-            if (yetiskin) return false;
+            return !yetiskin;
         }
         return true;
     }
 
+    @SuppressWarnings("all")
     public int adDegistir(SQLiteDatabase db, String yeniAd) {
         int rowsAffected;
 
@@ -101,6 +104,7 @@ public class M3UGrup {
         return rowsAffected;
     }
 
+    @SuppressWarnings("all")
     public long kaydet(SQLiteDatabase db) {
         long rowId;
 
@@ -133,12 +137,12 @@ public class M3UGrup {
             return grupAdi;
     }
 
+    @SuppressWarnings("all")
     public long kanalEkle(String kod) {
         this.kanallar.add(kod);
         ContentValues values = new ContentValues();
         ContentValueDoldur(values, kod, this.kanallar.size());
-        long rowId = M3UVeri.db.insertWithOnConflict(M3U_DB.TABLE_GRUPDETAY, null, values, SQLiteDatabase.CONFLICT_REPLACE);
-        return rowId;
+        return M3UVeri.db.insertWithOnConflict(M3U_DB.TABLE_GRUPDETAY, null, values, SQLiteDatabase.CONFLICT_REPLACE);
     }
 
     private void ContentValueDoldur(ContentValues values, String kod, int siraNo) {
@@ -197,8 +201,8 @@ public class M3UGrup {
     public boolean detaydaYetiskinVarMi() {
         if (kanallar == null) return false;
         for (String m3uId : kanallar) {
-            M3UBilgi item = M3UVeri.tumM3UListesi.get(m3uId);
-            if (item.yetiskin) return true;
+            M3UBilgi item = M3UVeri.tumM3UListesi.getOrDefault(m3uId, null);
+            if (item!=null && item.yetiskin) return true;
         }
         return false;
     }

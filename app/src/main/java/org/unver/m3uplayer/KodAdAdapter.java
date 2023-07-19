@@ -1,5 +1,6 @@
 package org.unver.m3uplayer;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.graphics.Color;
 import android.view.View;
@@ -23,6 +24,7 @@ public class KodAdAdapter extends ArrayAdapter<KodAd> {
         this.selectedItemPosition = -1;
     }
 
+    @SuppressLint("SetTextI18n")
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
         View view = super.getView(position, convertView, parent);
@@ -37,7 +39,7 @@ public class KodAdAdapter extends ArrayAdapter<KodAd> {
             view.setBackgroundColor(Color.WHITE);
             textView.setTextColor(Color.BLACK);
         }
-        textView.setText((position + 1) + "-" + ka.toString());
+        textView.setText((position + 1) + "-" + ka);
         return view;
     }
 

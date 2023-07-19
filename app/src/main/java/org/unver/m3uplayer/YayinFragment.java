@@ -64,8 +64,6 @@ public class YayinFragment extends Fragment {
     ArrayAdapter<String> grupAdapter;
     private String otoAc = null;
     private M3UBilgi.M3UTur otoTur;
-    private String otoSezon = null;
-    private String otoBolum = null;
     private boolean pauseBaslat;
     private boolean tamEkranBaslat;
     private boolean ilkPlay;
@@ -294,8 +292,6 @@ public class YayinFragment extends Fragment {
         if (acilistan) {
             otoAc = null;
             otoTur = M3UBilgi.M3UTur.tv;
-            otoSezon = null;
-            otoBolum = null;
             if (OrtakAlan.son_tv_kanalini_oynatarak_basla) {
                 if (!OrtakAlan.StringIsNUllOrEmpty(OrtakAlan.sonTVProgramID)) {
                     otoAc = OrtakAlan.sonTVProgramID;

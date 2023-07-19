@@ -3,17 +3,14 @@ package org.unver.m3uplayer;
 import android.annotation.SuppressLint;
 import android.graphics.Color;
 import android.os.Handler;
-import android.util.Log;
 import android.view.Gravity;
 import android.view.Menu;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 
-import androidx.annotation.NonNull;
 import androidx.appcompat.widget.PopupMenu;
 
 import com.google.android.material.slider.RangeSlider;
@@ -35,8 +32,6 @@ public class CustomMediaController implements View.OnClickListener {
     private Handler hideHandler;
     private FrameLayout frameLayout;
     public boolean tamEkran;
-    private boolean durdurulabilir = true;
-    private long currentMS;
     private int currentSec;
     private Date baslamaZamani;
     private int currentMin;
@@ -45,9 +40,6 @@ public class CustomMediaController implements View.OnClickListener {
     public String bolum;
     public String sezon;
     private long totalMs;
-    private boolean aranaBilir;
-    //private boolean sesCubuguGizli = true;
-    //private SeekBar sesCubugu;
 
     private int birimW = 6;
     private int birimH = 6;
@@ -78,7 +70,7 @@ public class CustomMediaController implements View.OnClickListener {
         return false;
     }
 
-    private static EkranYer[] ekranYerler = new EkranYer[]{
+    private static final EkranYer[] ekranYerler = new EkranYer[]{
             new EkranYer(R.drawable.baseline_fullscreen_24, 4, Gravity.TOP | Gravity.END, 0, 3, 0, 0), //0 Ekranı kapla tuşu yeri
             new EkranYer(R.drawable.baseline_autorenew_24, 4, Gravity.TOP | Gravity.END, 0, 8, 0, 0), //0 reLoad tuşu
 
@@ -112,16 +104,16 @@ public class CustomMediaController implements View.OnClickListener {
 
     private boolean TuslariAyarla() {
         if (GetWH()) {
-            for (int i = 0; i < ekranYerler.length; i++) {
-                FrameLayout.LayoutParams layP = (FrameLayout.LayoutParams) ekranYerler[i].button.getLayoutParams();
-                layP.width = ekranYerler[i].buyukluk * birimW;
-                layP.height = ekranYerler[i].buyukluk * birimH;
+            for (EkranYer ekranYer : ekranYerler) {
+                FrameLayout.LayoutParams layP = (FrameLayout.LayoutParams) ekranYer.button.getLayoutParams();
+                layP.width = ekranYer.buyukluk * birimW;
+                layP.height = ekranYer.buyukluk * birimH;
 
-                layP.rightMargin = ekranYerler[i].sagMargin * birimW;
-                layP.leftMargin = ekranYerler[i].solMargin * birimW;
-                layP.topMargin = ekranYerler[i].ustMargin * birimH;
-                layP.bottomMargin = ekranYerler[i].altMargin * birimH;
-                ekranYerler[i].button.requestLayout();
+                layP.rightMargin = ekranYer.sagMargin * birimW;
+                layP.leftMargin = ekranYer.solMargin * birimW;
+                layP.topMargin = ekranYer.ustMargin * birimH;
+                layP.bottomMargin = ekranYer.altMargin * birimH;
+                ekranYer.button.requestLayout();
             }
 
             FrameLayout.LayoutParams zamanCubuguLayoutParams = (FrameLayout.LayoutParams) zamanCubugu.getLayoutParams();
@@ -133,14 +125,6 @@ public class CustomMediaController implements View.OnClickListener {
         }
         return false;
     }
-
-//    private int SesSagBul() {
-//        return 23 * birimW - birimW * 4;
-//    }
-//
-//    private int SesUstBul() {
-//        return 8 * birimH;
-//    }
 
     private void createButton(int buttonId) {
         ImageButton button = new ImageButton(yayinFragment.mainActivity);
@@ -162,6 +146,7 @@ public class CustomMediaController implements View.OnClickListener {
         ekranYerler[buttonId].button = button;
     }
 
+    @SuppressLint("DefaultLocale")
     private RangeSlider zamanCubuguOlustur() {
         RangeSlider zamanCubugu = new RangeSlider(yayinFragment.mainActivity);
         FrameLayout.LayoutParams zamanCubuguLayoutParams = new FrameLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
@@ -174,14 +159,10 @@ public class CustomMediaController implements View.OnClickListener {
         zamanCubugu.setValueTo(1f);
         zamanCubugu.setValues(0f);
         frameLayout.addView(zamanCubugu, zamanCubuguLayoutParams);
-        zamanCubugu.addOnChangeListener(new RangeSlider.OnChangeListener() {
-            @SuppressLint("RestrictedApi")
-            @Override
-            public void onValueChange(@NonNull RangeSlider slider, float value, boolean fromUser) {
-                if (fromUser) {
-                    mediaPlayer.setTime((long) value * 1000);
-                    resetTimeout();
-                }
+        zamanCubugu.addOnChangeListener((slider, value, fromUser) -> {
+            if (fromUser) {
+                mediaPlayer.setTime((long) value * 1000);
+                resetTimeout();
             }
         });
 
@@ -195,45 +176,6 @@ public class CustomMediaController implements View.OnClickListener {
 
         return zamanCubugu;
     }
-
-//    private SeekBar sesCubuguOlustur(int gravity) {
-//        SeekBar sesCubugu = new SeekBar(playerFragment.mainActivity);
-//        FrameLayout.LayoutParams sesCubuguLayoutParams = new FrameLayout.LayoutParams(birimW * 12, birimH * 3);
-//        sesCubugu.setBackgroundColor(Color.GREEN);
-//        sesCubuguLayoutParams.gravity = gravity;
-//        sesCubuguLayoutParams.topMargin = SesUstBul();
-//        sesCubuguLayoutParams.rightMargin = SesSagBul();
-//        sesCubugu.setRotation(90);
-//
-//        sesCubugu.setPadding (0, 0 ,0 , 0);
-//
-//        sesCubugu.setMax(10);
-//        sesCubugu.setProgress(0);
-//        frameLayout.addView(sesCubugu, sesCubuguLayoutParams);
-//        sesCubugu.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
-//            @Override
-//            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-//                if(fromUser)
-//                {
-//                    resetTimeout();
-//                    mediaPlayer.setVolume(progress*20);
-//                }
-//            }
-//
-//            @Override
-//            public void onStartTrackingTouch(SeekBar seekBar) {
-//
-//            }
-//
-//            @Override
-//            public void onStopTrackingTouch(SeekBar seekBar) {
-//
-//            }
-//        });
-//
-//        return sesCubugu;
-//    }
-
 
     @Override
     public void onClick(View view) {
@@ -249,33 +191,6 @@ public class CustomMediaController implements View.OnClickListener {
         } else if (view == ekranYerler[8].button) { // Konuşma butonu
             SecenekleriYap(8);
         }
-//        else if (view == ekranYerler[9].button) { // Konuşma butonu
-//            Log.d("M3UVeri", "ses:" + mediaPlayer.getVolume());
-//            try {
-//                int resId;
-//                if (mediaPlayer.getVolume() == 0) {
-//                    mediaPlayer.setVolume(100);
-//                    resId = R.drawable.baseline_music_note_24;
-//                } else {
-//                    mediaPlayer.setVolume(0);
-//                    resId = R.drawable.baseline_music_off_24;
-//                }
-//                Log.d("M3UVeri", "res:" + resId);
-//                ekranYerler[9].button.setImageResource(resId);
-//            }
-//            catch (Exception ex)
-//            {
-//                Log.d("M3UVeri", ex.getMessage());
-//            }
-//        }
-
-//        else if (view == ekranYerler[1].button) {
-//            // Altyazı tuşuna tıklandığında yapılacak işlemler
-//        } else if (view == ekranYerler[1].button) {
-//            // Ses tuşuna tıklandığında yapılacak işlemler
-//        } else if (view == ekranYerler[1].button) {
-//            // Hız tuşuna tıklandığında yapılacak işlemler
-//        }
     }
 
     private void SecenekleriYap(int sira) {
@@ -292,13 +207,10 @@ public class CustomMediaController implements View.OnClickListener {
         for (int i = 0; i < secenekler.length; i++) {
             Media.Track secenek = secenekler[i];
             menu.add(Menu.NONE, i, Menu.NONE, secenek.language + ":" + secenek.name)
-                    .setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
-                        @Override
-                        public boolean onMenuItemClick(MenuItem item) {
-                            int secId = item.getItemId();
-                            mediaPlayer.selectTrack(secenekler[secId].id);
-                            return true;
-                        }
+                    .setOnMenuItemClickListener(item -> {
+                        int secId = item.getItemId();
+                        mediaPlayer.selectTrack(secenekler[secId].id);
+                        return true;
                     });
         }
 
@@ -360,18 +272,11 @@ public class CustomMediaController implements View.OnClickListener {
         if (this.visibleHide == View.VISIBLE) hideHandler.postDelayed(hideRunnable, timeout);
     }
 
-    private Runnable hideRunnable = new Runnable() {
-        @Override
-        public void run() {
-            showHide(View.GONE);
-        }
-    };
+    private final Runnable hideRunnable = () -> showHide(View.GONE);
 
     public void showHide(int visibleHide) {
         frameLayout.setVisibility(visibleHide);
-//        for (View child: kontrolListesi) {
-//            child.setVisibility(visibleHide);
-//        }
+
         this.visibleHide = visibleHide;
         if (this.visibleHide == View.VISIBLE) resetTimeout();
     }
@@ -382,8 +287,8 @@ public class CustomMediaController implements View.OnClickListener {
     }
 
     public void BilgiAyarla(boolean pauseBaslat) {
-        this.durdurulabilir = mediaPlayer.isSeekable();
-        this.aranaBilir = mediaPlayer.isSeekable();
+///        boolean durdurulabilir = mediaPlayer.isSeekable();
+///        boolean aranaBilir = mediaPlayer.isSeekable();
         this.totalMs = mediaPlayer.getLength();
         this.pauseBaslat = pauseBaslat;
         baslamaZamani = new Date();
@@ -400,13 +305,12 @@ public class CustomMediaController implements View.OnClickListener {
             zamanCubugu.setVisibility(View.GONE);
     }
 
-    private String BolumSezonAd() {
-        if (bolum == null || sezon == null) return "";
-        else return "(" + sezon + "/" + bolum + ")";
-    }
+///    private String BolumSezonAd() {
+///        if (bolum == null || sezon == null) return "";
+///        else return "(" + sezon + "/" + bolum + ")";
+///    }
 
     public void ZamanAyarla(long timeChanged) {
-        currentMS = timeChanged;
         int lCurrentSec = (int) (timeChanged / 1000);
         if (lCurrentSec != currentSec) {
             currentSec = lCurrentSec;

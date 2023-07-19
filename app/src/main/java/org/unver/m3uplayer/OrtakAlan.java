@@ -10,7 +10,6 @@ import android.util.Log;
 import android.view.View;
 
 import java.text.SimpleDateFormat;
-import java.util.AbstractCollection;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
@@ -190,7 +189,6 @@ public class OrtakAlan {
         if (kodMu) return kod;
         return "_";
     }
-
 
     public static boolean parolaDogruMu(String parola) {
         return parola.equals(OrtakAlan.parolaBul());

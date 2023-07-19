@@ -11,10 +11,8 @@ import android.annotation.SuppressLint;
 import android.app.AlertDialog;
 import android.content.pm.ActivityInfo;
 import android.content.res.Configuration;
-import android.content.res.Resources;
 import android.os.Bundle;
 import android.os.Handler;
-import android.util.Log;
 import android.view.View;
 import android.view.Window;
 import android.view.inputmethod.InputMethodManager;
@@ -65,7 +63,7 @@ public class MainActivity extends AppCompatActivity {
         drawerLayout = findViewById(R.id.drawerLayout);
         //NavigationView navigationView = findViewById(R.id.navigationView);
         M3UVeri.OkuBakayim(this);
-        OrtakAlan.AyarlariOku(Resources.getSystem().getConfiguration().locale.getLanguage());
+        OrtakAlan.AyarlariOku(getApplicationContext().getResources().getConfiguration().getLocales().toLanguageTags());
 
         AyarlariKapat();
 
@@ -75,7 +73,7 @@ public class MainActivity extends AppCompatActivity {
         turSecDDL.setAdapter(aaTur);
         turSecDDL.setText(aaTur.getItem(0), false);
 
-        filtreAlan = (EditText) findViewById(R.id.filtreAd);
+        filtreAlan = findViewById(R.id.filtreAd);
         msTur = findViewById(R.id.msTur);
         turAlDialog = DialogTanimlar.TurAl(this, FilmTurYonetim.TurIsimler(1), msTur);
         DialogTanimlar.TMDBDialogOl(this);

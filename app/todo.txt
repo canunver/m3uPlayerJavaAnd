@@ -1,5 +1,4 @@
 == YAPILACAK GELİŞTİRMELER
-- TODO: Reklamlardan sonra ekran hatalı hesaplanıyor
 
 == YAPILACAK İYİLEŞTİRMELER
 
@@ -20,7 +19,7 @@
 + DONE: 8.07.2023 tmdb bölüm çekme işlemi yapılınca ekrandaki görüntü refresh edilmeli
 + DONE: 9.07.2023 internetten kanal çekmeyi 3 M3U adresi için de yap
 + DONE: Diziler geldiğinde, son seyredilen otomatik seçili gelsin.
-+ DONE: Puan, Türler,  Yayın Tarihi bilgileri gelecek
++ DONE: Puan, Türler, Yayın Tarihi bilgileri gelecek
 + DONE: Hata düzelt: Başlangıçta, seri otomatik oynuyor ve ilk bölüm oynuyor
 + DONE: TMDB Türleri dil dosyasından oku
 + DONE: TMDBDil, değişkenlerden okunacak

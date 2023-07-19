@@ -1,5 +1,6 @@
 package org.unver.m3uplayer;
 
+import android.annotation.SuppressLint;
 import android.util.Log;
 
 import java.util.Calendar;
@@ -9,10 +10,9 @@ import java.util.TimerTask;
 public class ArkaPlanIslemleri {
 
     private static Timer timer = null;
-    private static boolean isPaused;
     private static final long INTERVAL = 10 * 60 * 1000; // 10 dakika
+    @SuppressLint("StaticFieldLeak")
     private static MainActivity mainActivity;
-    private int state = 0;
 
     public static void baslat(MainActivity mMainActivity) {
         mainActivity = mMainActivity;
@@ -25,7 +25,7 @@ public class ArkaPlanIslemleri {
         timer.scheduleAtFixedRate(new TimerTask() {
             @Override
             public void run() {
-                if (!isPaused && !mainActivity.VeriCekiliyorMu()) {
+                if (!mainActivity.VeriCekiliyorMu()) {
                     performBackgroundTask();
                 }
             }
@@ -62,17 +62,5 @@ public class ArkaPlanIslemleri {
         if (timer != null)
             timer.cancel();
         timer = null;
-    }
-
-    // Servis durumu değiştiğinde
-    public void setPaused(boolean paused) {
-        isPaused = paused;
-        //showGif();
-    }
-
-    // Veri türü değiştiğinde
-    public void setState(int state) {
-        this.state = state;
-        //showGif();
     }
 }

@@ -1,7 +1,6 @@
 package org.unver.m3uplayer;
 
 import android.annotation.SuppressLint;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -66,6 +65,7 @@ public class YayinListesiAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
             return new KanalViewHolder(LayoutInflater.from(parent.getContext()).inflate(R.layout.kanalitem, parent, false));
     }
 
+    @SuppressWarnings("all")
     @Override
     public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, int position) {
         M3UBilgi blg = data.get(position);
@@ -132,22 +132,19 @@ public class YayinListesiAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
             }
         }
     }
-
+    @SuppressWarnings("all")
     public class ReklamViewHolder extends RecyclerView.ViewHolder {
         private final ConstraintLayout blgReklam;
-        private AdColonyAdView reklam;
 
         public ReklamViewHolder(@NonNull View itemView) {
             super(itemView);
             this.blgReklam = itemView.findViewById(R.id.blgReklam);
         }
 
-        public void bind(M3UBilgi blg, int ignoredPosition) {
+        public void bind(M3UBilgi ignoredBlg, int ignoredPosition) {
             AdColonyAdViewListener listener = new AdColonyAdViewListener() {
                 @Override
                 public void onRequestFilled(AdColonyAdView adColonyAdView) {
-                    Log.d("REKLAM", "onRequestFilled");
-                    reklam = adColonyAdView;
                     blgReklam.removeAllViews();
                     blgReklam.addView(adColonyAdView);
                 }
@@ -155,7 +152,6 @@ public class YayinListesiAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
                 @Override
                 public void onRequestNotFilled(AdColonyZone zone) {
                     super.onRequestNotFilled(zone);
-                    Log.d("REKLAM", "onRequestNotFilled");
                 }
 
                 @Override
@@ -282,9 +278,9 @@ public class YayinListesiAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
             int secSezon = 0;
             int secBolum = 0;
             if (!blg.sirali) {
-                blg.seriSezonlari.sort((o1, o2) -> o1.sezonAd.compareTo(o2.sezonAd));
+                blg.seriSezonlari.sort(Comparator.comparing(o -> o.sezonAd));
                 for (Sezon s : blg.seriSezonlari) {
-                    s.bolumler.sort((o1, o2) -> o1.bolum.compareTo(o2.bolum));
+                    s.bolumler.sort(Comparator.comparing(o -> o.bolum));
                 }
             }
             for (int si = 0; si < blg.seriSezonlari.size(); si++) {

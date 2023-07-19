@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<menu xmlns:android="http://schemas.android.com/apk/res/android">
+<menu xmlns:tools="http://schemas.android.com/tools"
+    xmlns:android="http://schemas.android.com/apk/res/android">
     <item
         android:id="@+id/action_yukari_tasi"
         android:title="@string/kanallari_yukari_tasi" />
@@ -16,7 +17,8 @@
         android:id="@+id/action_knl_yet_normal"
         android:title="@string/kanallari_yetiskin_yap_yapma" />
 
-    <item android:title="-----------" android:enabled="false" />
+    <item android:title="-----------" android:enabled="false"
+        tools:ignore="HardcodedText" />
 
     <item
         android:id="@+id/action_grp_yeni"

@@ -22,17 +22,15 @@ public class M3UListeArac {
             try {
                 InputStream iStream = new URL(url).openStream();
                 Bitmap image = BitmapFactory.decodeStream(iStream);
-                handler.post(()->{
-                    imageView.setImageBitmap(image);
-                });
+                handler.post(()-> imageView.setImageBitmap(image));
             } catch (Exception e) {
                 Log.d("URL", e.getMessage());
             }
         });
     }
 
+    @SuppressWarnings("all")
     public static String DegerBul(String line, String anahtar) {
-
         String deger = "";
         int yer = line.indexOf(anahtar + "=");
         if (yer > 0)
@@ -57,9 +55,9 @@ public class M3UListeArac {
 
     public static boolean IsNullOrWhiteSpace(String str) {
         if (str == null) return true;
-        if (str == "") return true;
+        if (str.length() == 0) return true;
 
-        if( str.trim() == "") return true;
+        if( str.trim().length() == 0) return true;
         return false;
     }
 }
