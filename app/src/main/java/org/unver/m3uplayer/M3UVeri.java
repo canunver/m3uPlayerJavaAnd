@@ -123,7 +123,6 @@ public class M3UVeri {
                             minYil = m3u.filmYilInt;
                         GruplaraIsle(m3u, true);
                     } while (cursor.moveToNext());
-                    if (minYil > 3000) minYil = 0;
                 }
             } catch (Exception ex) {
                 Log.e("M3UVeriG", "M3U okunurken hata oldu:" + ex.getMessage());
@@ -132,6 +131,7 @@ public class M3UVeri {
             }
         }
         Log.i("M3UVeri", "Gruplar sıralanacak");
+        if (minYil > 3000) minYil = 0;
 
         Comparator<? super M3UGrup> grupKiyasla = (Comparator<M3UGrup>) (o1, o2) -> {
             int result = (o1.gelenGrup == o2.gelenGrup) ? 0 : (o1.gelenGrup ? 1 : -1);

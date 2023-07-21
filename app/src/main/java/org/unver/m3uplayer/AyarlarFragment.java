@@ -79,11 +79,11 @@ public class AyarlarFragment extends Fragment {
         txttmdbErisimAnahtar = currView.findViewById(R.id.tmdbErisimAnahtar);
         spntmdbErisimDil = currView.findViewById(R.id.tmdbErisimDil);
         chksonTvKanalBaslat = currView.findViewById(R.id.sonTvKanalBaslat);
-        chktamEkranBaslat= currView.findViewById(R.id.tamEkranBaslat);
+        chktamEkranBaslat = currView.findViewById(R.id.tamEkranBaslat);
 
-        txtm3uAdresA.setText(OrtakAlan.m3u_internet_adresi_1);
-        txtm3uAdresB.setText(OrtakAlan.m3u_internet_adresi_2);
-        txtm3uAdresC.setText(OrtakAlan.m3u_internet_adresi_3);
+        txtm3uAdresA.setText(OrtakAlan.m3uAdresAl(1));
+        txtm3uAdresB.setText(OrtakAlan.m3uAdresAl(2));
+        txtm3uAdresC.setText(OrtakAlan.m3uAdresAl(3));
         txttmdbErisimAnahtar.setText(OrtakAlan.tmdb_erisim_anahtar);
         spntmdbErisimDil.setSelection(OrtakAlan.tmdb_erisim_dil);
         chksonTvKanalBaslat.setChecked(OrtakAlan.son_tv_kanalini_oynatarak_basla);
@@ -91,9 +91,9 @@ public class AyarlarFragment extends Fragment {
 
         View kaydetTus = currView.findViewById(R.id.btnKaydet);
         kaydetTus.setOnClickListener(v -> {
-            OrtakAlan.m3u_internet_adresi_1 = txtm3uAdresA.getText().toString();
-            OrtakAlan.m3u_internet_adresi_2 = txtm3uAdresB.getText().toString();
-            OrtakAlan.m3u_internet_adresi_3 = txtm3uAdresC.getText().toString();
+            OrtakAlan.adresDegerAta(1, txtm3uAdresA.getText().toString());
+            OrtakAlan.adresDegerAta(2, txtm3uAdresB.getText().toString());
+            OrtakAlan.adresDegerAta(3, txtm3uAdresC.getText().toString());
             OrtakAlan.tmdb_erisim_anahtar = txttmdbErisimAnahtar.getText().toString();
             OrtakAlan.tmdb_erisim_dil = spntmdbErisimDil.getSelectedItemPosition();
             OrtakAlan.son_tv_kanalini_oynatarak_basla = chksonTvKanalBaslat.isChecked();

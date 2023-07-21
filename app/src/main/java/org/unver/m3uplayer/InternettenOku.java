@@ -25,7 +25,7 @@ import javax.net.ssl.X509TrustManager;
 
 public class InternettenOku {
 
-    private void Ekle( SQLiteDatabase db, String kod, String ilkSatir, String ikinciSatir, String suAn) {
+    private void Ekle(SQLiteDatabase db, String kod, String ilkSatir, String ikinciSatir, String suAn) {
         M3UBilgi m3u = new M3UBilgi(kod,
                 M3UListeArac.DegerBul(ilkSatir, "tvg-id"),
                 M3UListeArac.DegerBul(ilkSatir, "tvg-name"),
@@ -55,13 +55,13 @@ public class InternettenOku {
                     String urlAddress;
                     if (i == 1) {
                         kod = "A";
-                        urlAddress = OrtakAlan.m3u_internet_adresi_1;
+                        urlAddress = OrtakAlan.m3uAdresAl(1);
                     } else if (i == 2) {
                         kod = "B";
-                        urlAddress = OrtakAlan.m3u_internet_adresi_2;
+                        urlAddress = OrtakAlan.m3uAdresAl(2);
                     } else { //3
                         kod = "C";
-                        urlAddress = OrtakAlan.m3u_internet_adresi_3;
+                        urlAddress = OrtakAlan.m3uAdresAl(3);
                     }
                     if (OrtakAlan.StringIsNUllOrEmpty(urlAddress)) continue;
                     //Log.i("M3UVeri", "Internetten veri alınacak");
@@ -101,7 +101,7 @@ public class InternettenOku {
                         reader.close();
                         if (!hataVar) {
                             //Log.i("M3UVeri", "Internet verisi işlendi");
-                            OrtakAlan.sonCekilmeZamaniYaz();
+                            OrtakAlan.sonCekilmeZamaniniSimdiYap();
                         }
                     }
                     connection.disconnect();
@@ -343,7 +343,7 @@ public class InternettenOku {
                     }
                     for (String bolumM3UId : bb.blm.ids) {
                         M3UBilgi bolM3u = M3UVeri.tumM3UListesi.getOrDefault(bolumM3UId, null);
-                        if(bolM3u != null) {
+                        if (bolM3u != null) {
                             bolM3u.tmdbId = yazId;
                             bolM3u.Yaz(M3UVeri.db);
                         }

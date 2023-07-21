@@ -282,6 +282,7 @@ public class YayinListesiAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
                 for (Sezon s : blg.seriSezonlari) {
                     s.bolumler.sort(Comparator.comparing(o -> o.bolum));
                 }
+                blg.sirali = true;
             }
             for (int si = 0; si < blg.seriSezonlari.size(); si++) {
                 Sezon s = blg.seriSezonlari.get(si);

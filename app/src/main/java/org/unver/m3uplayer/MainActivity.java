@@ -29,7 +29,6 @@ import com.google.android.material.slider.RangeSlider;
 
 import java.util.Calendar;
 
-
 public class MainActivity extends AppCompatActivity {
     public boolean TVInfoOkundu = false;
     public DrawerLayout drawerLayout;
@@ -168,12 +167,9 @@ public class MainActivity extends AppCompatActivity {
     //    public static final  String TAG = "AdColony Banner";
     private void InitAd() {
         AdColonyAppOptions appOptions = new AdColonyAppOptions()
-                .setKeepScreenOn(true)
-                .setTestModeEnabled(true); // Test modunu etkinleştirin
-
+                .setKeepScreenOn(true);
+                //.setTestModeEnabled(true); // Test modunu etkinleştirin
         AdColony.configure(this, appOptions, APP_ID);
-
-        //AdColony.configure(this, APP_ID); //, ZONE_ID
     }
 
     public void AyarlariKapat() {

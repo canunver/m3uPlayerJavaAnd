@@ -1,9 +1,9 @@
 <resources>
-    <string name="app_name" translatable="false">M3UPlayer</string>
+    <string name="app_name" translatable="false">CNU M3U Player</string>
     <string name="NoEPG">"EPG Not Supported Yet"</string>
     <string-array name="turListesi">
-        <item>Channel</item>
-        <item>Film</item>
+        <item>Channels</item>
+        <item>Movies</item>
         <item>Series</item>
     </string-array>
 
@@ -54,7 +54,7 @@
     <string name="YetiskinIlkHarf">A</string>
     <string name="zatenListedeVar">Item already exist in list!</string>
     <string name="bulunanlarEklendi">Found items added to selection box.</string>
-    <string name="secilenGrupBulunamadi">Groıp did not found!</string>
+    <string name="secilenGrupBulunamadi">Group could not found!</string>
     <string name="tamEkranBaslat">Start full screen</string>
     <string name="onaySilmeBaslik">Confirmation for deletion</string>
     <string name="onaySilmeMesaj">Selected items will be removed from group, OK?</string>
@@ -65,19 +65,19 @@
     <string name="filmOzellik">Votes:%s, Type:%s,  Date:%s</string>
     <string name="tmdbBagYok">You have to enter TMDB key to see properties!</string>
     <string name="aramaKayitYok">No record found!</string>
-    <string name="tmdb_erisim_dil">TMDB Veri Çekme Dili</string>
-    <string name="parola_giriniz">Parola Giriniz</string>
-    <string name="yeni_parola_giriniz1">Yeni Parola (1)</string>
-    <string name="yeni_parola_giriniz2">Yeni Parola (2)</string>
-    <string name="tmdb_bagla">TMDB Bağla</string>
-    <string name="bolum_cek">Bölüm Çek</string>
+    <string name="tmdb_erisim_dil">TMDB Info Language</string>
+    <string name="parola_giriniz">Enter Password</string>
+    <string name="yeni_parola_giriniz1">New Password (1)</string>
+    <string name="yeni_parola_giriniz2">New Password (2)</string>
+    <string name="tmdb_bagla">Link to TMDB</string>
+    <string name="bolum_cek">Get Episode Infos</string>
     <string name="uc_nokta">…</string>
-    <string name="degistir">Değiştir</string>
-    <string name="hatali_parola">Girilen parola hatalı</string>
-    <string name="hata_parola_kisa">Parola en az 4 karakter olmalı</string>
-    <string name="hata_parola_bosluk">Parola boşluk karakteri içeremez</string>
-    <string name="hata_parola_ayni_degil">İki parola aynı değil</string>
-    <string name="kapat">Kapat</string>
-    <string name="parola_degisti">Parola değiştirildi</string>
-    <string name="ara">Ara</string>
+    <string name="degistir">Change</string>
+    <string name="hatali_parola">Password is wrong</string>
+    <string name="hata_parola_kisa">Password must gave at least 4 character</string>
+    <string name="hata_parola_bosluk">Password can not contain spaces</string>
+    <string name="hata_parola_ayni_degil">Two new password is not same</string>
+    <string name="kapat">Close</string>
+    <string name="parola_degisti">Password is changed</string>
+    <string name="ara">Search</string>
 </resources>

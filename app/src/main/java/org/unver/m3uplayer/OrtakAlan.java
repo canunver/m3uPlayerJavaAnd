@@ -70,7 +70,7 @@ public class OrtakAlan {
         son_tv_kanalini_oynatarak_basla = ConvertToInt32(M3UVeri.AyarOku("son_tv_kanalini_oynatarak_basla"), 0) == 1;
         tamEkranBaslat = ConvertToInt32(M3UVeri.AyarOku("tamEkranBaslat"), 0) == 1;
         tmdb_erisim_dil = ConvertToInt32(M3UVeri.AyarOku("tmdb_erisim_dil"), 0);
-        if(tmdb_erisim_dil == 1) {
+        if (tmdb_erisim_dil == 1) {
             TMDBDil = "tr-TR";
         }
         Log.d("M3UVeri", "TMDBDil:" + TMDBDil);
@@ -135,8 +135,12 @@ public class OrtakAlan {
         return false;
     }
 
-    public static void sonCekilmeZamaniYaz() {
-        sonCekilmeZamani = Calendar.getInstance().getTimeInMillis();
+    public static void sonCekilmeZamaniniSimdiYap() {
+        sonCekilmeZamaniYaz(Calendar.getInstance().getTimeInMillis());
+    }
+
+    public static void sonCekilmeZamaniYaz(long zaman) {
+        sonCekilmeZamani = zaman;
         M3UVeri.AyarYaz("sonCekilmeZamani", Long.toString(sonCekilmeZamani));
     }
 
@@ -193,6 +197,7 @@ public class OrtakAlan {
     public static boolean parolaDogruMu(String parola) {
         return parola.equals(OrtakAlan.parolaBul());
     }
+
     public static void parolaGirildi(String parola) {
         if (parola.equals(OrtakAlan.parolaBul())) {
             parolaVar = true;
@@ -266,4 +271,31 @@ public class OrtakAlan {
         return result;
     }
 
+    public static void adresDegerAta(int adresNo, String yeniAdres) {
+        String eskiAdres = m3uAdresAl(adresNo);
+        if (StringIsNUllOrEmpty(eskiAdres)) {
+            if (!StringIsNUllOrEmpty(yeniAdres)) {
+                adresDegerAtaDogrudan(adresNo, yeniAdres);
+            }
+        } else {
+            if (StringIsNUllOrEmpty(yeniAdres)) {
+                adresDegerAtaDogrudan(adresNo, yeniAdres);
+            } else if (!yeniAdres.equals(eskiAdres)) {
+                adresDegerAtaDogrudan(adresNo, yeniAdres);
+            }
+        }
+    }
+
+    private static void adresDegerAtaDogrudan(int adresNo, String yeniAdres) {
+        if (adresNo == 1) m3u_internet_adresi_1 = yeniAdres;
+        else if (adresNo == 2) m3u_internet_adresi_2 = yeniAdres;
+        else m3u_internet_adresi_3 = yeniAdres;
+        sonCekilmeZamaniYaz(0);
+    }
+
+    public static String m3uAdresAl(int adresNo) {
+        if (adresNo == 1) return m3u_internet_adresi_1;
+        else if (adresNo == 2) return m3u_internet_adresi_2;
+        else return m3u_internet_adresi_3;
+    }
 }

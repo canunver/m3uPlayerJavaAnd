@@ -22,6 +22,6 @@ public class Sezon {
     public int seyredilenSonBul() {
         for (int bi = bolumler.size() - 1; bi >= 0; bi--)
             if (bolumler.get(bi).seyredilenSureBul() > 0) return bi;
-        return 0;
+        return -1;
     }
 }
