@@ -162,7 +162,7 @@ public class YayinFragment extends Fragment {
             landscapeConstraintSet.connect(R.id.oynatmaBolmesi, ConstraintSet.END, ConstraintSet.PARENT_ID, ConstraintSet.END, 0);
 
         } catch (Exception ex) {
-            Log.d("Exc", ex.getMessage());
+            Log.e("Exc", ex.getMessage());
         }
 
         recyclerView = currView.findViewById(R.id.recyclerView);
@@ -387,9 +387,9 @@ public class YayinFragment extends Fragment {
         tamEkranBaslat = tamEkran;
         mMediaPlayer.setEventListener(event -> {
 ///                if (event.type == MediaPlayer.Event.Opening) { //İlk oluşan event 258
-///                    //Log.d("PlayerFragment", m3uBilgi.tvgName + "TimeChanged");
+///                    //Log.e("PlayerFragment", m3uBilgi.tvgName + "TimeChanged");
 ///                } else if (event.type == MediaPlayer.Event.PausableChanged) {//İkinci oluşan event 270
-///                    //Log.d("PlayerFragment", m3uBilgi.tvgName + "TimeChanged");
+///                    //Log.e("PlayerFragment", m3uBilgi.tvgName + "TimeChanged");
 ///                } else
             if (event.type == MediaPlayer.Event.Playing) {//Üçüncü oluşan event 260
                 if (ilkPlay) {
@@ -408,18 +408,18 @@ public class YayinFragment extends Fragment {
                 mediaController.ZamanAyarla(mMediaPlayer.getTime());
             }
 ///                else if (event.type == MediaPlayer.Event.ESAdded) {//Dördüncü oluşan event 276
-///                    //Log.d("PlayerFragment", m3uBilgi.tvgName + "TimeChanged");
+///                    //Log.e("PlayerFragment", m3uBilgi.tvgName + "TimeChanged");
 ///                } else if (event.type == MediaPlayer.Event.ESSelected) {//Beşinci oluşan event 278
-///                    //Log.d("PlayerFragment", m3uBilgi.tvgName + "TimeChanged");
+///                    //Log.e("PlayerFragment", m3uBilgi.tvgName + "TimeChanged");
 ///                } else if (event.type == MediaPlayer.Event.Vout) {//Altıncı oluşan event 274
-///                    //Log.d("PlayerFragment", m3uBilgi.tvgName + "TimeChanged");
+///                    //Log.e("PlayerFragment", m3uBilgi.tvgName + "TimeChanged");
 ///                }
 /// else if (event.type == MediaPlayer.Event.PositionChanged) {
 ///
 ///                } else if (event.type == MediaPlayer.Event.Buffering) {
 ///
 ///                } else if (event.type == MediaPlayer.Event.SeekableChanged) { //269
-///                    Log.d("PlayerFragment", mediaController.m3uBilgi.tvgName + "SeekableChanged:" + event.getSeekable());
+///                    Log.e("PlayerFragment", mediaController.m3uBilgi.tvgName + "SeekableChanged:" + event.getSeekable());
 ///                } else if (event.type == MediaPlayer.Event.LengthChanged) { //273
 ///
 ///                } else if (event.type == MediaPlayer.Event.EndReached) { //269
@@ -429,7 +429,7 @@ public class YayinFragment extends Fragment {
 ///                } else if (event.type == MediaPlayer.Event.Stopped) { //262
 ///
 ///                } else {
-///                    Log.d("PlayerFragment", mediaController.m3uBilgi.tvgName + "MediaPlayer.Event.type:" + event.type);
+///                    Log.e("PlayerFragment", mediaController.m3uBilgi.tvgName + "MediaPlayer.Event.type:" + event.type);
 ///                }
         });
 
@@ -494,6 +494,7 @@ public class YayinFragment extends Fragment {
 
     public void InternettenCekmeIkon(int internettenCekiliyor) {
         try {
+            Log.d("YF", "InternettenCekmeIkon: " + internettenCekiliyor);
             if (internettenCekiliyor == 0)
                 imgOp.setVisibility(View.GONE);
             else {
@@ -505,7 +506,7 @@ public class YayinFragment extends Fragment {
             }
             //anaYerlesim.requestLayout();
         } catch (Exception ex) {
-            Log.d("M3UVeri", ex.getMessage());
+            Log.e("M3UVeri", ex.getMessage());
         }
     }
 }

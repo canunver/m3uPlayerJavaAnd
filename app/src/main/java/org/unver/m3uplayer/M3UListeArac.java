@@ -24,7 +24,7 @@ public class M3UListeArac {
                 Bitmap image = BitmapFactory.decodeStream(iStream);
                 handler.post(()-> imageView.setImageBitmap(image));
             } catch (Exception e) {
-                Log.d("URL", e.getMessage());
+                Log.e("URL", e.getMessage());
             }
         });
     }

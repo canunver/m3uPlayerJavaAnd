@@ -30,8 +30,6 @@ public class M3UVeri {
     }
 
     public static void OkuBakayim(MainActivity mainActivity) {
-
-        Log.i("M3UVeri", "Oku bakayım");
         M3UVeri.mainActivity = mainActivity;
         tvGruplari.clear();
         seriGruplari.clear();
@@ -42,10 +40,9 @@ public class M3UVeri {
             dbHelper = new M3U_DB(M3UVeri.mainActivity);
         if (db == null)
             db = dbHelper.getWritableDatabase();
-
+        dbHelper.kontrolEt(db);
         String query = "SELECT GRUP.type_name, GRUP.gelenGrup, GRUP.gizli, GRUP.yetiskin, GRUPDETAY.ID  FROM GRUP LEFT OUTER JOIN GRUPDETAY ON GRUP.type_name = GRUPDETAY.type_name order by GRUP.gelenGrup, GRUP.type_name, GRUPDETAY.sira_No";
         Cursor cursorGrup = db.rawQuery(query, null);
-        Log.i("M3UVeri", "Raw query bitti");
 
         if (cursorGrup != null) {
             try {
@@ -81,10 +78,8 @@ public class M3UVeri {
             }
         } else
             Log.e("M3UVeri", "Cursor null oldu...");
-        Log.i("M3UVeri", "Kullanıcı grupları bitti");
-
+        minYil = 10000;
         Cursor cursor = db.query(M3U_DB.TABLE_M3U, null, null, null, null, null, null);
-        Log.i("M3UVeri", "M3U Table query bitti");
         if (cursor != null) {
             try {
                 if (cursor.moveToFirst()) {
@@ -130,8 +125,7 @@ public class M3UVeri {
                 cursor.close();
             }
         }
-        Log.i("M3UVeri", "Gruplar sıralanacak");
-        if (minYil > 3000) minYil = 0;
+        if (minYil > 3000) minYil = 1950;
 
         Comparator<? super M3UGrup> grupKiyasla = (Comparator<M3UGrup>) (o1, o2) -> {
             int result = (o1.gelenGrup == o2.gelenGrup) ? 0 : (o1.gelenGrup ? 1 : -1);
@@ -143,7 +137,6 @@ public class M3UVeri {
         tvGruplari.sort(grupKiyasla);
         filmGruplari.sort(grupKiyasla);
         seriGruplari.sort(grupKiyasla);
-        Log.i("M3UVeri", "Okuma bitti");
     }
 
     public static void TMDByeIsle(TVInfo tvInfo) {
@@ -160,7 +153,6 @@ public class M3UVeri {
         M3UGrup yeni;
         if (yoksaEkle) {
             yeni = new M3UGrup(aktifTurSira, groupTitle, gelenGrup);
-            //Log.d("M3UVeriG", yeni.anahtarBul() + "::" + yeni.grupAdiBul(true, "G", "Y") + " Eklendi M3U");
             anaGrup.add(yeni);
         } else
             yeni = null;
@@ -285,13 +277,13 @@ public class M3UVeri {
                         deger = cursor.getString(DEGERIndex);
                     }
                 } catch (Exception ex) {
-                    Log.d("M3UVeri", ex.getMessage());
+                    Log.e("M3UVeri", ex.getMessage());
                 } finally {
                     cursor.close();
                 }
             }
         } catch (Exception ex) {
-            Log.d("M3UVeri", ex.getMessage());
+            Log.e("M3UVeri", ex.getMessage());
         }
         return deger;
     }
@@ -303,7 +295,7 @@ public class M3UVeri {
             values.put("DEGER", deger);
             db.insertWithOnConflict(M3U_DB.TABLE_AYARLAR, null, values, SQLiteDatabase.CONFLICT_REPLACE);
         } catch (Exception ex) {
-            Log.d("M3UVeri", ex.getMessage());
+            Log.e("M3UVeri", ex.getMessage());
         }
     }
 
@@ -312,12 +304,11 @@ public class M3UVeri {
     }
 
     public static void FilmBilgiCek() {
-        try {
-            new InternettenOku().performNetworkOperationTMDB(mainActivity, db, CekilecekKanallariBul());
-        } catch (Exception ex) {
-            Log.d("M3UVeri", ex.getMessage());
-        }
-        mainActivity.internettenCekiliyorYap(0);
+            try {
+                new InternettenOku().performNetworkOperationTMDB(mainActivity, db, CekilecekKanallariBul());
+            } catch (Exception ex) {
+                Log.e("M3UVeri", ex.getMessage());
+            }
     }
 
     public static ArrayList<M3UBilgi> CekilecekKanallariBul() {
@@ -428,7 +419,6 @@ public class M3UVeri {
                 cursor.close();
             }
         }
-        Log.i("M3UVeri", "TVInfo cursor oldu");
         return son;
     }
 

@@ -1,6 +1,7 @@
 package org.unver.m3uplayer;
 
 import android.content.Context;
+import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
@@ -80,5 +81,18 @@ public class M3U_DB extends SQLiteOpenHelper {
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
 ///        if (oldVersion < 6) {
 ///        }
+    }
+
+    public void kontrolEt(SQLiteDatabase db) {
+        Cursor cursor = db.query("sqlite_master", null, "type = 'table' AND name = ?", new String[]{TABLE_GRUP}, null, null, null);
+
+        boolean exists = false;
+        if (cursor != null) {
+            exists = cursor.getCount() > 0;
+            cursor.close();
+        }
+
+        if(!exists)
+            onCreate(db);
     }
 }

@@ -81,4 +81,6 @@
     <string name="kapat">Kapat</string>
     <string name="parola_degisti">Parola değiştirildi</string>
     <string name="ara">Ara</string>
+    <string name="TMDBKur">TMBD Bağını kurduktan sonra deneyiniz!</string>
+    <string name="veriCekiliyor">Internet verisi işleniyor: %d</string>
 </resources>

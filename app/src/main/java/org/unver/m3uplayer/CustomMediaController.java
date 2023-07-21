@@ -294,7 +294,6 @@ public class CustomMediaController implements View.OnClickListener {
         this.pauseBaslat = pauseBaslat;
         baslamaZamani = new Date();
         yeterinceSeyrettik = false;
-        //Log.d("PlayerFragment", m3uBilgi.tvgName + "Playing:" + ":" + totalMs + "/" + aranaBilir + BolumSezonAd());
         oynuyor = true;
         if (totalMs > 0) {
             zamanCubugu.setVisibility(View.VISIBLE);

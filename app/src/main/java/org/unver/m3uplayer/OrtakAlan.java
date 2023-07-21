@@ -6,7 +6,6 @@ import android.graphics.Typeface;
 import android.text.Spannable;
 import android.text.SpannableString;
 import android.text.style.StyleSpan;
-import android.util.Log;
 import android.view.View;
 
 import java.text.SimpleDateFormat;
@@ -73,7 +72,6 @@ public class OrtakAlan {
         if (tmdb_erisim_dil == 1) {
             TMDBDil = "tr-TR";
         }
-        Log.d("M3UVeri", "TMDBDil:" + TMDBDil);
         sonTVGrup = M3UVeri.AyarOku("sonTVGrup");
         sonTVProgramID = M3UVeri.AyarOku("sonTVProgramID");
         sonM3UTur = M3UVeri.TurBul(ConvertToInt32(M3UVeri.AyarOku("sonM3UTur"), 0));
@@ -101,7 +99,6 @@ public class OrtakAlan {
     }
 
     public static void TarihceyeEkle(M3UBilgi.M3UTur aktifTur, String aktifGrupAd, String id, String sezon, String bolum) {
-        Log.d("M3UVeri", "sezon: " + sezon + ", bolum: " + bolum);
         if (!StringIsNUllOrEmpty(aktifGrupAd) && !StringIsNUllOrEmpty(id)) {
             if (aktifTur != sonM3UTur || !aktifGrupAd.equals(sonGrup) || !id.equals(sonProgramID)) {
                 sonM3UTur = aktifTur;
@@ -117,7 +114,6 @@ public class OrtakAlan {
                 M3UVeri.AyarYaz("sonGrup", sonGrup);
                 M3UVeri.AyarYaz("sonProgramID", sonProgramID);
             }
-            Log.d("M3UVeri", "sezon: " + sezon + ", bolum: " + bolum);
             if (!OrtakAlan.StringIsNUllOrEmpty(sezon) && !sezon.equals(sonSezon)) {
                 sonSezon = sezon;
                 M3UVeri.AyarYaz("sonSezon", sezon);
@@ -291,6 +287,7 @@ public class OrtakAlan {
         else if (adresNo == 2) m3u_internet_adresi_2 = yeniAdres;
         else m3u_internet_adresi_3 = yeniAdres;
         sonCekilmeZamaniYaz(0);
+        ArkaPlanIslemleri.performBackgroundTask(false);
     }
 
     public static String m3uAdresAl(int adresNo) {

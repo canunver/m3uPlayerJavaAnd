@@ -155,6 +155,13 @@ public class DialogTanimlar {
         tmdbAraButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+
+                if(OrtakAlan.StringIsNUllOrEmpty(OrtakAlan.tmdb_erisim_anahtar))
+                {
+                    Toast.makeText(v.getContext(), R.string.TMDBKur, Toast.LENGTH_SHORT).show();
+                    return;
+                }
+
                 tmdbAraButton.setEnabled(false);
 
                 ExecutorService executor = Executors.newSingleThreadExecutor();
@@ -169,7 +176,7 @@ public class DialogTanimlar {
                             this.DegerAta(true);
                         }
                     } catch (Exception ex) {
-                        Log.d("M3UVeri", ex.getMessage());
+                        Log.e("M3UVeri", ex.getMessage());
                     }
                     this.DegerAta(false);
                 });
@@ -197,7 +204,6 @@ public class DialogTanimlar {
                             ti.type = M3UVeri.SiraBul(arananM3U.Tur);
                             arananM3U.tmdbId = ti.id;
                             arananM3U.Yaz(M3UVeri.db);
-                            //Log.d("Cek", "arananM3U.tmdbId: " + arananM3U.tmdbId + ", " + "ti.tostr:" + ti);
                             M3UVeri.tumTMDBListesi.put(ti.anahtarBul(), ti);
                             ti.Yaz(M3UVeri.db);
                             aktifAdapter.notifyItemChanged(seciliItemPos);

@@ -26,30 +26,33 @@ public class ArkaPlanIslemleri {
             @Override
             public void run() {
                 if (!mainActivity.VeriCekiliyorMu()) {
-                    performBackgroundTask();
+                    performBackgroundTask(true);
                 }
             }
         }, 0, INTERVAL);
     }
 
-    private static void performBackgroundTask() {
-        Log.i("M3UVeri", "performBackgroundTask, sonCekilmeZamani: " + OrtakAlan.sonCekilmeZamani);
-
+    public static void performBackgroundTask(boolean inTask) {
         try {
-            if(!mainActivity.TVInfoOkundu)
-            {
-                mainActivity.internettenCekiliyorYap(3);
-                M3UVeri.TMDBOku();
+            if (!mainActivity.TVInfoOkundu) {
+                if (!OrtakAlan.StringIsNUllOrEmpty(OrtakAlan.tmdb_erisim_anahtar)) {
+                    mainActivity.internettenCekiliyorYap(3, inTask);
+                    M3UVeri.TMDBOku();
+                }
             }
             if (OrtakAlan.sonCekilmeZamani == 0 || GecenSureSaat(Calendar.getInstance().getTimeInMillis(), OrtakAlan.sonCekilmeZamani) >= 24) {
-                mainActivity.internettenCekiliyorYap(1);
-                M3UVeri.CekBakalim();
+                if (!mainActivity.M3UCekiliyorMu()) {
+                    mainActivity.internettenCekiliyorYap(1, inTask);
+                    M3UVeri.CekBakalim();
+                }
             } else {
-                mainActivity.internettenCekiliyorYap(2);
-                M3UVeri.FilmBilgiCek();
+                if (!OrtakAlan.StringIsNUllOrEmpty(OrtakAlan.tmdb_erisim_anahtar)) {
+                    mainActivity.internettenCekiliyorYap(2, inTask);
+                    M3UVeri.FilmBilgiCek();
+                }
             }
         } catch (Exception ex) {
-            Log.d("M3UVeri", ex.getMessage());
+            Log.e("M3UVeri", ex.getMessage());
         }
     }
 
@@ -58,7 +61,6 @@ public class ArkaPlanIslemleri {
     }
 
     public static void kapat() {
-        Log.i("M3UVeri", "performBackgroundTask bitiyor");
         if (timer != null)
             timer.cancel();
         timer = null;

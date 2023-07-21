@@ -166,8 +166,10 @@ public class MainActivity extends AppCompatActivity {
 
     //    public static final  String TAG = "AdColony Banner";
     private void InitAd() {
-        AdColonyAppOptions appOptions = new AdColonyAppOptions()
-                .setKeepScreenOn(true);
+        AdColonyAppOptions appOptions = new AdColonyAppOptions();
+        appOptions.setKeepScreenOn(true);
+        appOptions.setIsChildDirectedApp(false);
+        //boolean GDPR_CONSENT = true; // GDPR onayu durumuna göre true veya false olarak ayarlanmalı
 
                 //.setTestModeEnabled(true); // Test modunu etkinleştirin
         AdColony.configure(this, appOptions, APP_ID);
@@ -222,9 +224,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void Cekildi() {
-        internettenCekiliyor = 0;
-        if (anaFragment != null)
-            anaFragment.InternettenCekmeIkon(internettenCekiliyor);
+        internettenCekiliyorYap(0, true);
     }
 
     public void btnAcClicked(View view) {
@@ -236,9 +236,9 @@ public class MainActivity extends AppCompatActivity {
         this.aktifTur = M3UVeri.TurBul(aktifTurPos);
     }
 
-    public void internettenCekiliyorYap(int state) {
+    public void internettenCekiliyorYap(int state, boolean ignoredInHandler) {
+        internettenCekiliyor = state;
         handler.postDelayed(() -> {
-            internettenCekiliyor = state;
             if (anaFragment != null)
                 anaFragment.InternettenCekmeIkon(internettenCekiliyor);
         }, 50);
@@ -251,5 +251,12 @@ public class MainActivity extends AppCompatActivity {
 
     public boolean VeriCekiliyorMu() {
         return this.internettenCekiliyor != 0;
+    }
+
+    public void listeyiYenile() {
+        handler.postDelayed(() -> {
+            if (anaFragment != null)
+                anaFragment.TurSecildi(M3UVeri.SiraBul(aktifTur), false);
+        }, 50);
     }
 }

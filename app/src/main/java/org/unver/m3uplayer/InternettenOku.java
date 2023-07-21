@@ -3,6 +3,7 @@ package org.unver.m3uplayer;
 import android.annotation.SuppressLint;
 import android.database.sqlite.SQLiteDatabase;
 import android.util.Log;
+import android.widget.Toast;
 
 import com.google.gson.Gson;
 
@@ -64,20 +65,18 @@ public class InternettenOku {
                         urlAddress = OrtakAlan.m3uAdresAl(3);
                     }
                     if (OrtakAlan.StringIsNUllOrEmpty(urlAddress)) continue;
-                    //Log.i("M3UVeri", "Internetten veri alınacak");
                     URL url = new URL(urlAddress);
                     HttpURLConnection connection = (HttpURLConnection) url.openConnection();
                     connection.setRequestMethod("GET");
 
                     int responseCode = connection.getResponseCode();
                     if (responseCode == HttpURLConnection.HTTP_OK) {
-                        //Log.i("M3UVeri", "Internetten veri alındı");
                         BufferedReader reader = new BufferedReader(new InputStreamReader(connection.getInputStream()));
                         boolean hataVar;
                         String line;
                         db.beginTransaction();
                         try {
-///                            int say = 0;
+                            int say = 0;
                             String ilkSatir = null;
                             String suAn = OrtakAlan.TarihYAGOl(new Date());
 
@@ -86,9 +85,11 @@ public class InternettenOku {
                                     ilkSatir = line;
                                 } else if (ilkSatir != null) {
                                     Ekle(db, kod, ilkSatir, line, suAn);
-///                                    say++;
-///                                    if (say % 1000 == 1)
-///                                        Log.i("M3UVeri", "Internet verisi işleniyor:" + say);
+                                    say++;
+                                    if (say % 1000 == 1) {
+                                        int finalSay = say;
+                                        mainActivity.handler.postDelayed((Runnable) () -> Toast.makeText(mainActivity, mainActivity.getString(R.string.veriCekiliyor, finalSay), Toast.LENGTH_SHORT).show(), 10);
+                                    }
                                 }
                             }
                             hataVar = false;
@@ -102,14 +103,15 @@ public class InternettenOku {
                         if (!hataVar) {
                             //Log.i("M3UVeri", "Internet verisi işlendi");
                             OrtakAlan.sonCekilmeZamaniniSimdiYap();
+                            mainActivity.listeyiYenile();
                         }
                     }
                     connection.disconnect();
-                    mainActivity.Cekildi();
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
             }
+            mainActivity.Cekildi();
         });
 
         executor.shutdown();
@@ -126,7 +128,7 @@ public class InternettenOku {
                     try {
                         ti = TMDBInfoBul(m3u);
                     } catch (Exception ex) {
-                        Log.d("M3UVeri", "Hata:" + ex.getMessage());
+                        Log.e("M3UVeri", "Hata:" + ex.getMessage());
                         ti = null;
                     }
                     cevaplar.add(ti);
@@ -144,13 +146,11 @@ public class InternettenOku {
                     TVInfo tvInfo;
                     if (ti == null || ti.resultsSay() != 1) {
                         m3u.tmdbId = -1;
-                        Log.d("M3UVeri", "-1 olarak yazılacak");
                         tvInfo = null;
                     } else {
                         tvInfo = ti.InfoAl(0);
                         tvInfo.type = M3UVeri.SiraBul(m3u.Tur);
                         m3u.tmdbId = tvInfo.id;
-                        Log.d("M3UVeri", tvInfo.anahtarBul() + " olarak yazılacak");
                     }
                     if (tvInfo != null) {
                         tvInfo.Yaz(M3UVeri.db);
@@ -206,8 +206,6 @@ public class InternettenOku {
         try {
             if (!trustInit) doTrustInit();
             String urlStr = String.format("https://api.themoviedb.org/3/tv/%s/season/%s/episode/%s?language=%s", m3u.tmdbId, sezonAd.substring(1), bolumNo.substring(1), OrtakAlan.TMDBDil);
-
-            Log.d("M3UVeri", "TMDB bölüm alınacak:" + urlStr + " " + OrtakAlan.tmdb_erisim_anahtar);
             URL url = new URL(urlStr);
             connection = (HttpURLConnection) url.openConnection();
             connection.setRequestMethod("GET");
@@ -222,9 +220,9 @@ public class InternettenOku {
                 }
                 reader.close();
             } else
-                Log.d("M3UVeri", "TMDB veri OK Değil: " + responseCode);
+                Log.e("M3UVeri", "TMDB veri OK Değil: " + responseCode);
         } catch (Exception ex) {
-            Log.d("M3UVeri", "TMDB veri alınamadı" + ex.getMessage());
+            Log.e("M3UVeri", "TMDB veri alınamadı" + ex.getMessage());
         }
         if (connection != null)
             connection.disconnect();
@@ -234,19 +232,18 @@ public class InternettenOku {
 
         TMDBBolum gelenObj = gson.fromJson(response.toString(), TMDBBolum.class);
         if (gelenObj == null)
-            Log.d("M3UVeri", "TMDB, Gelen nesne çevrilemedi" + response);
+            Log.e("M3UVeri", "TMDB, Gelen nesne çevrilemedi" + response);
         return gelenObj;
     }
 
     public static TVResponse getTmdbInfo(String tmdbTur, String sorgu) {
-        Log.i("M3UVeri", "TMDB veri alınacak");
+        if (OrtakAlan.StringIsNUllOrEmpty(OrtakAlan.tmdb_erisim_anahtar)) return null;
         StringBuilder response = new StringBuilder();
         HttpURLConnection connection = null;
         try {
             if (!trustInit) doTrustInit();
 
             String urlStr = String.format("https://api.themoviedb.org/3/search/%s?language=%s&query=%s", tmdbTur, OrtakAlan.TMDBDil, sorgu);
-            Log.d("M3UVeri", "TMDB veri alınacak:" + urlStr + " " + OrtakAlan.tmdb_erisim_anahtar);
             URL url = new URL(urlStr);
             connection = (HttpURLConnection) url.openConnection();
             connection.setRequestMethod("GET");
@@ -262,7 +259,7 @@ public class InternettenOku {
                 reader.close();
             }
         } catch (Exception ex) {
-            Log.d("M3UVeri", "TMDB veri alınamadı" + ex.getMessage());
+            Log.e("M3UVeri", "TMDB veri alınamadı" + ex.getMessage());
         }
         if (connection != null)
             connection.disconnect();
@@ -272,7 +269,7 @@ public class InternettenOku {
 
         TVResponse gelenObj = gson.fromJson(response.toString(), TVResponse.class);
         if (gelenObj == null)
-            Log.d("M3UVeri", "TMDB, Gelen nesne çevrilemedi" + response);
+            Log.e("M3UVeri", "TMDB, Gelen nesne çevrilemedi" + response);
         return gelenObj;
     }
 
@@ -313,7 +310,7 @@ public class InternettenOku {
                         try {
                             tmdbBolum = TMDBInfoBulSeri(m3u, sez.sezonAd, blm.bolum);
                         } catch (Exception ex) {
-                            Log.d("M3UVeri", "Hata:" + ex.getMessage());
+                            Log.e("M3UVeri", "Hata:" + ex.getMessage());
                             tmdbBolum = null;
                         }
                         cevaplar.add(new BolumBilgi(tmdbBolum, blm));
@@ -331,12 +328,10 @@ public class InternettenOku {
                     TVInfo tvInfo;
                     long yazId = -1;
                     if (bb.ti == null) {
-                        //Log.d("M3UVeri", "-1 olarak yazılacak");
                         tvInfo = null;
                     } else {
                         tvInfo = new TVInfo(9, bb.ti.id, bb.ti.name, bb.ti.air_date, bb.ti.overview, bb.ti.vote_average);
                         yazId = tvInfo.id;
-                        //Log.d("M3UVeri", tvInfo.anahtarBul() + " olarak yazılacak");
                     }
                     if (tvInfo != null) {
                         tvInfo.Yaz(M3UVeri.db);

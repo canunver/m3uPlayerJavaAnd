@@ -80,4 +80,6 @@
     <string name="kapat">Close</string>
     <string name="parola_degisti">Password is changed</string>
     <string name="ara">Search</string>
+    <string name="TMDBKur">Try after setting of TMDB key!</string>
+    <string name="veriCekiliyor">Count of data stored to DB: %d</string>
 </resources>
