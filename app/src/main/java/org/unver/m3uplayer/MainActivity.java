@@ -168,6 +168,7 @@ public class MainActivity extends AppCompatActivity {
     private void InitAd() {
         AdColonyAppOptions appOptions = new AdColonyAppOptions()
                 .setKeepScreenOn(true);
+
                 //.setTestModeEnabled(true); // Test modunu etkinleştirin
         AdColony.configure(this, appOptions, APP_ID);
     }

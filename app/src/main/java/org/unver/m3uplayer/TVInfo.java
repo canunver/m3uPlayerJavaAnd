@@ -41,7 +41,7 @@ public class TVInfo {
     public int FilmYil() {
         String yt = yayinTarihiBul();
         if (!OrtakAlan.StringIsNUllOrEmpty(yt)) {
-            OrtakAlan.ConvertToInt32(yt.substring(yt.length() - 4), 0);
+            return OrtakAlan.ConvertToInt32(yt.substring(0, 4), 0);
         }
         return 0;
     }

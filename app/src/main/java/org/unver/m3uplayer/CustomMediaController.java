@@ -71,18 +71,18 @@ public class CustomMediaController implements View.OnClickListener {
     }
 
     private static final EkranYer[] ekranYerler = new EkranYer[]{
-            new EkranYer(R.drawable.baseline_fullscreen_24, 4, Gravity.TOP | Gravity.END, 0, 3, 0, 0), //0 Ekranı kapla tuşu yeri
-            new EkranYer(R.drawable.baseline_autorenew_24, 4, Gravity.TOP | Gravity.END, 0, 8, 0, 0), //0 reLoad tuşu
+            new EkranYer(R.drawable.baseline_fullscreen_24, 4, Gravity.TOP | Gravity.END, 0, 3, 0, 0, false), //0 Ekranı kapla tuşu yeri
+            new EkranYer(R.drawable.baseline_autorenew_24, 4, Gravity.TOP | Gravity.END, 0, 8, 0, 0, true), //0 reLoad tuşu
 
-            new EkranYer(R.drawable.baseline_skip_previous_24, 6, Gravity.CENTER_VERTICAL | Gravity.START, 2, 0, 0, 0), //Sonraki Media
-            new EkranYer(R.drawable.baseline_backward_5_24, 6, Gravity.CENTER_VERTICAL | Gravity.START, 9, 0, 0, 0), //Sonraki Media
+            new EkranYer(R.drawable.baseline_skip_previous_24, 6, Gravity.CENTER_VERTICAL | Gravity.START, 2, 0, 0, 0, true), //Sonraki Media
+            new EkranYer(R.drawable.baseline_backward_5_24, 6, Gravity.CENTER_VERTICAL | Gravity.START, 9, 0, 0, 0, true), //Sonraki Media
 
-            new EkranYer(R.drawable.baseline_pause_circle_outline_24, 7, Gravity.CENTER_VERTICAL | Gravity.CENTER_HORIZONTAL, 0, 0, 0, 0),
+            new EkranYer(R.drawable.baseline_pause_circle_outline_24, 7, Gravity.CENTER_VERTICAL | Gravity.CENTER_HORIZONTAL, 0, 0, 0, 0, false),
 
-            new EkranYer(R.drawable.baseline_forward_30_24, 6, Gravity.CENTER_VERTICAL | Gravity.END, 0, 9, 0, 0),
-            new EkranYer(R.drawable.baseline_skip_next_24, 6, Gravity.CENTER_VERTICAL | Gravity.END, 0, 2, 0, 0),
-            new EkranYer(R.drawable.konusma, 4, Gravity.TOP | Gravity.END, 0, 13, 0, 0),
-            new EkranYer(R.drawable.baseline_subtitles_24, 4, Gravity.TOP | Gravity.END, 0, 18, 0, 0),
+            new EkranYer(R.drawable.baseline_forward_30_24, 6, Gravity.CENTER_VERTICAL | Gravity.END, 0, 9, 0, 0, true),
+            new EkranYer(R.drawable.baseline_skip_next_24, 6, Gravity.CENTER_VERTICAL | Gravity.END, 0, 2, 0, 0, true),
+            new EkranYer(R.drawable.konusma, 4, Gravity.TOP | Gravity.END, 0, 13, 0, 0, false),
+            new EkranYer(R.drawable.baseline_subtitles_24, 4, Gravity.TOP | Gravity.END, 0, 18, 0, 0, false),
 //            new EkranYer(R.drawable.baseline_music_note_24, 4, Gravity.TOP | Gravity.END, 0, 23, 0, 0),
     };
 
@@ -132,7 +132,8 @@ public class CustomMediaController implements View.OnClickListener {
         //button.setBackgroundResource(R.drawable.baseline_transparent_24);
         button.setBackgroundColor(Color.TRANSPARENT);
         button.setScaleType(ImageView.ScaleType.CENTER_CROP);
-        //button.setVisibility(View.GONE);
+        if(ekranYerler[buttonId].isleviYok)
+            button.setVisibility(View.GONE);
         FrameLayout.LayoutParams layoutParams = new FrameLayout.LayoutParams(birimW * ekranYerler[buttonId].buyukluk, birimH * ekranYerler[buttonId].buyukluk);
 
         layoutParams.gravity = ekranYerler[buttonId].gravity;
@@ -202,18 +203,18 @@ public class CustomMediaController implements View.OnClickListener {
 
         // Dil seçeneklerini içeren bir liste veya dizi oluşturun
         Media.Track[] secenekler = SecenekleriBul(sira);
-
-        // Dil seçeneklerini menüye ekleyin
-        for (int i = 0; i < secenekler.length; i++) {
-            Media.Track secenek = secenekler[i];
-            menu.add(Menu.NONE, i, Menu.NONE, secenek.language + ":" + secenek.name)
-                    .setOnMenuItemClickListener(item -> {
-                        int secId = item.getItemId();
-                        mediaPlayer.selectTrack(secenekler[secId].id);
-                        return true;
-                    });
+        if(secenekler!=null && secenekler.length>0) {
+            // Dil seçeneklerini menüye ekleyin
+            for (int i = 0; i < secenekler.length; i++) {
+                Media.Track secenek = secenekler[i];
+                menu.add(Menu.NONE, i, Menu.NONE, secenek.language + ":" + secenek.name)
+                        .setOnMenuItemClickListener(item -> {
+                            int secId = item.getItemId();
+                            mediaPlayer.selectTrack(secenekler[secId].id);
+                            return true;
+                        });
+            }
         }
-
         // PopupMenu'yu gösterin
         popupMenu.show();
     }
@@ -374,9 +375,10 @@ public class CustomMediaController implements View.OnClickListener {
         public final int sagMargin;
         public final int ustMargin;
         public final int altMargin;
+        public final boolean isleviYok;
         public ImageButton button;
 
-        public EkranYer(int resId, int buyukluk, int gravity, int solMargin, int sagMargin, int ustMargin, int altMargin) {
+        public EkranYer(int resId, int buyukluk, int gravity, int solMargin, int sagMargin, int ustMargin, int altMargin, boolean isleviYok) {
             this.resId = resId;
             this.buyukluk = buyukluk;
             this.gravity = gravity;
@@ -384,6 +386,7 @@ public class CustomMediaController implements View.OnClickListener {
             this.sagMargin = sagMargin;
             this.ustMargin = ustMargin;
             this.altMargin = altMargin;
+            this.isleviYok = isleviYok;
             button = null;
         }
     }

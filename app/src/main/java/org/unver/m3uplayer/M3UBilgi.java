@@ -265,7 +265,7 @@ public class M3UBilgi {
 
         if (filtre.maxYil <= 0 || filtre.maxYil < filtre.minYil) return true;
         int yil = tmdbYil();
-        if (yil < 0) yil = this.filmYilInt;
+        if (yil <= 0) yil = this.filmYilInt;
         if (yil <= filtre.maxYil && yil >= filtre.minYil) return true;
         return false;
     }
